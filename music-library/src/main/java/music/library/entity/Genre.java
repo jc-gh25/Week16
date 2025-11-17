@@ -1,3 +1,4 @@
+// src/main/java/music/library/entity/Genre.java
 package music.library.entity;
 
 import jakarta.persistence.*;
@@ -25,9 +26,10 @@ public class Genre {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /* Inverse side of the many‑to‑many */
     @ManyToMany(mappedBy = "genres")
     @EqualsAndHashCode.Exclude
+    @Builder.Default // When the builder is used, start with the value given in the field declaration 
+    // unless the caller explicitly sets something else.
     private Set<Album> albums = new HashSet<>();
 
     @PrePersist

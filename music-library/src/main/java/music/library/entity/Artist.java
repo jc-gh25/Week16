@@ -1,6 +1,9 @@
+
 package music.library.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,18 +20,22 @@ public class Artist {
     private Long artistId;
 
     @Column(nullable = false, length = 255)
+    @NotBlank(message = "Artist name must not be blank")
+    @Size(max = 255, message = "Artist name must be ≤ 255 characters")
     private String name;
 
     @Column(columnDefinition = "TEXT")
-    private String description;   // renamed from bio
-
+    private String description;   // not using validation
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /* One‑to‑many with Album */
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    @EqualsAndHashCode.Exclude   // avoid circular equals/hashcode
-    private Set<Album> albums = new HashSet<>();
+    /* One-to-many with Album */
+    @OneToMany(mappedBy = "artist",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @Builder.Default                     // tell Lombok to keep this init
+    private Set<Album> albums = new HashSet<>();   // <-- generic type added
 
     @PrePersist
     void onCreate() {

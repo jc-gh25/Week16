@@ -1,16 +1,17 @@
 spring:
   datasource:
+    url: jdbc:mysql://localhost:3306/music_library
     username: music_library
     password: music_library
-    url: jdbc:mysql://localhost:3306/music_library
-
-
   jpa:
     hibernate:
-      ddl-auto: update # creates/updates tables automatically
+      ddl-auto: none  # Hibernate will never touch the DB schema. Create/modify tables with MySQL Workbench.
+      # update creates/updates tables automatically
+      # validate just checks that the schema matches the entities
     show-sql: true
     defer-datasource-initialization: true
-    
   sql:
-    init: 
-      mode: never # if not loading any .sql scripts at startup
+    init:
+      mode: never 
+         # never if not loading .sql scripts at startup
+         
