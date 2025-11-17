@@ -1,4 +1,3 @@
-// src/main/java/music/library/entity/Genre.java
 package music.library.entity;
 
 import jakarta.persistence.*;

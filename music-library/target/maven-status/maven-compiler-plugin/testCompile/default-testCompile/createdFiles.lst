@@ -1,0 +1,7 @@
+music\library\integration\AlbumControllerIT$2.class
+music\library\repository\AlbumRepositoryTest.class
+music\library\integration\AlbumControllerIT$1.class
+music\library\service\AlbumServiceBidirectionalTest.class
+music\library\service\AlbumServiceTest.class
+music\library\service\ArtistServiceTest.class
+music\library\integration\AlbumControllerIT.class

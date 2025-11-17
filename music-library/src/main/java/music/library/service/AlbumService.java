@@ -21,7 +21,7 @@ public class AlbumService {
 	private final AlbumRepository albumRepo;
 	private final GenreRepository genreRepo;
 	
-	// ------------------- CRUD -------------------
+	// CRUD
 
 	public List<Album> findAll() {
 		return albumRepo.findAll();
@@ -52,13 +52,16 @@ public class AlbumService {
 		albumRepo.deleteById(id);
 	}
 
-	/*** Join-table helpers ***/
+	// Join-table helpers 
 	public Album addGenre(Long albumId, Long genreId) {
 		Album album = findById(albumId);
 		Genre genre = genreRepo.findById(genreId).orElseThrow(() -> new ResourceNotFoundException(
 				"Genre with ID " + genreId + " not found"));
 		album.getGenres().add(genre);
-		return albumRepo.save(album);
+		genre.getAlbums().add(album);
+		albumRepo.save(album);
+		genreRepo.save(genre);
+		return album;
 	}
 
 	public Album removeGenre(Long albumId, Long genreId) {
@@ -66,10 +69,13 @@ public class AlbumService {
 		Genre genre = genreRepo.findById(genreId).orElseThrow(() -> new ResourceNotFoundException(
 				"Genre with ID " + genreId + " not found"));
 		album.getGenres().remove(genre);
-		return albumRepo.save(album);
+		genre.getAlbums().remove(album);
+		albumRepo.save(album);
+		genreRepo.save(genre);
+		return album;
 	}
 	
-	/*** Service method that combines the specifications ***/
+	// Service method that combines the specifications
 	public Page<Album> search(String title, Integer startYear, Integer endYear, Long genreId, Pageable pageable) {
 
 		Specification<Album> spec = null;
@@ -88,7 +94,7 @@ public class AlbumService {
 		            : spec.and(AlbumSpecs.hasGenre(genreId));
 		}
 
-		// If the caller supplied no criteria at all, `spec` will stay null.
+		// If the call supplied no criteria at all, `spec` will stay null.
 		// `JpaSpecificationExecutor.findAll(null, pageable)` treats a null spec as “match everything”.
 		return albumRepo.findAll(spec, pageable);
 	}

@@ -1,13 +1,12 @@
 package music.library.specification;
 
-import music.library.entity.Album;
-import music.library.entity.Genre;
+import java.time.LocalDate;
+
 import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
-import java.time.LocalDate;
+import music.library.entity.Album;
+import music.library.entity.Genre;
 
 /*
  * Helper class that builds {@link Specification}s for {@link Album}.

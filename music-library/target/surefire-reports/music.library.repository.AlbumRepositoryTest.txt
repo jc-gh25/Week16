@@ -1,0 +1,19 @@
+-------------------------------------------------------------------------------
+Test set: music.library.repository.AlbumRepositoryTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 9.286 s <<< FAILURE! -- in music.library.repository.AlbumRepositoryTest
+music.library.repository.AlbumRepositoryTest.albumGenre_bidirectional -- Time elapsed: 0.711 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+Expecting actual:
+  []
+to contain exactly (and in same order):
+  ["Rock Album"]
+but could not find the following elements:
+  ["Rock Album"]
+
+	at music.library.repository.AlbumRepositoryTest.albumGenre_bidirectional(AlbumRepositoryTest.java:90)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

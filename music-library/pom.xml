@@ -29,20 +29,48 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
-	<dependencies>
 	
+	<dependencies>
 		<!-- Add the OpenAPI (Swagger) dependency -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.6.0</version>   <!-- latest stable at the time of writing -->
+			<version>2.6.0</version>
 		</dependency>
 		
-		<!-- Bean‑validation (JSR‑380) – needed for @NotBlank, @Size, @Min, etc. -->
+		<!-- Bean validation (JSR-380) – needed for @NotBlank, @Size, @Min, etc. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+		
+		<!-- Spring Boot’s test starter pulls in JUnit 5, AssertJ, Hamcrest, etc. -->
+		<dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-test</artifactId>
+        	<scope>test</scope>
+		</dependency>
+
+		<!-- Mockito inline – enables mocking of final classes (Lombok entities) -->
+		<dependency>
+        	<groupId>org.mockito</groupId>
+        	<artifactId>mockito-inline</artifactId>
+        	<version>5.2.0</version>
+        	<scope>test</scope>
+		</dependency>
+
+		<!-- Testcontainers (optional – real MySQL in Docker) -->
+		<dependency>
+        	<groupId>org.testcontainers</groupId>
+        	<artifactId>junit-jupiter</artifactId>
+        	<scope>test</scope>
+		</dependency>
+
+		<dependency>
+        	<groupId>org.testcontainers</groupId>
+        	<artifactId>mysql</artifactId>
+        	<scope>test</scope>
+        </dependency>
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -68,15 +96,43 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<!--  JaCoCo – code-coverage report -->
+			<plugin>
+            	<groupId>org.jacoco</groupId>
+            	<artifactId>jacoco-maven-plugin</artifactId>
+            	<version>0.8.12</version>
+            	<executions>
+                	<!-- Run instrumentation during the test phase -->
+                	<execution>
+                    	<id>prepare-agent</id>
+                    	<goals>
+                        	<goal>prepare-agent</goal>
+                    	</goals>
+                	</execution>
+                	<!-- Generate the HTML report after tests -->
+                	<execution>
+                    	<id>report</id>
+                    	<phase>verify</phase>
+                    	<goals>
+                        	<goal>report</goal>
+                    	</goals>
+                	</execution>
+            	</executions>
+        	</plugin> 
+			<!--  Maven Surefire property that sets the active profile for every test run -->
+			<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-surefire-plugin</artifactId>
+            	<configuration>
+                	<systemPropertyVariables>
+                    	<spring.profiles.active>test</spring.profiles.active>
+                	</systemPropertyVariables>
+            	</configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

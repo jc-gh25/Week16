@@ -5,9 +5,9 @@ spring:
     password: music_library
   jpa:
     hibernate:
-      ddl-auto: none  # Hibernate will never touch the DB schema. Create/modify tables with MySQL Workbench.
+      ddl-auto: none  # Hibernate will not touch the DB schema. Create/modify tables with MySQL Workbench.
       # update creates/updates tables automatically
-      # validate just checks that the schema matches the entities
+      # validate only checks that the schema matches the entities
     show-sql: true
     defer-datasource-initialization: true
   sql:
