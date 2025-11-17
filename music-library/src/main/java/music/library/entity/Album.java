@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,10 +30,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "album")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+// @EqualsAndHashCode   // Keep Lombok’s generation
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Album {
 
     @Id
@@ -53,7 +57,7 @@ public class Album {
     public Integer getReleaseYear() {
         return (releaseDate != null) ? releaseDate.getYear() : null; }
     
- // NEW FIELD: cover image URL. Most music apps display album art. Even a placeholder URL 
+    // NEW FIELD: cover image URL. Most music apps display album art. Even a placeholder URL 
     // (e.g., a link to a public image or a local static folder) makes the API feel more real.
     @Size(max = 255, message = "Cover image URL too long")
     private String coverImageUrl;
@@ -78,15 +82,27 @@ public class Album {
     @EqualsAndHashCode.Exclude
     private Artist artist;
 
-    /* Many-to-many with Genre via join table */
-    @ManyToMany
+    /* Owner side of the many-to-many with Genre via join table */
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}, // The Genre is already persisted
+            // but it makes the model safer when you build an Album with a brand new Genre
+            fetch   = FetchType.LAZY)
     @JoinTable(
         name = "album_genre",
         joinColumns = @JoinColumn(name = "album_id"),
         inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
+    @EqualsAndHashCode.Exclude // Exclude collection - Collections should never participate in equals()/hashCode()
+    // for JPA entities – they are mutable proxies and cause “no-row-inserted” errors.
     @Builder.Default
     private Set<Genre> genres = new HashSet<>();
+    
+    // Helper that keeps the inverse side consistent when the collection is set
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres == null ? new HashSet<>() : genres;
+        // Make the bidirectional link visible to JPA
+        this.genres.forEach(g -> g.getAlbums().add(this));
+    }
 
     @PrePersist
     void onCreate() {

@@ -1,5 +1,14 @@
 package music.library.service;
 
+import java.util.List;
+
+import org.hibernate.Hibernate;    // for explicit init
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import music.library.entity.Album;
 import music.library.entity.Genre;
@@ -7,15 +16,11 @@ import music.library.exception.ResourceNotFoundException;
 import music.library.repository.AlbumRepository;
 import music.library.repository.GenreRepository;
 import music.library.specification.AlbumSpecs;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional  /* Guarantees a Hibernate Session (and therefore a first-level cache)
+* lives for the entire method execution. make the method robust if we switch the fetch mode back to LAZY*/
 public class AlbumService {
 
 	private final AlbumRepository albumRepo;
@@ -57,8 +62,10 @@ public class AlbumService {
 		Album album = findById(albumId);
 		Genre genre = genreRepo.findById(genreId).orElseThrow(() -> new ResourceNotFoundException(
 				"Genre with ID " + genreId + " not found"));
-		album.getGenres().add(genre);
-		genre.getAlbums().add(album);
+		album.getGenres().add(genre); // Owns the relation
+		genre.getAlbums().add(album); // Keep inverse side in sync
+        Hibernate.initialize(genre.getAlbums()); /* Force initialization of the inverse collection.
+        * Guarantees the inverse collection is loaded while the transaction is open */
 		albumRepo.save(album);
 		genreRepo.save(genre);
 		return album;
@@ -70,12 +77,15 @@ public class AlbumService {
 				"Genre with ID " + genreId + " not found"));
 		album.getGenres().remove(genre);
 		genre.getAlbums().remove(album);
+		Hibernate.initialize(genre.getAlbums()); // Initialize before we leave the transaction
+		// No explicit save needed – the transaction will flush at commit,
+        // but calling save() is harmless and makes the intent clear.
 		albumRepo.save(album);
 		genreRepo.save(genre);
 		return album;
 	}
 	
-	// Service method that combines the specifications
+	// Search
 	public Page<Album> search(String title, Integer startYear, Integer endYear, Long genreId, Pageable pageable) {
 
 		Specification<Album> spec = null;

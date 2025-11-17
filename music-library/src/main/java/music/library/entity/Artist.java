@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "artist")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
@@ -30,6 +34,8 @@ public class Artist {
     private LocalDateTime updatedAt;
 
     /* One-to-many with Album */
+    @JsonIgnore /*This hides the collection from the JSON representation, 
+    * breaking the cycle for serialization and for OpenAPI generation.*/
     @OneToMany(mappedBy = "artist",
                cascade = CascadeType.ALL,
                orphanRemoval = true)
