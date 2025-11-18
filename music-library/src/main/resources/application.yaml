@@ -16,7 +16,6 @@ spring:
       # none - Hibernate will not touch the DB schema. Create/modify tables with MySQL Workbench.
       # validate - only checks that the schema matches the entities
     show-sql: true
-    defer-datasource-initialization: true
   sql:
     init:
       mode: never 
