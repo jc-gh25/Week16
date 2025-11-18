@@ -6,8 +6,10 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    baseline-on-migrate: true   # if starting with an existing DB  
+    baseline-on-migrate: true   # safe for fresh DBs; makes Flyway create a baseline version if the DB is empty,
+    # preventing “no migration applied” error on a new Railway MySQL instance
   jpa:
+    defer-datasource-initialization: true   # postpone JPA until after Flyway
     hibernate:
       ddl-auto: update
       # update - creates/updates tables automatically
