@@ -1,0 +1,1 @@
+ALTER TABLE album ADD COLUMN cover_image_url VARCHAR(255);

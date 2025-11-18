@@ -3,6 +3,10 @@ spring:
     url: jdbc:mysql://localhost:3306/music_library
     username: music_library
     password: music_library
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true   # if starting with an existing DB  
   jpa:
     hibernate:
       ddl-auto: update

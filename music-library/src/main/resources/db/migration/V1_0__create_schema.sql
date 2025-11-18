@@ -1,0 +1,36 @@
+CREATE TABLE artist (
+    artist_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE genre (
+    genre_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE album (
+    album_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    release_date DATE,
+    cover_image_url VARCHAR(255),
+    track_count INT,
+    catalog_number VARCHAR(50) UNIQUE,
+    artist_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_album_artist FOREIGN KEY (artist_id) REFERENCES artist(artist_id)
+);
+
+CREATE TABLE album_genre (
+    album_id BIGINT NOT NULL,
+    genre_id BIGINT NOT NULL,
+    PRIMARY KEY (album_id, genre_id),
+    CONSTRAINT fk_ag_album FOREIGN KEY (album_id) REFERENCES album(album_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ag_genre FOREIGN KEY (genre_id) REFERENCES genre(genre_id) ON DELETE CASCADE
+);

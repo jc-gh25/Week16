@@ -32,6 +32,12 @@
 	
 	<dependencies>
 	
+		<!-- Add Flyway – database version control -->
+		<dependency>
+    		<groupId>org.flywaydb</groupId>
+    		<artifactId>flyway-core</artifactId>
+		</dependency>
+	
 		<!-- Add support for SpringDataWebProperties -->
 		<dependency>
     		<groupId>org.springframework.data</groupId>
