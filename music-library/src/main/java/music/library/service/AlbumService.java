@@ -90,7 +90,6 @@ public class AlbumService {
 	public void delete(Long id) {
 		albumRepo.deleteById(id);
 	}
-	
 
 	// Join-table helpers 
 	public Album addGenre(Long albumId, Long genreId) {
