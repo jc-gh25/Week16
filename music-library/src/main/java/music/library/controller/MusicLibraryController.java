@@ -1,9 +1,11 @@
 package music.library.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,12 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
-import lombok.RequiredArgsConstructor;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -26,112 +32,139 @@ import music.library.service.GenreService;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
-@Validated // <‑‑ enables validation on @PathVariable, @RequestParam, etc.
 public class MusicLibraryController {
-
-	private final ArtistService artistSvc;
-	private final AlbumService albumSvc;
-	private final GenreService genreSvc;
-
-	/* ---------- Artists ---------- */
-	@GetMapping("/artists")
-	public Page<Artist> allArtists(Pageable pageable) {
-		return artistSvc.findAll(pageable);
-	}
-
+	
+	@Autowired
+	private ArtistService artistSvc;
+	@Autowired
+	private AlbumService albumSvc;
+	@Autowired
+	private GenreService genreSvc;
+	
+	@Operation(
+		summary = "Create a new artist",
+		description = "Creates a new artist in the music library with the provided name and optional description. The artistId, createdAt, and updatedAt fields are automatically generated."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "201",
+			description = "Artist successfully created",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = Artist.class),
+				examples = @ExampleObject(
+					value = "{\"artistId\":1,\"name\":\"The Rolling Stones\",\"description\":\"Legendary British rock band\",\"createdAt\":\"2025-01-19T04:40:37.345906\",\"updatedAt\":\"2025-01-19T04:40:37.345906\"}"
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Bad Request - Invalid input data (e.g., missing required name field, name exceeds 255 characters)",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@PostMapping("/artists")
-	public Artist createArtist(@Valid @RequestBody Artist a) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public Artist createArtist(
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			description = "Artist object to be created. The 'name' field is required (max 255 characters), and 'description' is optional. Do not include artistId, createdAt, updatedAt, or albums fields as they are auto-generated or ignored.",
+			required = true,
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = Artist.class),
+				examples = @ExampleObject(
+					name = "Create Artist Example",
+					value = "{\"name\":\"The Beatles\",\"description\":\"Iconic British rock band from Liverpool\"}"
+				)
+			)
+		)
+		@Valid @RequestBody Artist a
+	) {
 		return artistSvc.create(a);
 	}
-
+	
+	@GetMapping("/artists")
+	public Page<Artist> getAllArtists(Pageable pageable) {
+		return artistSvc.findAll(pageable);
+	}
+	
 	@GetMapping("/artists/{id}")
-	public Artist getArtist(@PathVariable @Positive Long id) {
+	public Artist getArtistById(@PathVariable Long id) {
 		return artistSvc.findById(id);
 	}
-
+	
 	@PutMapping("/artists/{id}")
-	public Artist updateArtist(@PathVariable @Positive Long id, @Valid @RequestBody Artist a) {
+	public Artist updateArtist(@PathVariable Long id, @Valid @RequestBody Artist a) {
 		return artistSvc.update(id, a);
 	}
-
+	
 	@DeleteMapping("/artists/{id}")
-	public ResponseEntity<Void> deleteArtist(@PathVariable @Positive Long id) {
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteArtist(@PathVariable Long id) {
 		artistSvc.delete(id);
-		return ResponseEntity.noContent().build();
 	}
-
-	/* ---------- Albums ---------- */
-	@GetMapping("/albums")
-	public Page<Album> allAlbums(Pageable pageable) {
-		return albumSvc.findAll(pageable);
-	}
-
+	
 	@PostMapping("/albums")
+	@ResponseStatus(HttpStatus.CREATED)
 	public Album createAlbum(@Valid @RequestBody Album a) {
 		return albumSvc.create(a);
 	}
-
+	
+	@GetMapping("/albums")
+	public Page<Album> getAllAlbums(Pageable pageable) {
+		return albumSvc.findAll(pageable);
+	}
+	
 	@GetMapping("/albums/{id}")
-	public Album getAlbum(@PathVariable @Positive Long id) {
+	public Album getAlbumById(@PathVariable Long id) {
 		return albumSvc.findById(id);
 	}
-
+	
 	@PutMapping("/albums/{id}")
-	public Album updateAlbum(@PathVariable @Positive Long id, @Valid @RequestBody Album a) {
+	public Album updateAlbum(@PathVariable Long id, @Valid @RequestBody Album a) {
 		return albumSvc.update(id, a);
 	}
-
+	
 	@DeleteMapping("/albums/{id}")
-	public ResponseEntity<Void> deleteAlbum(@PathVariable @Positive Long id) {
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteAlbum(@PathVariable Long id) {
 		albumSvc.delete(id);
-		return ResponseEntity.noContent().build();
 	}
-
-	/* ---------- Genres ---------- */
-	@GetMapping("/genres")
-	public Page<Genre> allGenres(Pageable pageable) {
-		return genreSvc.findAll(pageable);
-	}
-
+	
 	@PostMapping("/genres")
+	@ResponseStatus(HttpStatus.CREATED)
 	public Genre createGenre(@Valid @RequestBody Genre g) {
 		return genreSvc.create(g);
 	}
-
+	
+	@GetMapping("/genres")
+	public Page<Genre> getAllGenres(Pageable pageable) {
+		return genreSvc.findAll(pageable);
+	}
+	
 	@GetMapping("/genres/{id}")
-	public Genre getGenre(@PathVariable @Positive Long id) {
+	public Genre getGenreById(@PathVariable Long id) {
 		return genreSvc.findById(id);
 	}
-
+	
 	@PutMapping("/genres/{id}")
-	public Genre updateGenre(@PathVariable @Positive Long id, @Valid @RequestBody Genre g) {
+	public Genre updateGenre(@PathVariable Long id, @Valid @RequestBody Genre g) {
 		return genreSvc.update(id, g);
 	}
-
+	
 	@DeleteMapping("/genres/{id}")
-	public ResponseEntity<Void> deleteGenre(@PathVariable @Positive Long id) {
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteGenre(@PathVariable Long id) {
 		genreSvc.delete(id);
-		return ResponseEntity.noContent().build();
 	}
-
-	/* ---------- Album‑Genre join operations ---------- */
-	@PostMapping("/albums/{albumId}/genres/{genreId}")
-	public Album addGenreToAlbum(@PathVariable @Positive Long albumId, @PathVariable @Positive Long genreId) {
-		return albumSvc.addGenre(albumId, genreId);
+	
+	@GetMapping("/artists/{artistId}/albums")
+	public List<Album> getAlbumsByArtist(@PathVariable Long artistId) {
+		return albumSvc.findByArtistId(artistId);
 	}
-
-	@DeleteMapping("/albums/{albumId}/genres/{genreId}")
-	public Album removeGenreFromAlbum(@PathVariable @Positive Long albumId, @PathVariable @Positive Long genreId) {
-		return albumSvc.removeGenre(albumId, genreId);
-	}
-
-	/* ---------- Search endpoint ---------- */
-	@GetMapping("/albums/search")
-	public Page<Album> searchAlbums(@RequestParam(required = false) String title,
-			@RequestParam(required = false) Integer startYear, @RequestParam(required = false) Integer endYear,
-			@RequestParam(required = false) Long genreId, Pageable pageable) {
-
-		return albumSvc.search(title, startYear, endYear, genreId, pageable);
+	
+	@GetMapping("/genres/{genreId}/albums")
+	public List<Album> getAlbumsByGenre(@PathVariable Long genreId) {
+		return albumSvc.findByGenreId(genreId);
 	}
 }
