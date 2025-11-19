@@ -1,16 +1,21 @@
 package music.library.repository;
 
-import music.library.entity.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.time.LocalDate;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.*;
+import music.library.entity.Album;
+import music.library.entity.Artist;
+import music.library.entity.Genre;
 
 /* @DataJpaTest boots an in-memory database (H2 by default) and scans only JPA components. 
  * Can be used to check that entity relationships, unique constraints, and column definitions work. 

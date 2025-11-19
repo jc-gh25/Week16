@@ -1,13 +1,17 @@
 package music.library.service;
 
-import music.library.entity.*;
-import music.library.repository.*;
-import org.junit.jupiter.api.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.*;
+import music.library.entity.Album;
+import music.library.entity.Artist;
+import music.library.entity.Genre;
+import music.library.repository.ArtistRepository;
+import music.library.repository.GenreRepository;
 
 @SpringBootTest
 @ActiveProfiles("test") // forces the H2 test profile

@@ -14,11 +14,11 @@ spring:
   # -------------------------------------------------------
   jpa:
     hibernate:
-      ddl-auto: update          # creates/updates tables on the fly
+      ddl-auto: update          # let Hibernate create/update tables automatically
     show-sql: true             # prints SQL statements to the console (debug)
 
   # --------------------------------------------------
-  # Flyway – disabled for now (you can enable later)
+  # Flyway – disabled for now (can enable later)
   # --------------------------------------------------
   flyway:
    enabled: false
