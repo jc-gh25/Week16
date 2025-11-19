@@ -83,8 +83,10 @@ public class MusicLibraryController {
 			)
 		)
 		@Valid @RequestBody CreateArtistRequest request
-	) {
-		return artistSvc.createArtist(request);
+	) 
+	
+	{
+		return artistSvc.create(request);
 	}
 	
 	@GetMapping("/artists")
@@ -138,7 +140,7 @@ public class MusicLibraryController {
 	@PostMapping("/genres")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Genre createGenre(@Valid @RequestBody CreateGenreRequest request) {
-		return genreSvc.createGenre(request);
+		return genreSvc.create(request);
 	}
 	
 	@GetMapping("/genres")
