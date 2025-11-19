@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springdoc.core.annotations.ParameterObject;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -84,7 +85,7 @@ public class MusicLibraryController {
 	}
 	
 	@GetMapping("/artists")
-	public Page<Artist> getAllArtists(Pageable pageable) {
+	public Page<Artist> getAllArtists(@ParameterObject Pageable pageable) {
 		return artistSvc.findAll(pageable);
 	}
 	
@@ -111,7 +112,7 @@ public class MusicLibraryController {
 	}
 	
 	@GetMapping("/albums")
-	public Page<Album> getAllAlbums(Pageable pageable) {
+	public Page<Album> getAllAlbums(@ParameterObject Pageable pageable) {
 		return albumSvc.findAll(pageable);
 	}
 	
@@ -138,7 +139,7 @@ public class MusicLibraryController {
 	}
 	
 	@GetMapping("/genres")
-	public Page<Genre> getAllGenres(Pageable pageable) {
+	public Page<Genre> getAllGenres(@ParameterObject Pageable pageable) {
 		return genreSvc.findAll(pageable);
 	}
 	
