@@ -35,6 +35,8 @@ import music.library.service.AlbumService;
 import music.library.service.ArtistService;
 import music.library.service.DatabaseResetService;
 import music.library.service.GenreService;
+import music.library.dto.DatabaseResetResponse;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api")
@@ -148,18 +150,17 @@ public class MusicLibraryController {
 	}
 
 	@Operation(summary = "Reset database", description = "Deletes all data from the database "
-			+ "(albums, artists, and genres) in the correct order to avoid foreign key constraint violations."
+			+ "(albums, artists, and genres) in the correct order to avoid foreign key constraint violations. "
 			+ "⚠️ WARNING: This operation cannot be undone! You must pass confirm=true as a query parameter "
 			+ "to execute this action.")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "204", description = "Database successfully reset - all data deleted", 
-					content = @Content(mediaType = "application/json")),
+			@ApiResponse(responseCode = "200", description = "Database successfully reset - all data deleted and auto-increment sequences reset to 1", 
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = DatabaseResetResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Bad Request - Confirmation parameter missing or invalid. "
 					+ "Pass ?confirm=true to confirm the reset operation.", 
 					content = @Content(mediaType = "application/json")) })
 	@DeleteMapping("/reset")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void resetDatabase(
+	public ResponseEntity<DatabaseResetResponse> resetDatabase(
 			@RequestParam(value = "confirm", required = false, defaultValue = "false") boolean confirm) {
 		if (!confirm) {
 			throw new IllegalArgumentException(
@@ -168,5 +169,9 @@ public class MusicLibraryController {
 									+ "?confirm=true");
 		}
 		resetSvc.resetDatabase();
+		DatabaseResetResponse response = new DatabaseResetResponse(
+			"Database reset successfully. All data has been deleted and auto-increment sequences have been reset to 1."
+		);
+		return ResponseEntity.ok(response);
 	}
 }
