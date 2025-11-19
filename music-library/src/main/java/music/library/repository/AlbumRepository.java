@@ -12,5 +12,6 @@ public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecific
     List<Album> findByArtist_ArtistId(Long artistId);
     
     List<Album> findByGenres_GenreId(Long genreId);
+    
 }
 

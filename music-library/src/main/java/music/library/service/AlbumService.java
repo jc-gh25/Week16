@@ -56,6 +56,7 @@ public class AlbumService {
 	public void delete(Long id) {
 		albumRepo.deleteById(id);
 	}
+	
 
 	// Join-table helpers 
 	public Album addGenre(Long albumId, Long genreId) {
@@ -107,5 +108,13 @@ public class AlbumService {
 		// If the call supplied no criteria at all, `spec` will stay null.
 		// `JpaSpecificationExecutor.findAll(null, pageable)` treats a null spec as “match everything”.
 		return albumRepo.findAll(spec, pageable);
+	}
+	
+	public List<Album> findByArtistId(Long artistId) {
+	    return albumRepo.findByArtist_ArtistId(artistId);
+	}
+
+	public List<Album> findByGenreId(Long genreId) {
+	    return albumRepo.findByGenres_GenreId(genreId);
 	}
 }
