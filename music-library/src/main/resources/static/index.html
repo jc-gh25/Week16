@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Library API - Backend Development Portfolio Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --code-bg: #f3f4f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 5px;
+            font-weight: 500;
+        }
+
+        .section {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tech-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .tech-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .tech-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tech-card li {
+            padding: 5px 0;
+            color: var(--text-dark);
+        }
+
+        .tech-card li:before {
+            content: "✓ ";
+            color: var(--success-color);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .architecture-layer {
+            background: var(--bg-light);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .architecture-layer h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.15rem;
+        }
+
+        .class-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .class-item {
+            background: var(--bg-white);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .class-item h5 {
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .class-item code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .api-endpoint {
+            background: var(--code-bg);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .endpoint-method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.85rem;
+        }
+
+        .method-get { background: #10b981; color: white; }
+        .method-post { background: #3b82f6; color: white; }
+        .method-put { background: #f59e0b; color: white; }
+        .method-delete { background: #ef4444; color: white; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            margin-top: 40px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tech-stack,
+            .features-grid,
+            .class-list {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Music Library API</h1>
+            <p class="subtitle">A Professional RESTful API for Music Album Management</p>
+            <div>
+                <span class="badge">Spring Boot 3.5.7</span>
+                <span class="badge">Java 17</span>
+                <span class="badge">MySQL</span>
+                <span class="badge">JPA/Hibernate</span>
+                <span class="badge">RESTful</span>
+            </div>
+            <div class="cta-buttons">
+                <a href="https://javabc.up.railway.app/swagger-ui.html" class="btn btn-primary" target="_blank">📚 Explore API Documentation</a>
+                <a href="https://github.com/jc-gh25" class="btn btn-secondary" target="_blank">💻 View on GitHub</a>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2>📋 Project Overview</h2>
+            <p>
+                The <strong>Music Library API</strong> is a comprehensive backend application developed as a final bootcamp project, 
+                demonstrating professional-grade software engineering practices. This RESTful API provides complete CRUD operations 
+                for managing a music catalog including artists, albums, and genres with sophisticated relationship management.
+            </p>
+            <p>
+                Built with enterprise-level architecture patterns, this project showcases expertise in Spring Boot ecosystem, 
+                database design, API development, testing strategies, and deployment practices. The application is production-ready 
+                and deployed on Railway with full CI/CD integration.
+            </p>
+            <p>
+                <strong>Live API Base URL:</strong> <code class="highlight">https://javabc.up.railway.app/api</code>
+            </p>
+        </section>
+
+        <section class="section">
+            <h2>🚀 Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>🔄 Complete CRUD Operations</h4>
+                    <p>Full Create, Read, Update, Delete functionality for Artists, Albums, and Genres with proper HTTP status codes and error handling.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔗 Complex Relationships</h4>
+                    <p>One-to-Many (Artist-Album) and Many-to-Many (Album-Genre) relationships with bidirectional synchronization.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📄 Pagination Support</h4>
+                    <p>Efficient data retrieval with Spring Data pagination and sorting capabilities for large datasets.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔍 Advanced Search</h4>
+                    <p>JPA Specifications for dynamic filtering by title, release date ranges, and genre associations.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>✅ Input Validation</h4>
+                    <p>Bean Validation (JSR-380) with custom constraints ensuring data integrity at the API boundary.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🛡️ Exception Handling</h4>
+                    <p>Centralized error handling with @RestControllerAdvice providing consistent, informative error responses.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📖 OpenAPI Documentation</h4>
+                    <p>Interactive Swagger UI with comprehensive endpoint documentation, examples, and try-it-out functionality.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🧪 Comprehensive Testing</h4>
+                    <p>Unit tests, integration tests, and Testcontainers for database testing with JaCoCo code coverage reporting.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🗄️ Database Migration</h4>
+                    <p>Flyway for version-controlled database schema management and repeatable deployments.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-card">
+                    <h4>Backend Framework</h4>
+                    <ul>
+                        <li>Spring Boot 3.5.7</li>
+                        <li>Spring Web MVC</li>
+                        <li>Spring Data JPA</li>
+                        <li>Spring Validation</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>Database & ORM</h4>
+                    <ul>
+                        <li>MySQL (Production)</li>
+                        <li>H2 Database (Testing)</li>
+                        <li>Hibernate ORM</li>
+                        <li>Flyway Migration</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>Development Tools</h4>
+                    <ul>
+                        <li>Java 17</li>
+                        <li>Maven Build Tool</li>
+                        <li>Lombok</li>
+                        <li>Jackson JSON</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>API & Documentation</h4>
+                    <ul>
+                        <li>RESTful Architecture</li>
+                        <li>SpringDoc OpenAPI 3</li>
+                        <li>Swagger UI</li>
+                        <li>JSON Response Format</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>Testing</h4>
+                    <ul>
+                        <li>JUnit 5</li>
+                        <li>Mockito</li>
+                        <li>Testcontainers</li>
+                        <li>JaCoCo Coverage</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>Deployment</h4>
+                    <ul>
+                        <li>Railway Platform</li>
+                        <li>Docker Containerization</li>
+                        <li>CI/CD Pipeline</li>
+                        <li>Environment Profiles</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🏗️ Architecture Overview</h2>
+            <p>
+                The application follows a <strong>layered architecture</strong> pattern with clear separation of concerns, 
+                promoting maintainability, testability, and scalability. Each layer has distinct responsibilities and 
+                communicates through well-defined interfaces.
+            </p>
+
+            <div class="architecture-layer">
+                <h4>🌐 Controller Layer (Presentation)</h4>
+                <p>
+                    Handles HTTP requests and responses, maps URLs to service methods, validates input, and formats output. 
+                    Uses Spring MVC annotations for RESTful endpoint definition.
+                </p>
+                <div class="class-list">
+                    <div class="class-item">
+                        <h5>MusicLibraryController</h5>
+                        <code>@RestController</code>
+                        <p>Main REST controller exposing all API endpoints for Artists, Albums, and Genres. Implements comprehensive 
+                        OpenAPI annotations for documentation. Handles pagination with <code>@ParameterObject Pageable</code>.</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>SwaggerRedirectController</h5>
+                        <code>@Controller</code>
+                        <p>Redirects root URL to Swagger UI for convenient API documentation access.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>⚙️ Service Layer (Business Logic)</h4>
+                <p>
+                    Contains business logic, transaction management, and orchestrates operations between controllers and repositories. 
+                    Annotated with <code>@Service</code> and <code>@Transactional</code> for proper transaction boundaries.
+                </p>
+                <div class="class-list">
+                    <div class="class-item">
+                        <h5>ArtistService</h5>
+                        <code>@Service @Transactional</code>
+                        <p>Manages artist CRUD operations with pagination support. Throws <code>ResourceNotFoundException</code> 
+                        for missing entities. Uses constructor injection via <code>@RequiredArgsConstructor</code>.</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>AlbumService</h5>
+                        <code>@Service @Transactional</code>
+                        <p>Handles album operations including complex many-to-many genre relationships. Implements advanced search 
+                        using JPA Specifications. Manages bidirectional relationship synchronization with explicit Hibernate initialization.</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>GenreService</h5>
+                        <code>@Service @Transactional</code>
+                        <p>Manages genre entities and their album associations. Provides methods for adding/removing albums from genres 
+                        while maintaining referential integrity.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>💾 Repository Layer (Data Access)</h4>
+                <p>
+                    Interfaces extending Spring Data JPA repositories for database operations. Provides automatic CRUD implementation 
+                    and custom query methods using Spring Data naming conventions.
+                </p>
+                <div class="class-list">
+                    <div class="class-item">
+                        <h5>ArtistRepository</h5>
+                        <code>extends JpaRepository&lt;Artist, Long&gt;</code>
+                        <p>Data access interface for Artist entities. Inherits standard CRUD and pagination methods from JpaRepository.</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>AlbumRepository</h5>
+                        <code>extends JpaRepository, JpaSpecificationExecutor</code>
+                        <p>Repository with custom query methods: <code>findByArtist_ArtistId()</code> and <code>findByGenres_GenreId()</code>. 
+                        Implements JpaSpecificationExecutor for dynamic query building.</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>GenreRepository</h5>
+                        <code>extends JpaRepository&lt;Genre, Long&gt;</code>
+                        <p>Simple repository interface for Genre entity persistence operations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>📦 Entity Layer (Domain Model)</h4>
+                <p>
+                    JPA entities representing database tables with proper relationships, validation constraints, and lifecycle callbacks. 
+                    Uses Lombok for boilerplate reduction and Jackson annotations for JSON serialization control.
+                </p>
+                <div class="class-list">
+                    <div class="class-item">
+                        <h5>Artist</h5>
+                        <code>@Entity @Table(name="artist")</code>
+                        <p><strong>Fields:</strong> artistId (PK), name (required, max 255), description (TEXT), createdAt, updatedAt<br>
+                        <strong>Relationships:</strong> One-to-Many with Album (cascade ALL, orphan removal)<br>
+                        <strong>Features:</strong> @PrePersist/@PreUpdate for timestamps, @JsonIgnore on albums collection to prevent cycles</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>Album</h5>
+                        <code>@Entity @Table(name="album")</code>
+                        <p><strong>Fields:</strong> albumId (PK), title (required), releaseDate, coverImageUrl, trackCount, catalogNumber (unique), 
+                        createdAt, updatedAt<br>
+                        <strong>Relationships:</strong> Many-to-One with Artist (required), Many-to-Many with Genre via join table<br>
+                        <strong>Features:</strong> Transient getReleaseYear() method, custom setGenres() for bidirectional sync, LAZY fetching</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>Genre</h5>
+                        <code>@Entity @Table(name="genre")</code>
+                        <p><strong>Fields:</strong> genreId (PK), name (required, max 100), description (TEXT), createdAt, updatedAt<br>
+                        <strong>Relationships:</strong> Many-to-Many with Album (inverse side, EAGER fetch for testing)<br>
+                        <strong>Features:</strong> @JsonIgnore on albums to break serialization cycles, @EqualsAndHashCode.Exclude on collections</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>🔍 Specification Layer (Dynamic Queries)</h4>
+                <p>
+                    Implements the Specification pattern for building dynamic, type-safe queries with JPA Criteria API.
+                </p>
+                <div class="class-list">
+                    <div class="class-item">
+                        <h5>AlbumSpecs</h5>
+                        <code>Specification&lt;Album&gt;</code>
+                        <p>Provides static factory methods for album filtering:<br>
+                        • <code>titleContains(String)</code> - Case-insensitive title search<br>
+                        • <code>releasedBetween(Integer, Integer)</code> - Date range filtering<br>
+                        • <code>hasGenre(Long)</code> - Filter by genre association with JOIN</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>🚨 Exception Handling Layer</h4>
+                <p>
+                    Centralized exception handling using Spring's @RestControllerAdvice for consistent error responses across the API.
+                </p>
+                <div class="class-list">
+                    <div class="class-item">
+                        <h5>GlobalExceptionHandler</h5>
+                        <code>@RestControllerAdvice</code>
+                        <p>Handles multiple exception types with specific handlers:<br>
+                        • <code>MethodArgumentNotValidException</code> → 400 (validation errors)<br>
+                        • <code>ConstraintViolationException</code> → 400 (constraint violations)<br>
+                        • <code>ResourceNotFoundException</code> → 404 (entity not found)<br>
+                        • <code>MethodArgumentTypeMismatchException</code> → 400 (type errors)<br>
+                        • <code>HttpMessageNotReadableException</code> → 400 (malformed JSON)<br>
+                        • <code>Exception</code> → 500 (unexpected errors with logging)</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>ResourceNotFoundException</h5>
+                        <code>extends RuntimeException</code>
+                        <p>Custom exception thrown when requested entities don't exist. Automatically converted to 404 responses 
+                        by GlobalExceptionHandler.</p>
+                    </div>
+                    <div class="class-item">
+                        <h5>ApiError</h5>
+                        <code>@Builder</code>
+                        <p>Uniform error response DTO containing: timestamp, status code, error type, message, request path, 
+                        and optional validation error list. Provides consistent error format across all endpoints.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🔌 API Endpoints</h2>
+            <p>All endpoints are prefixed with <code>/api</code> and return JSON responses.</p>
+
+            <h3>👨‍🎤 Artist Endpoints</h3>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-post">POST</span>
+                <code>/api/artists</code> - Create a new artist
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/artists?page=0&size=20&sort=name,asc</code> - Get paginated artists
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/artists/{id}</code> - Get artist by ID
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-put">PUT</span>
+                <code>/api/artists/{id}</code> - Update artist
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-delete">DELETE</span>
+                <code>/api/artists/{id}</code> - Delete artist
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/artists/{artistId}/albums</code> - Get all albums by artist
+            </div>
+
+            <h3>💿 Album Endpoints</h3>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-post">POST</span>
+                <code>/api/albums</code> - Create a new album
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/albums?page=0&size=20</code> - Get paginated albums
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/albums/{id}</code> - Get album by ID
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-put">PUT</span>
+                <code>/api/albums/{id}</code> - Update album
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-delete">DELETE</span>
+                <code>/api/albums/{id}</code> - Delete album
+            </div>
+
+            <h3>🎸 Genre Endpoints</h3>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-post">POST</span>
+                <code>/api/genres</code> - Create a new genre
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/genres?page=0&size=20</code> - Get paginated genres
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/genres/{id}</code> - Get genre by ID
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-put">PUT</span>
+                <code>/api/genres/{id}</code> - Update genre
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-delete">DELETE</span>
+                <code>/api/genres/{id}</code> - Delete genre
+            </div>
+            <div class="api-endpoint">
+                <span class="endpoint-method method-get">GET</span>
+                <code>/api/genres/{genreId}/albums</code> - Get all albums by genre
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>💡 Technical Highlights</h2>
+            <div class="tech-card">
+                <h4>🔐 Data Validation</h4>
+                <p>Comprehensive input validation using Bean Validation (JSR-380) annotations:</p>
+                <ul>
+                    <li>@NotBlank, @Size for string fields</li>
+                    <li>@NotNull for required relationships</li>
+                    <li>@PositiveOrZero for numeric constraints</li>
+                    <li>Custom validation messages for user-friendly errors</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>🔄 Bidirectional Relationships</h4>
+                <p>Properly managed JPA relationships with:</p>
+                <ul>
+                    <li>Cascade operations for dependent entities</li>
+                    <li>Orphan removal for data integrity</li>
+                    <li>Explicit Hibernate.initialize() to prevent LazyInitializationException</li>
+                    <li>@JsonIgnore to break serialization cycles</li>
+                    <li>Custom setters for bidirectional synchronization</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>📊 Advanced Querying</h4>
+                <p>Flexible data retrieval with:</p>
+                <ul>
+                    <li>Spring Data JPA derived query methods</li>
+                    <li>JPA Specifications for dynamic filtering</li>
+                    <li>Pagination and sorting support</li>
+                    <li>Property path navigation (e.g., findByArtist_ArtistId)</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>🧪 Testing Strategy</h4>
+                <p>Multi-layered testing approach:</p>
+                <ul>
+                    <li>Unit tests with Mockito for service layer isolation</li>
+                    <li>Integration tests with @SpringBootTest</li>
+                    <li>Testcontainers for real MySQL database testing</li>
+                    <li>JaCoCo for code coverage metrics</li>
+                    <li>Separate test profile with H2 in-memory database</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>🗄️ Database Management</h4>
+                <p>Professional database practices:</p>
+                <ul>
+                    <li>Flyway for version-controlled schema migrations</li>
+                    <li>Separate profiles for dev/test/production</li>
+                    <li>Proper indexing on foreign keys</li>
+                    <li>Timestamp tracking with @PrePersist/@PreUpdate</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>📖 API Documentation</h4>
+                <p>Comprehensive OpenAPI 3.0 documentation:</p>
+                <ul>
+                    <li>@Operation annotations with descriptions</li>
+                    <li>@ApiResponses for all status codes</li>
+                    <li>Request/response examples</li>
+                    <li>Interactive Swagger UI for testing</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🎯 Learning Outcomes</h2>
+            <p>This project demonstrates proficiency in:</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>Backend Development</h4>
+                    <p>Spring Boot, Spring MVC, dependency injection, RESTful API design, HTTP protocol</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Database Design</h4>
+                    <p>Relational modeling, JPA/Hibernate, entity relationships, query optimization, migrations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Software Architecture</h4>
+                    <p>Layered architecture, separation of concerns, SOLID principles, design patterns</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Testing & Quality</h4>
+                    <p>Unit testing, integration testing, test-driven development, code coverage</p>
+                </div>
+                <div class="feature-card">
+                    <h4>DevOps & Deployment</h4>
+                    <p>Docker containerization, cloud deployment, CI/CD, environment configuration</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Best Practices</h4>
+                    <p>Error handling, validation, logging, documentation, code organization</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🚀 Getting Started</h2>
+            <h3>Prerequisites</h3>
+            <ul style="margin-left: 20px; color: var(--text-dark);">
+                <li>Java 17 or higher</li>
+                <li>Maven 3.6+</li>
+                <li>MySQL 8.0+ (or use H2 for testing)</li>
+            </ul>
+
+            <h3>Running Locally</h3>
+            <div class="api-endpoint">
+                <code>git clone https://github.com/yourusername/music-library.git</code>
+            </div>
+            <div class="api-endpoint">
+                <code>cd music-library</code>
+            </div>
+            <div class="api-endpoint">
+                <code>mvn spring-boot:run</code>
+            </div>
+            <p>Access the API at <code>http://localhost:8080/api</code> and Swagger UI at <code>http://localhost:8080/swagger-ui.html</code></p>
+
+            <h3>Running Tests</h3>
+            <div class="api-endpoint">
+                <code>mvn test</code>
+            </div>
+            <div class="api-endpoint">
+                <code>mvn verify</code> (includes JaCoCo coverage report)
+            </div>
+        </section>
+
+        <footer>
+            <p>Built with ❤️ as a Backend Development Bootcamp Final Project</p>
+            <p>© 2025 Music Library API | Demonstrating Professional Backend Development Skills</p>
+            <div class="cta-buttons" style="margin-top: 20px;">
+                <a href="https://javabc.up.railway.app/swagger-ui.html" class="btn btn-primary" target="_blank">Try the Live API</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
