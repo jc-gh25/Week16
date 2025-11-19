@@ -13,30 +13,79 @@ import music.library.exception.ResourceNotFoundException;
 import music.library.repository.ArtistRepository;
 import music.library.dto.CreateArtistRequest;
 
+/**
+ * Service layer for Artist entity business logic.
+ * 
+ * Handles all artist-related operations including CRUD operations with validation.
+ * All methods are transactional to ensure data consistency.
+ * 
+ * Key Responsibilities:
+ * - Artist CRUD operations
+ * - DTO-based creation for API endpoints
+ * - Pagination support for list operations
+ * 
+ * @author JC - Backend Developer Bootcamp Portfolio
+ * @see Artist
+ * @see ArtistRepository
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ArtistService {
 
+    // Repository dependency injected via Lombok's @RequiredArgsConstructor
     private final ArtistRepository repo;
 
+    /**
+     * Retrieves all artists without pagination.
+     * Note: Use paginated version for production to avoid loading large datasets.
+     * 
+     * @return list of all artists
+     */
     public List<Artist> findAll() {
         return repo.findAll();
     }
     
+    /**
+     * Retrieves all artists with pagination support.
+     * 
+     * @param pageable pagination parameters (page, size, sort)
+     * @return paginated list of artists
+     */
     public Page<Artist> findAll(Pageable pageable) {
         return repo.findAll(pageable);
     }
 
+    /**
+     * Retrieves a single artist by ID.
+     * 
+     * @param id the artist ID
+     * @return the artist entity
+     * @throws ResourceNotFoundException if artist not found
+     */
     public Artist findById(Long id) {
         return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException(
         		"Artist with ID " + id + " not found"));
     }
 
+    /**
+     * Creates a new artist from an Artist entity.
+     * Note: Prefer create(CreateArtistRequest) for API endpoints.
+     * 
+     * @param a the artist entity to create
+     * @return the persisted artist with generated ID and timestamps
+     */
     public Artist create(Artist a) {
         return repo.save(a);
     }
     
+    /**
+     * Creates a new artist using a DTO.
+     * This is the preferred method for API endpoints as it uses validated request objects.
+     * 
+     * @param request DTO containing name and bio
+     * @return the created artist entity with generated ID and timestamps
+     */
     public Artist create(CreateArtistRequest request) {
         Artist artist = new Artist();
         artist.setName(request.getName());
@@ -44,6 +93,14 @@ public class ArtistService {
         return repo.save(artist);
     }
 
+    /**
+     * Updates an existing artist.
+     * 
+     * @param id the artist ID to update
+     * @param a the artist entity with updated values
+     * @return the updated artist entity
+     * @throws ResourceNotFoundException if artist not found
+     */
     public Artist update(Long id, Artist a) {
         Artist existing = findById(id);
         existing.setName(a.getName());
@@ -51,6 +108,13 @@ public class ArtistService {
         return repo.save(existing);
     }
 
+    /**
+     * Deletes an artist by ID.
+     * Note: Cascade behavior depends on entity configuration. If albums reference
+     * this artist, the operation may fail with a constraint violation.
+     * 
+     * @param id the artist ID to delete
+     */
     public void delete(Long id) {
         repo.deleteById(id);
     }

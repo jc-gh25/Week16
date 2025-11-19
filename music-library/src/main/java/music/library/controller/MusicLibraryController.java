@@ -38,10 +38,58 @@ import music.library.service.GenreService;
 import music.library.dto.DatabaseResetResponse;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Main REST controller for the Music Library API.
+ * 
+ * Provides comprehensive CRUD endpoints for managing artists, albums, and
+ * genres, along with relationship-based queries and database management
+ * operations. All endpoints return JSON and follow RESTful conventions.
+ * 
+ * Base Path: /api
+ * 
+ * Endpoints: - POST /api/artists - Create new artist (201 Created) - GET
+ * /api/artists - List all artists with pagination (200 OK) - GET
+ * /api/artists/{id} - Get artist by ID (200 OK, 404 Not Found) - PUT
+ * /api/artists/{id} - Update artist (200 OK, 404 Not Found) - DELETE
+ * /api/artists/{id} - Delete artist (204 No Content, 404 Not Found)
+ * 
+ * - POST /api/albums - Create new album (201 Created) 
+ * - GET /api/albums - List  all albums with pagination (200 OK) 
+ * - GET /api/albums/{id} - Get album by ID (200 OK, 404 Not Found) 
+ * - PUT /api/albums/{id} - Update album (200 OK, 404 Not Found) 
+ * - DELETE /api/albums/{id} - Delete album (204 No Content, 404 Not Found)
+ * 
+ * - POST /api/genres - Create new genre (201 Created) 
+ * - GET /api/genres - List all genres with pagination (200 OK) 
+ * - GET /api/genres/{id} - Get genre by ID (200 OK, 404 Not Found) 
+ * - PUT /api/genres/{id} - Update genre (200 OK, 404 Not Found) 
+ * - DELETE /api/genres/{id} - Delete genre (204 No Content, 404 Not Found)
+ * 
+ * - GET /api/artists/{artistId}/albums 
+ * - Get all albums by artist (200 OK) 
+ * - GET /api/genres/{genreId}/albums 
+ * - Get all albums by genre (200 OK) 
+ * - DELETE /api/reset?confirm=true - Reset database (200 OK, 400 Bad Request)
+ * 
+ * Pagination: All list endpoints support Spring Data pagination via query
+ * parameters: - page: zero-based page number (default: 0) - size: page size
+ * (default: 20) - sort: sort criteria (e.g., "name,asc" or "createdAt,desc")
+ * 
+ * Error Handling: All exceptions are handled by GlobalExceptionHandler,
+ * returning standardized ApiError responses with appropriate HTTP status codes.
+ * 
+ * @author JC - Backend Developer Bootcamp Portfolio
+ * @see music.library.service.ArtistService
+ * @see music.library.service.AlbumService
+ * @see music.library.service.GenreService
+ * @see music.library.exception.GlobalExceptionHandler
+ */
+
 @RestController
 @RequestMapping("/api")
 public class MusicLibraryController {
 
+	// Service layer dependencies injected via Spring's @Autowired
 	@Autowired
 	private ArtistService artistSvc;
 	@Autowired
@@ -64,86 +112,208 @@ public class MusicLibraryController {
 		return artistSvc.create(request);
 	}
 
+	/**
+	 * Retrieves all artists with pagination support.
+	 * 
+	 * @param pageable pagination parameters (page, size, sort) - automatically
+	 *                 bound from query params
+	 * @return paginated list of artists with metadata (totalElements, totalPages,
+	 *         etc.)
+	 */
 	@GetMapping("/artists")
 	public Page<Artist> getAllArtists(@ParameterObject Pageable pageable) {
 		return artistSvc.findAll(pageable);
 	}
 
+	/**
+	 * Retrieves a single artist by ID.
+	 * 
+	 * @param id the artist ID
+	 * @return the artist entity
+	 * @throws music.library.exception.ResourceNotFoundException if artist not found
+	 *                                                           (404)
+	 */
 	@GetMapping("/artists/{id}")
 	public Artist getArtistById(@PathVariable Long id) {
 		return artistSvc.findById(id);
 	}
 
+	/**
+	 * Updates an existing artist.
+	 * 
+	 * @param id the artist ID to update
+	 * @param a  the updated artist data (validated)
+	 * @return the updated artist entity
+	 * @throws music.library.exception.ResourceNotFoundException if artist not found
+	 *                                                           (404)
+	 */
 	@PutMapping("/artists/{id}")
 	public Artist updateArtist(@PathVariable Long id, @Valid @RequestBody Artist a) {
 		return artistSvc.update(id, a);
 	}
 
+	/**
+	 * Deletes an artist by ID. Note: Deletion behavior depends on cascade settings.
+	 * If albums reference this artist, the operation may fail with a constraint
+	 * violation or cascade delete albums.
+	 * 
+	 * @param id the artist ID to delete
+	 * @throws music.library.exception.ResourceNotFoundException if artist not found
+	 *                                                           (404)
+	 */
 	@DeleteMapping("/artists/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteArtist(@PathVariable Long id) {
 		artistSvc.delete(id);
 	}
 
+	/**
+	 * Creates a new album.
+	 * 
+	 * @param request the album creation request containing title, artistId,
+	 *                genreId, releaseYear, etc.
+	 * @return the created album entity with generated ID and timestamps
+	 * @throws music.library.exception.ResourceNotFoundException if referenced
+	 *                                                           artist or genre not
+	 *                                                           found
+	 */
 	@PostMapping("/albums")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Album createAlbum(@Valid @RequestBody CreateAlbumRequest request) {
 		return albumSvc.createAlbum(request);
 	}
 
+	/**
+	 * Retrieves all albums with pagination support.
+	 * 
+	 * @param pageable pagination parameters (page, size, sort)
+	 * @return paginated list of albums with metadata
+	 */
 	@GetMapping("/albums")
 	public Page<Album> getAllAlbums(@ParameterObject Pageable pageable) {
 		return albumSvc.findAll(pageable);
 	}
 
+	/**
+	 * Retrieves a single album by ID.
+	 * 
+	 * @param id the album ID
+	 * @return the album entity
+	 * @throws music.library.exception.ResourceNotFoundException if album not found
+	 *                                                           (404)
+	 */
 	@GetMapping("/albums/{id}")
 	public Album getAlbumById(@PathVariable Long id) {
 		return albumSvc.findById(id);
 	}
 
+	/**
+	 * Updates an existing album.
+	 * 
+	 * @param id the album ID to update
+	 * @param a  the updated album data (validated)
+	 * @return the updated album entity
+	 * @throws music.library.exception.ResourceNotFoundException if album not found
+	 *                                                           (404)
+	 */
 	@PutMapping("/albums/{id}")
 	public Album updateAlbum(@PathVariable Long id, @Valid @RequestBody Album a) {
 		return albumSvc.update(id, a);
 	}
 
+	/**
+	 * Deletes an album by ID.
+	 * 
+	 * @param id the album ID to delete
+	 * @throws music.library.exception.ResourceNotFoundException if album not found
+	 *                                                           (404)
+	 */
 	@DeleteMapping("/albums/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteAlbum(@PathVariable Long id) {
 		albumSvc.delete(id);
 	}
 
+	/**
+	 * Creates a new genre.
+	 * 
+	 * @param request the genre creation request containing name and optional description
+	 * @return the created genre entity with generated ID and timestamps
+	 */
 	@PostMapping("/genres")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Genre createGenre(@Valid @RequestBody CreateGenreRequest request) {
 		return genreSvc.create(request);
 	}
 
+	/**
+	 * Retrieves all genres with pagination support.
+	 * 
+	 * @param pageable pagination parameters (page, size, sort)
+	 * @return paginated list of genres with metadata
+	 */
 	@GetMapping("/genres")
 	public Page<Genre> getAllGenres(@ParameterObject Pageable pageable) {
 		return genreSvc.findAll(pageable);
 	}
 
+	/**
+	 * Retrieves a single genre by ID.
+	 * 
+	 * @param id the genre ID
+	 * @return the genre entity
+	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
+	 */
 	@GetMapping("/genres/{id}")
 	public Genre getGenreById(@PathVariable Long id) {
 		return genreSvc.findById(id);
 	}
 
+	/**
+	 * Updates an existing genre.
+	 * 
+	 * @param id the genre ID to update
+	 * @param g the updated genre data (validated)
+	 * @return the updated genre entity
+	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
+	 */
 	@PutMapping("/genres/{id}")
 	public Genre updateGenre(@PathVariable Long id, @Valid @RequestBody Genre g) {
 		return genreSvc.update(id, g);
 	}
 
+	/**
+	 * Deletes a genre by ID.
+	 * Note: Deletion may fail if albums reference this genre, depending on cascade settings.
+	 * 
+	 * @param id the genre ID to delete
+	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
+	 */
 	@DeleteMapping("/genres/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteGenre(@PathVariable Long id) {
 		genreSvc.delete(id);
 	}
 
+	/**
+	 * Retrieves all albums by a specific artist.
+	 * 
+	 * @param artistId the artist ID
+	 * @return list of albums by the artist (empty list if none found)
+	 * @throws music.library.exception.ResourceNotFoundException if artist not found (404)
+	 */
 	@GetMapping("/artists/{artistId}/albums")
 	public List<Album> getAlbumsByArtist(@PathVariable Long artistId) {
 		return albumSvc.findByArtistId(artistId);
 	}
 
+	/**
+	 * Retrieves all albums in a specific genre.
+	 * 
+	 * @param genreId the genre ID
+	 * @return list of albums in the genre (empty list if none found)
+	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
+	 */
 	@GetMapping("/genres/{genreId}/albums")
 	public List<Album> getAlbumsByGenre(@PathVariable Long genreId) {
 		return albumSvc.findByGenreId(genreId);

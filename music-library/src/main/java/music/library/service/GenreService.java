@@ -15,31 +15,82 @@ import music.library.repository.AlbumRepository;
 import music.library.repository.GenreRepository;
 import music.library.dto.CreateGenreRequest;
 
+/**
+ * Service layer for Genre entity business logic.
+ * 
+ * Handles all genre-related operations including CRUD operations and
+ * bidirectional relationship management with albums. All methods are
+ * transactional to ensure data consistency.
+ * 
+ * Key Responsibilities:
+ * - Genre CRUD operations with validation
+ * - DTO-based creation for API endpoints
+ * - Managing many-to-many relationships with albums
+ * - Pagination support for list operations
+ * 
+ * @author JC - Backend Developer Bootcamp Portfolio
+ * @see Genre
+ * @see GenreRepository
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class GenreService {
 
+    // Repository dependencies injected via Lombok's @RequiredArgsConstructor
     private final GenreRepository repo;
-    private final AlbumRepository albumRepo;   // needed for the join ops
+    private final AlbumRepository albumRepo;   // Needed for bidirectional album-genre operations
 
+    /**
+     * Retrieves all genres without pagination.
+     * Note: Use paginated version for production to avoid loading large datasets.
+     * 
+     * @return list of all genres
+     */
     public List<Genre> findAll() {
         return repo.findAll();
     }
     
+    /**
+     * Retrieves all genres with pagination support.
+     * 
+     * @param pageable pagination parameters (page, size, sort)
+     * @return paginated list of genres
+     */
     public Page<Genre> findAll(Pageable pageable) {
         return repo.findAll(pageable);
     }
 
+    /**
+     * Retrieves a single genre by ID.
+     * 
+     * @param id the genre ID
+     * @return the genre entity
+     * @throws ResourceNotFoundException if genre not found
+     */
     public Genre findById(Long id) {
         return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException(
         		"Genre with ID " + id + " not found"));
     }
 
+    /**
+     * Creates a new genre from a Genre entity.
+     * Note: Prefer create(CreateGenreRequest) for API endpoints.
+     * 
+     * @param g the genre entity to create
+     * @return the persisted genre with generated ID and timestamps
+     */
     public Genre create(Genre g) {
         return repo.save(g);
     }
     
+    /**
+     * Creates a new genre using a DTO.
+     * This is the preferred method for API endpoints as it uses validated request objects.
+     * 
+     * @param request DTO containing name and description
+     * @return the created genre entity with generated ID and timestamps
+     */
     public Genre create(CreateGenreRequest request) {
         Genre genre = new Genre();
         genre.setName(request.getName());
@@ -47,6 +98,14 @@ public class GenreService {
         return repo.save(genre);
     }
 
+    /**
+     * Updates an existing genre.
+     * 
+     * @param id the genre ID to update
+     * @param g the genre entity with updated values
+     * @return the updated genre entity
+     * @throws ResourceNotFoundException if genre not found
+     */
     public Genre update(Long id, Genre g) {
         Genre existing = findById(id);
         existing.setName(g.getName());
@@ -54,11 +113,32 @@ public class GenreService {
         return repo.save(existing);
     }
 
+    /**
+     * Deletes a genre by ID.
+     * Note: Cascade behavior depends on entity configuration. If albums reference
+     * this genre, the operation may fail with a constraint violation.
+     * 
+     * @param id the genre ID to delete
+     */
     public void delete(Long id) {
         repo.deleteById(id);
     }
     
-    // Make the Genre - Album relationship fully bidirectional
+    // ========== Many-to-Many Relationship Management ==========
+    
+    /**
+     * Adds an album to a genre's album collection.
+     * Maintains bidirectional relationship consistency by updating both sides.
+     * 
+     * Note: Album owns the relationship (via @JoinTable), so changes to
+     * album.genres are what actually modify the join table. This method
+     * updates the inverse side (genre.albums) for consistency.
+     * 
+     * @param genreId the genre ID
+     * @param albumId the album ID to add
+     * @return the updated genre with the new album
+     * @throws ResourceNotFoundException if genre or album not found
+     */
     public Genre addAlbum(Long genreId, Long albumId) {
         Genre genre = repo.findById(genreId)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre with ID " + genreId + " not found"));
@@ -68,6 +148,15 @@ public class GenreService {
         return repo.save(genre);
     }
 
+    /**
+     * Removes an album from a genre's album collection.
+     * Maintains bidirectional relationship consistency by updating both sides.
+     * 
+     * @param genreId the genre ID
+     * @param albumId the album ID to remove
+     * @return the updated genre without the removed album
+     * @throws ResourceNotFoundException if genre or album not found
+     */
     public Genre removeAlbum(Long genreId, Long albumId) {
         Genre genre = repo.findById(genreId)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre with ID " + genreId + " not found"));
