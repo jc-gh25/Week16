@@ -1,13 +1,16 @@
 # -------------------------------------------------------------
 # Spring Boot configuration for Railway (MySQL free tier)
 # -----------------------------------------------------
+server:
+  port: ${PORT:8080}  # Use Railway's dynamic PORT, fallback to 8080 locally
+
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=true&requireSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     # Username & password are taken from the separate env vars
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
 
   # --------------------------------------------------------
   # JPA / Hibernate – let Hibernate create/update tables automatically
