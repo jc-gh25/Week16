@@ -32,6 +32,10 @@ spring:
     swagger-ui:
       enabled: true
       path: /swagger-ui.html
+      cors-enabled: true      # THIS ENABLES CORS for /v3/api-docs
+      # (optional) force the public base URL – uncomment if you need it
+      servers:
+        - url: https://javabc.up.railway.app
 
 # ---------------------------------------------------------
 # Prevent Spring from executing any plain .sql scripts at startup

@@ -16,8 +16,8 @@ public class CorsConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            //tells Spring MVC to add the CORS response headers to every request.
-            public void addCorsMappings(CorsRegistry registry) {
+            public void addCorsMappings(CorsRegistry registry) {  // tells Spring MVC to add the CORS
+            	// response headers to every request.
             // "**" means every path (/**) – can narrow it to /api/**
                 registry.addMapping("/**")
                       .allowedOrigins("*")  // makes the API publicly callable from any origin (for dev only) 
