@@ -48,7 +48,6 @@
 		<dependency>
     		<groupId>com.fasterxml.jackson.datatype</groupId>
     		<artifactId>jackson-datatype-hibernate5</artifactId>
-    		<version>2.19.2</version> <!-- match the Jackson version used by Spring Boot 3.5.7 -->
 		</dependency>
 
 		<!-- Add the OpenAPI (Swagger) dependency -->

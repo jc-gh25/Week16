@@ -1,6 +1,6 @@
 package music.library.exception;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
 		List<String> fieldErrors = ex.getBindingResult().getFieldErrors().stream().map(this::formatFieldError)
 				.collect(Collectors.toList());
 
-		ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).status(HttpStatus.BAD_REQUEST.value())
+		ApiError error = ApiError.builder().timestamp(Instant.now()).status(HttpStatus.BAD_REQUEST.value())
 				.error(HttpStatus.BAD_REQUEST.getReasonPhrase()).message("Validation failed")
 				.path(request.getRequestURI()).validationErrors(fieldErrors).build();
 
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
 		List<String> violations = ex.getConstraintViolations().stream()
 				.map(cv -> cv.getPropertyPath() + ": " + cv.getMessage()).collect(Collectors.toList());
 
-		ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).status(HttpStatus.BAD_REQUEST.value())
+		ApiError error = ApiError.builder().timestamp(Instant.now()).status(HttpStatus.BAD_REQUEST.value())
 				.error(HttpStatus.BAD_REQUEST.getReasonPhrase()).message("Constraint violation")
 				.path(request.getRequestURI()).validationErrors(violations).build();
 
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<ApiError> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
 
-		ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).status(HttpStatus.NOT_FOUND.value())
+		ApiError error = ApiError.builder().timestamp(Instant.now()).status(HttpStatus.NOT_FOUND.value())
 				.error(HttpStatus.NOT_FOUND.getReasonPhrase()).message(ex.getMessage()).path(request.getRequestURI())
 				.validationErrors(null).build();
 
@@ -102,7 +102,7 @@ public class GlobalExceptionHandler {
 		String msg = String.format("Parameter '%s' should be of type %s", ex.getName(),
 				ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown");
 
-		ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).status(HttpStatus.BAD_REQUEST.value())
+		ApiError error = ApiError.builder().timestamp(Instant.now()).status(HttpStatus.BAD_REQUEST.value())
 				.error(HttpStatus.BAD_REQUEST.getReasonPhrase()).message(msg).path(request.getRequestURI())
 				.validationErrors(null).build();
 
@@ -117,7 +117,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ApiError> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
 
-		ApiError error = ApiError.builder().timestamp(LocalDateTime.now()).status(HttpStatus.BAD_REQUEST.value())
+		ApiError error = ApiError.builder().timestamp(Instant.now()).status(HttpStatus.BAD_REQUEST.value())
 				.error(HttpStatus.BAD_REQUEST.getReasonPhrase()).message("Malformed JSON request")
 				.path(request.getRequestURI()).validationErrors(null).build();
 
@@ -135,7 +135,7 @@ public class GlobalExceptionHandler {
 		// Log the stack trace with SLF4J (better than printStackTrace)
 		log.error("Unexpected error at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
 
-		ApiError error = ApiError.builder().timestamp(LocalDateTime.now())
+		ApiError error = ApiError.builder().timestamp(Instant.now())
 				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
 				.message(ex.getMessage() != null ? ex.getMessage() : "Unexpected error").path(request.getRequestURI())
