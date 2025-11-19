@@ -13,18 +13,19 @@ spring:
     password: ${MYSQL_PASSWORD}
 
   # --------------------------------------------------------
-  # JPA / Hibernate – let Hibernate create/update tables automatically
+  # JPA / Hibernate – Flyway will manage schema, so use validate
   # -------------------------------------------------------
   jpa:
     hibernate:
-      ddl-auto: update          # let Hibernate create/update tables automatically
-    show-sql: true             # prints SQL statements to the console (debug)
+      ddl-auto: validate          # Flyway manages schema, Hibernate only validates
+    show-sql: true                # prints SQL statements to the console (debug)
 
   # --------------------------------------------------
-  # Flyway – disabled for now (can enable later)
+  # Flyway – ENABLED for database migrations
   # --------------------------------------------------
   flyway:
-   enabled: false
+    enabled: true                 # Enable Flyway for schema and data management
+    locations: classpath:db/migration  # Location of migration scripts
 
   # ------------------------------------------------------
   # Springdoc / Swagger UI (optional but handy for testing)
