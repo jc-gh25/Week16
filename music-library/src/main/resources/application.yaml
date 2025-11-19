@@ -1,37 +1,45 @@
-#spring:
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/music_library
-#    username: music_library
-#    password: music_library
+# -------------------------------------------------------------
+# Spring Boot configuration – Railway + MySQL (free tier)
+# -------------------------------------------------------------
 spring:
   datasource:
     # Railway injects DATABASE_URL automatically.
-    # The "?useSSL=false&allowPublicKeyRetrieval=true" part is optional for the free MySQL add‑on.
+    # Example value: mysql://user:pass@host:3306/music_library
+    # We turn it into a JDBC URL and turn off SSL for the free tier.
     url: ${DATABASE_URL}?useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # ----------------------------------------
+  # JPA / Hibernate
+  # ---------------------------------------------------------
+  jpa:
+    # Let Flyway run first, then start JPA. This breaks the circular‑depends‑on.
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none          # Flyway will create the schema; Hibernate must not.
+    show-sql: true           # Prints SQL to the console (helpful for debugging)
+
+  # ------------------------------------------------------
+  # Flyway – database migrations (optional, keep if you have *.sql files)
+  # --------------------------------------------------
   flyway:
     enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true   # safe for fresh DBs; makes Flyway create a baseline version if the DB is empty,
-    # preventing “no migration applied” error on a new Railway MySQL instance
-  jpa:
-    defer-datasource-initialization: true   # postpone JPA until after Flyway
-    hibernate:
-      ddl-auto: none
-      # update - creates/updates tables automatically
-      # none - Hibernate will not touch the DB schema. Create/modify tables with MySQL Workbench.
-      # validate - only checks that the schema matches the entities
-    show-sql: true
-  sql:
-    init:
-      mode: never 
-         # never if not loading .sql scripts at startup
+    baseline-on-migrate: true          # Safe for a brand‑new DB
+    locations: classpath:db/migration   # Default location; keep it or change as needed
+
+  # ------------------------------------------------------
+  # Springdoc / Swagger UI (nice for manual testing)
+  # ---------------------------------------------------------
   springdoc:
-  api-docs:
-    path: /v3/api-docs  # default, just being explicit
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html  # default UI entry point
-    # Optional: hide the “try it out” button for endpoints that require authorization
-    # try-it-out-enabled: false
-         
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui.html
+
+# ----------------------------------------------
+# Miscellaneous – we don’t want Spring to run any plain .sql scripts at startup
+# ---------------------------------------------------------
+sql:
+  init:
+    mode: never
