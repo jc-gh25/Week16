@@ -25,6 +25,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import music.library.dto.CreateAlbumRequest;
+import music.library.dto.CreateArtistRequest;
+import music.library.dto.CreateGenreRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -80,9 +82,9 @@ public class MusicLibraryController {
 				)
 			)
 		)
-		@Valid @RequestBody Artist a
+		@Valid @RequestBody CreateArtistRequest request
 	) {
-		return artistSvc.create(a);
+		return artistSvc.createArtist(request);
 	}
 	
 	@GetMapping("/artists")
@@ -135,8 +137,8 @@ public class MusicLibraryController {
 	
 	@PostMapping("/genres")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Genre createGenre(@Valid @RequestBody Genre g) {
-		return genreSvc.create(g);
+	public Genre createGenre(@Valid @RequestBody CreateGenreRequest request) {
+		return genreSvc.createGenre(request);
 	}
 	
 	@GetMapping("/genres")

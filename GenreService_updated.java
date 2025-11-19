@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import music.library.dto.CreateGenreRequest;
 import music.library.entity.Album;
 import music.library.entity.Genre;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.AlbumRepository;
 import music.library.repository.GenreRepository;
-import music.library.dto.CreateGenreRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +39,8 @@ public class GenreService {
     public Genre create(Genre g) {
         return repo.save(g);
     }
-    
-    public Genre create(CreateGenreRequest request) {
+
+    public Genre createGenre(CreateGenreRequest request) {
         Genre genre = new Genre();
         genre.setName(request.getName());
         genre.setDescription(request.getDescription());

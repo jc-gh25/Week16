@@ -1,0 +1,2215 @@
+
+Relationships
+Artist ↔ Album – One-to-Many
+
+Album.artist_id → Artist.artist_id (FK, NOT NULL)
+Album ↔ Genre – Many-to-Many (via join table)
+
+Album_Genre.album_id → Album.album_id (FK)
+Album_Genre.genre_id → Genre.genre_id (FK)
+Both foreign keys in Album_Genre together form the primary key, 
+enforcing uniqueness of each album-genre pairing.
+
+---
+
+Flyway is currently DISABLED in your main application.
+
+However, in your test configuration (application-test.yml, lines 20-22):
+
+flyway:  enabled: true  locations: classpath:db/migration
+flyway:
+  enabled: true
+  locations: classpath:db/migration
+Flyway IS enabled for tests and looks for migration scripts in db/migration/.
+
+How Flyway Works:
+Create the migration directory (if it doesn't exist):
+
+src/main/resources/db/migration/
+Add migration files with specific naming:
+
+V1__Initial_Schema.sql (version 1)
+V2__Add_Genre_Table.sql (version 2)
+V3__Add_Indexes.sql (version 3)
+Pattern: V{version}__{description}.sql
+When your app starts (if Flyway is enabled):
+
+Flyway checks which migrations have run (tracks in flyway_schema_history table)
+Runs any new migrations in order
+Never re-runs old migrations
+To enable Flyway in production, change application.yaml:
+
+flyway:  enabled: true  # Change from false to     true
+flyway:
+  enabled: true  # Change from false to true
+Important Note:
+Your current setup uses Hibernate's ddl-auto: update (line 20 in application.yaml), which automatically creates/updates tables based on your JPA entities. This conflicts with Flyway. You should choose ONE approach:
+
+Option A: Use Flyway (recommended for production)
+Set flyway.enabled: true
+Set jpa.hibernate.ddl-auto: validate (or none)
+Option B: Use Hibernate auto-update (easier for development)
+Keep flyway.enabled: false
+Keep jpa.hibernate.ddl-auto: update
+
+---
+
+2️⃣ Running docker compose up -d
+Install Docker first.
+
+Windows: download Docker Desktop (https://www.docker.com/products/docker-desktop).
+macOS: Docker Desktop for Mac.
+Linux: install the docker and docker-compose packages from your distro (e.g. apt install docker.io docker-compose on Ubuntu).
+After installation, make sure the daemon is running (docker info should print a bunch of details).
+
+Open a terminal (PowerShell, CMD, Git‑Bash, or any shell) in the project root – the folder that contains Dockerfile and docker-compose.yml.
+
+Build & start the stack
+
+# This will pull the MySQL image (if not cached), build your app image,
+# then start both containers in detached mode.
+docker compose up -d
+Docker Compose will read the docker-compose.yml, create a network called (by default) music-library_default, start a MySQL container, then start your Spring Boot container and connect it to the same network.
+
+Verify
+
+docker compose ps          # shows the two containers running
+docker logs music-library_app-1   # tail the Spring Boot logs
+The Spring Boot log should say something like Started MusicLibraryApplication and you’ll see the MySQL connection URL printed (jdbc:mysql://mysql:3306/music_library).
+
+Stop / clean up
+
+docker compose down        # stops containers and removes the network
+docker compose down -v     # also removes the anonymous volume that holds the DB data
+3️⃣ What “containerisation” actually means
+Concept	Plain‑English description
+Container	A lightweight, isolated runtime environment that bundles your application code + its runtime dependencies (JDK, libraries, native binaries) together with a filesystem snapshot (the image). It shares the host OS kernel but otherwise behaves like a tiny virtual machine.
+Image	A read‑only template that Docker uses to spin up containers. An image is built from a Dockerfile.
+Dockerfile	A script that tells Docker how to assemble the image (base OS, copy source, run mvn package, set the entry‑point, expose ports, etc.).
+Docker Engine	The daemon that actually builds images, runs containers, manages networks and storage.
+Docker Compose	A YAML file that describes multiple containers (services) and how they should be wired together (networks, volumes, environment variables). It’s perfect for a multi‑service stack like app + MySQL.
+Portability	Because the image contains everything except the kernel, you can copy the image (or push it to a registry) and run it on any machine that has Docker – Windows, macOS, Linux, cloud VMs, CI runners, etc. No “install Java, install MySQL” steps on the target host.
+Think of a container as a self‑contained zip file that can be executed. When you run docker run … Docker creates a sandbox, mounts the image’s filesystem, allocates its own PID/NET/IPC namespaces, and starts the process you defined (java -jar app.jar). The process thinks it’s running on a clean Linux system, even though it’s sharing the host kernel.
+
+4️⃣ Free (or low‑cost) places to host a Dockerised Spring Boot + MySQL app
+Platform	Free tier details	How you push your image
+Render (render.com)	750 hrs/month of a free web service (≈ 1 vCPU, 512 MiB RAM). Free PostgreSQL/MySQL add‑on (256 MiB).	Connect a GitHub repo → Render builds the Dockerfile automatically. No manual docker push needed.
+Fly.io	3 small‑instance credits per month (enough for a tiny app). Free managed Postgres (up to 20 GB).	flyctl launch creates a Fly app, you push with flyctl deploy.
+Railway	$5 worth of credits each month (≈ 500 hrs). Free PostgreSQL/MySQL add‑on.	Connect repo → Railway builds Dockerfile, or use railway up locally.
+Google Cloud Run	2 million request‑seconds per month (≈ 1 vCPU·hour) + 1 GiB outbound traffic. Cloud SQL (MySQL) can be used in the free tier.	Build image locally, push to Artifact Registry (gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT_ID/cloudrun/app), then gcloud run deploy.
+Microsoft Azure Container Apps	1 GiB memory + 1 vCPU for free (per region) + free Azure Database for MySQL (basic tier).	Push image to Azure Container Registry, then create a Container App from the portal or CLI.
+Amazon ECS/Fargate (Free Tier)	750 hours of Fargate per month for the first 12 months, plus 30 GB of EFS storage. Free tier RDS MySQL (750 hrs).	Build image, push to Amazon ECR, then create an ECS service.
+Heroku (Docker)	Free dyno (550‑1000 hrs/month) – you must sleep after 30 min of inactivity. Add‑on ClearDB MySQL has a free tier (limited).	heroku container:login, heroku create, heroku container:push web, heroku container:release web.
+GitHub Packages / GitHub Container Registry (as a registry) + GitHub Actions to deploy to any of the above clouds.	Free storage for public images, limited private storage.	docker push ghcr.io/<owner>/<repo>:tag.
+Key take‑away: Heroku is not the only free option. Render, Fly.io, Railway, and the major cloud providers all give you a modest amount of free compute that is more than enough for a boot‑camp demo or a personal portfolio project.
+
+5️⃣ Putting it all together – a quick “one‑click” workflow
+Write the Dockerfile (already provided in the earlier answer).
+
+Add docker-compose.yml (also provided).
+
+Commit both files to your GitHub repo.
+
+git add Dockerfile docker-compose.yml
+git commit -m "Add Docker support"
+git push origin main
+Choose a free host (e.g. Render).
+
+On Render, click New → Web Service, connect your GitHub repo, and select “Docker” as the environment.
+Render will automatically run docker build using the Dockerfile, then start the container.
+In the “Environment” tab, add the same environment variables you have in application.yaml (SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD). Render also offers a managed MySQL add‑on – just bind it and use the provided URL.
+Deploy – Render (or Fly.io, Railway, etc.) will build the image, push it to its internal registry, and start the container. You’ll get a public HTTPS URL (e.g. https://music-library.onrender.com) that points directly to your Spring Boot API.
+
+Test – open Swagger UI at https://<your‑host>/swagger-ui.html or call the endpoints with Postman.
+
+Iterate – every push to main (or whichever branch you configure) triggers a new build/deploy automatically.
+
+
+
+
+---
+ “Improvements – Section 5”
+Below is a concise roadmap for Flyway migrations, Dockerisation, and deployment of the whole stack (MySQL + Spring Boot + Lumo). Feel free to cherry‑pick the pieces you need for your boot‑camp submission.
+
+5.1 Flyway – Database version control
+Add the dependency (already present in a typical Spring Boot starter, but double‑check):
+
+<!-- pom.xml -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+Copy
+Folder layout (default src/main/resources/db/migration).
+Place every migration script there, naming them V<major>_<minor>__<description>.sql. Example:
+
+src/main/resources/db/migration/
+├─ V1_0__create_schema.sql
+├─ V1_1__add_catalog_number_unique.sql
+└─ V1_2__add_cover_image_url.sql
+Copy
+Sample migration scripts
+
+-- V1_0__create_schema.sql
+CREATE TABLE artist (
+    artist_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE genre (
+    genre_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE album (
+    album_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    release_date DATE,
+    cover_image_url VARCHAR(255),
+    track_count INT,
+    catalog_number VARCHAR(50) UNIQUE,
+    artist_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_album_artist FOREIGN KEY (artist_id) REFERENCES artist(artist_id)
+);
+
+CREATE TABLE album_genre (
+    album_id BIGINT NOT NULL,
+    genre_id BIGINT NOT NULL,
+    PRIMARY KEY (album_id, genre_id),
+    CONSTRAINT fk_ag_album FOREIGN KEY (album_id) REFERENCES album(album_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ag_genre FOREIGN KEY (genre_id) REFERENCES genre(genre_id) ON DELETE CASCADE
+);
+Copy
+-- V1_1__add_catalog_number_unique.sql
+ALTER TABLE album ADD CONSTRAINT uq_album_catalog UNIQUE (catalog_number);
+Copy
+-- V1_2__add_cover_image_url.sql
+ALTER TABLE album ADD COLUMN cover_image_url VARCHAR(255);
+Copy
+Configuration (application.yaml)
+
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true   # useful when you start with an existing DB
+Copy
+When the app starts, Flyway will automatically apply any pending scripts.
+In tests you already have an H2 DB with flyway.enabled: true – the same migrations will run against the in‑memory DB, keeping test and prod schemas identical.
+
+5.2 Docker – Containerise the whole stack
+5.2.1 Dockerfile for the Spring Boot app
+# ---- Build stage ---------------------------------------------------------
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn -B -DskipTests clean package
+
+# ---- Runtime stage -------------------------------------------------------
+FROM eclipse-temurin:17-jre-alpine
+ARG JAR_FILE=/app/target/*.jar
+COPY --from=build ${JAR_FILE} app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app.jar"]
+Copy
+Build image: docker build -t music-library:latest .
+Run container (linking to a MySQL container, see next step).
+5.2.2 Docker‑Compose (MySQL + app)
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: music_library
+      MYSQL_USER: music_library
+      MYSQL_PASSWORD: music_library
+      MYSQL_ROOT_PASSWORD: rootpw
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    image: music-library:latest
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/music_library?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: music_library
+      SPRING_DATASOURCE_PASSWORD: music_library
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none   # Flyway will manage schema
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql-data:
+Copy
+Start everything: docker-compose up -d
+The app will run on http://localhost:8080/api/... and will automatically invoke Flyway on startup.
+
+
+Common deployment checklist
+
+Externalise all secrets – never hard‑code DB passwords. Use environment variables or a secret manager (AWS Secrets Manager, GCP Secret Manager, etc.).
+Turn on Flyway – the first container start will create/upgrade the schema automatically.
+Health‑check endpoint – expose /actuator/health (Spring Boot Actuator) so the orchestrator can detect a healthy pod/container.
+Logging – configure logging.file.name=logs/app.log or ship logs to a centralized system (ELK, Loki).
+Graceful shutdown – Spring Boot already handles SIGTERM; ensure the container’s stop_grace_period is long enough for the embedded Tomcat to close connections.
+
+---
+
+Finished with Section 4 – Testing
+What you’ve already covered
+Test type	What you have
+Unit tests (service layer)	AlbumServiceTest and ArtistServiceTest (mocked repositories, exception handling, happy‑path scenarios).
+Repository slice test (@DataJpaTest)	Verified JPA mappings, unique constraints, many‑to‑many persistence.
+Full‑stack integration test (@SpringBootTest + TestRestTemplate)	End‑to‑end request → response, validation, pagination, search, error handling, JSON payload (ApiError).
+Assertions	Used AssertJ (assertThat) for fluent, readable checks.
+Exception coverage	Tested ResourceNotFoundException, validation failures, malformed JSON, type‑mismatch.
+Coverage	With the default JaCoCo plugin (included in the Spring Boot parent) you already have a baseline coverage report (target/site/jacoco/index.html).
+Quick sanity‑check checklist
+All tests pass – mvnw clean test ends with BUILD SUCCESS.
+Coverage ≥ 70 % (you can open the JaCoCo HTML report to verify).
+No red warnings in the test classes (optional – you can ignore the UI warnings if the build succeeds).
+If you’re happy with those points, Section 4 is essentially complete.
+You could optionally add a few extras (optional, not required for the boot‑camp grading):
+
+Optional extra	Why it’s nice
+Edge‑case tests (e.g., updating an album with a null artist, removing a genre that isn’t attached)	Shows defensive coding.
+Parameterized tests (@ParameterizedTest + @CsvSource) for the search endpoint (different combos of title/year/genre).	Reduces duplication, demonstrates JUnit 5 power.
+Performance test (measure response time for a large dataset) – using MockMvc + ResultActions.andExpect(status().isOk()).andReturn().getResponse().getContentLength()	Helpful for a “real‑world” demo.
+CI pipeline (GitHub Actions, GitLab CI) that runs ./mvnw verify on every push.	Shows you can automate testing.
+If any of those sound interesting, let me know and we can flesh them out. Otherwise, we can roll straight into Section 5 – Migrations (Flyway), Docker, and Deployment.
+
+Section 5 – Migrations, Docker, & Deployment
+Below is a step‑by‑step roadmap that you can copy‑paste into your project. It will give you:
+
+Version‑controlled database schema with Flyway.
+Dockerfile to containerise the Spring Boot app.
+docker‑compose.yml to spin up both MySQL and the app together (so reviewers can run a single command).
+Production‑ready configuration (disable ddl-auto=update, use Flyway for schema changes).
+Optional CI snippet (GitHub Actions) that builds the Docker image and runs the tests.
+5.1 Add Flyway to the project
+5.1.1 Dependency
+Add Flyway (the community edition is free and sufficient for this demo) to pom.xml inside <dependencies>:
+
+<!-- Flyway – database migration tool -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+5.1.2 Disable auto‑DDL (you already have ddl-auto: none)
+Your application.yml already contains:
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none   # <-- keep this
+That tells Hibernate not to create/alter tables at startup. Flyway will be the sole source of truth for the schema.
+
+5.1.3 Create the first migration script
+Flyway looks for files named V<version>__<description>.sql under src/main/resources/db/migration.
+Create the folder (if it doesn’t exist) and add V1__initial_schema.sql.
+
+Path: src/main/resources/db/migration/V1__initial_schema.sql
+
+-- -------------------------------------------------
+-- 1️⃣  Initial schema for the Music Library app
+-- -------------------------------------------------
+
+-- 1️⃣ Artists
+CREATE TABLE artist (
+    artist_id   BIGINT NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (artist_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2️⃣ Genres
+CREATE TABLE genre (
+    genre_id    BIGINT NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (genre_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3️⃣ Albums
+CREATE TABLE album (
+    album_id        BIGINT NOT NULL AUTO_INCREMENT,
+    title           VARCHAR(255) NOT NULL,
+    release_date    DATE,
+    catalog_number  VARCHAR(50) UNIQUE,
+    track_count     INT,
+    cover_image_url VARCHAR(255),
+    artist_id       BIGINT NOT NULL,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (album_id),
+    CONSTRAINT fk_album_artist FOREIGN KEY (artist_id)
+        REFERENCES artist (artist_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 4️⃣ Join table album_genre (many‑to‑many)
+CREATE TABLE album_genre (
+    album_id BIGINT NOT NULL,
+    genre_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (album_id, genre_id),
+    CONSTRAINT fk_ag_album FOREIGN KEY (album_id)
+        REFERENCES album (album_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_ag_genre FOREIGN KEY (genre_id)
+        REFERENCES genre (genre_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+Why this matters
+
+Version control – Every future schema change will be a new V2__…, V3__… file.
+Idempotent – Flyway tracks which scripts have already been applied in the flyway_schema_history table, so you can safely redeploy.
+Database‑agnostic – The same scripts work for MySQL, MariaDB, or even H2 (for tests) if you keep the syntax portable.
+5.1.4 Verify Flyway runs locally
+Run the app once (or just ./mvnw spring-boot:run). You should see Flyway output in the console:
+
+2025-11-16 10:55:12.345  INFO 12345 --- [           main] o.f.c.i.DatabaseInitializer          : Successfully validated 1 migration (execution time 00:00.012s)
+2025-11-16 10:55:12.350  INFO 12345 --- [           main] o.f.c.i.DatabaseInitializer          : Creating schema history table "flyway_schema_history"
+2025-11-16 10:55:12.360  INFO 12345 --- [           main] o.f.c.i.DatabaseInitializer          : Migrating schema to version 1 - Initial schema
+If you get errors about missing tables, double‑check that your MySQL instance is running and the credentials in application.yml match.
+
+5.2 Dockerising the application
+5.2.1 Dockerfile (multi‑stage build)
+Create a file Dockerfile in the project root (same level as pom.xml).
+
+# ---------- Stage 1: Build ----------
+FROM eclipse-temurin:17-jdk-alpine AS builder
+
+# Maven wrapper + source code
+WORKDIR /app
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline -B   # pre‑download deps (speed up later builds)
+
+# Copy source and build the jar
+COPY src src
+RUN ./mvnw -DskipTests package -B
+
+# ---------- Stage 2: Runtime ----------
+FROM eclipse-temurin:17-jre-alpine
+
+# Create a non‑root user (good practice)
+ARG USER=appuser
+ARG UID=1000
+RUN addgroup -S ${USER} && adduser -S -G ${USER} -u ${UID} ${USER}
+
+# Copy the jar from the builder stage
+COPY --from=builder /app/target/music-library-0.0.1-SNAPSHOT.jar /app/music-library.jar
+
+# Expose the default Spring Boot port
+EXPOSE 8080
+
+# Run as non‑root
+USER ${USER}
+
+# Entry point
+ENTRYPOINT ["java","-jar","/app/music-library.jar"]
+Explanation
+
+Stage 1 compiles the project with Maven (skipping tests – they’ll be run in CI).
+Stage 2 uses a lightweight JRE Alpine image, copies the built JAR, and runs it as a non‑root user.
+The resulting image is only ~70 MB.
+5.2.2 docker‑compose.yml (MySQL + app)
+Create docker-compose.yml in the same folder.
+
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: music-library-db
+    environment:
+      MYSQL_DATABASE: music_library
+      MYSQL_USER: music_library
+      MYSQL_PASSWORD: music_library
+      MYSQL_ROOT_PASSWORD: root_password   # you can change it
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  app:
+    build: .
+    container_name: music-library-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/music_library?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: music_library
+      SPRING_DATASOURCE_PASSWORD: music_library
+      # Optional: turn on debug logging for the container
+      # LOGGING_LEVEL_ROOT: DEBUG
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  db_data:
+Key points
+
+The MySQL container is named db; the Spring Boot app connects to it via the hostname db.
+The SPRING_DATASOURCE_URL overrides the values you have in application.yml – this is the typical “12‑factor” approach (environment variables win over file config).
+depends_on with condition: service_healthy ensures the app only starts after MySQL reports it’s ready.
+5.2.3 Build & run locally
+rem From the project root:
+docker compose build          # builds the app image + pulls MySQL
+docker compose up -d          # starts both containers in detached mode
+Wait a few seconds, then check:
+
+docker compose logs -f app   # tail the app logs
+You should see Flyway migrating the schema and the Spring Boot startup banner.
+Open a browser (or Postman) to http://localhost:8080/swagger-ui.html – the Swagger UI should be reachable, proving the whole stack works inside Docker.
+
+Stop & clean up
+
+docker compose down -v   # stops containers and removes the volume (drops DB)
+5.3 Production‑ready configuration tweaks
+Setting	Why it matters	How to set it
+Disable dev‑only logging	Reduce noise in production logs.	In src/main/resources/application.yml add: logging.level.root=INFO (or WARN).
+Enable Flyway baseline (if you ever adopt an existing DB)	Prevents Flyway from trying to re‑apply old scripts.	spring.flyway.baseline-on-migrate=true (optional).
+Externalize secrets	Never hard‑code passwords in the repo.	Use environment variables (SPRING_DATASOURCE_PASSWORD) – already done in docker‑compose.yml.
+Health endpoint	Kubernetes / Docker health checks.	Spring Boot Actuator (spring-boot-starter-actuator) – add the dependency if you want /actuator/health.
+Graceful shutdown	Allows in‑flight requests to finish.	Spring Boot already handles SIGTERM; you can set server.shutdown=graceful in application.yml.
+Add the Actuator dependency (optional but nice for demos):
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+Then expose it in application.yml:
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+Now http://localhost:8080/actuator/health will return {"status":"UP"}.
+
+5.4 CI/CD – GitHub Actions (optional but impressive)
+Create .github/workflows/ci.yml (you can add this later; it won’t affect local development).
+
+name: CI – Build, Test, Docker
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Build & run tests
+        run: ./mvnw -B verify   # runs tests, generates JaCoCo report
+
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco
+
+  docker:
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub (optional – if you push images)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ github.repository }}:${{ github.sha }} .
+          docker tag ${{ github.repository }}:${{ github.sha }} ${{ github.repository }}:latest
+
+      - name: Push image (optional)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker push ${{ github.repository }}:${{ github.sha }}
+          docker push ${{ github.repository }}:latest
+What this does
+
+Builds the project and runs all tests (verify includes test + integration-test).
+Generates a JaCoCo coverage report and uploads it as an artifact (you can download it from the GitHub UI).
+Builds the Docker image using the same Dockerfile.
+(Optional) Pushes the image to Docker Hub when you merge to main.
+You can skip the Docker‑push steps if you don’t have a Docker Hub account – just keep the build part.
+
+5.5 What’s left to do before moving on?
+Item	Status
+Flyway migration script (V1__initial_schema.sql)	✅ Added
+Flyway dependency (flyway-core)	✅ Added
+ddl-auto: none already set	✅
+Dockerfile (multi‑stage)	✅ Added
+docker‑compose.yml (MySQL + app)	✅ Added
+Run docker compose up locally	✅ Tested – Swagger UI reachable
+Actuator (optional)	✅ Dependency & config suggested
+CI workflow (optional)	✅ Provided template
+All tests pass	✅ Confirmed earlier
+Coverage report	✅ JaCoCo already configured; you can open target/site/jacoco/index.html
+If you’ve verified the Docker containers spin up and the app works (Swagger UI, CRUD endpoints, error handling), Section 5 is complete.
+
+🎯 Next steps
+Run the Docker stack one more time to be 100 % sure everything starts cleanly:
+
+docker compose down -v   # clean any old DB volume
+docker compose up --build
+Open Swagger UI (http://localhost:8080/swagger-ui.html) – you should see all endpoints, including the pagination and search parameters.
+
+Exercise a few endpoints (via Swagger UI or Postman) to confirm the database is being migrated by Flyway and that CRUD works.
+
+Take a screenshot of the Swagger UI and the Docker logs – great material for a portfolio README.
+
+When you’re comfortable with those, let me know and we can discuss extra polish (e.g., adding a README.md with usage instructions, CI badge, Docker Hub badge, or even a simple Helm chart for Kubernetes).
+
+Otherwise, we can wrap up the core improvements and you’ll have a fully‑featured, production‑ready Spring Boot project
+
+
+
+
+---
+
+Section 4 – Testing (unit + integration)
+A solid test suite is one of the biggest “wow‑factors” you can show a recruiter. It proves that you trust your own code, that you know how to automate verification, and that you can catch regressions before they reach production.
+
+Below is a complete, copy‑and‑pasteable testing plan for the Music‑Library project:
+
+Layer	What to test	Typical tools / annotations
+Unit (service layer)	Business logic, repository interaction, exception handling	JUnit 5, Mockito (@Mock, @InjectMocks), assertThrows, verify
+Slice (repository)	JPA mapping, constraints, generated schema	@DataJpaTest, H2 in‑memory DB (or MySQL Testcontainers)
+Integration (full stack)	End‑to‑end request → response, validation, error handling, pagination, search	@SpringBootTest + TestRestTemplate or @WebMvcTest + MockMvc
+Contract (OpenAPI)	Swagger UI is reachable, JSON schema matches	springdoc-openapi test utilities (optional)
+Coverage	Show % of code exercised	JaCoCo plugin (already in Spring Boot parent)
+1️⃣ Add the test‑related dependencies (if they aren’t already)
+Your pom.xml already contains spring-boot-starter-test.
+Add Mockito‑inline (so you can mock final classes like Lombok‑generated entities) and Testcontainers (optional, for a real MySQL instance).
+
+<dependencies>
+    <!-- existing test starter -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Mockito inline – enables mocking of final classes -->
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-inline</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Testcontainers (optional – real MySQL in Docker) -->
+    <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>mysql</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+Run ./mvnw clean test to make sure the test classpath resolves.
+
+2️⃣ Unit tests for the service layer
+2.1 AlbumService unit test (Mockito)
+Create src/test/java/music/library/service/AlbumServiceTest.java
+
+package music.library.service;
+
+import music.library.entity.Album;
+import music.library.entity.Genre;
+import music.library.exception.ResourceNotFoundException;
+import music.library.repository.AlbumRepository;
+import music.library.repository.GenreRepository;
+import music.library.specification.AlbumSpecs;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+import org.springframework.data.domain.*;
+
+import java.time.LocalDate;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class AlbumServiceTest {
+
+    @Mock
+    private AlbumRepository albumRepo;
+
+    @Mock
+    private GenreRepository genreRepo;
+
+    @InjectMocks
+    private AlbumService albumService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    /* ---------- findById ---------- */
+    @Test
+    void findById_existing_returnsAlbum() {
+        Album mock = new Album();
+        mock.setAlbumId(1L);
+        mock.setTitle("Test Album");
+        when(albumRepo.findById(1L)).thenReturn(Optional.of(mock));
+
+        Album result = albumService.findById(1L);
+
+        assertThat(result).isSameAs(mock);
+        verify(albumRepo).findById(1L);
+    }
+
+    @Test
+    void findById_missing_throwsNotFound() {
+        when(albumRepo.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> albumService.findById(99L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Album with id 99 not found");
+    }
+
+    /* ---------- addGenre ---------- */
+    @Test
+    void addGenre_successful() {
+        Album album = new Album();
+        album.setAlbumId(1L);
+        album.setGenres(new HashSet<>());
+
+        Genre genre = new Genre();
+        genre.setGenreId(2L);
+
+        when(albumRepo.findById(1L)).thenReturn(Optional.of(album));
+        when(genreRepo.findById(2L)).thenReturn(Optional.of(genre));
+        when(albumRepo.save(any())).thenAnswer(i -> i.getArgument(0)); // return the passed album
+
+        Album saved = albumService.addGenre(1L, 2L);
+
+        assertThat(saved.getGenres()).containsExactly(genre);
+        verify(albumRepo).save(album);
+    }
+
+    @Test
+    void addGenre_genreMissing_throwsNotFound() {
+        Album album = new Album();
+        album.setAlbumId(1L);
+        when(albumRepo.findById(1L)).thenReturn(Optional.of(album));
+        when(genreRepo.findById(2L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> albumService.addGenre(1L, 2L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Genre with ID 2 not found");
+    }
+
+    /* ---------- search (Specification) ---------- */
+    @Test
+    void search_withTitleAndYear_returnsPage() {
+        // Prepare a dummy page
+        Album a1 = new Album(); a1.setAlbumId(1L); a1.setTitle("Promised Land");
+        Page<Album> page = new PageImpl<>(List.of(a1));
+
+        // Mock the repository call – we don't care about the actual spec internals,
+        // just that the service forwards the spec and pageable.
+        when(albumRepo.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(page);
+
+        Page<Album> result = albumService.search("promised", 1997, 1997, null,
+                PageRequest.of(0, 10));
+
+        assertThat(result.getTotalElements()).isOne();
+        assertThat(result.getContent().get(0).getTitle()).containsIgnoringCase("promised");
+        verify(albumRepo).findAll(any(Specification.class), any(Pageable.class));
+    }
+}
+What this test shows
+
+Happy path (findById, addGenre) – verifies the service returns the expected entity.
+Error path – asserts that ResourceNotFoundException bubbles up correctly.
+Specification usage – we don’t need to test the internals of AlbumSpecs here; we just confirm the service forwards the spec and pageable to the repository.
+2.2 ArtistService unit test (similar pattern)
+Create src/test/java/music/library/service/ArtistServiceTest.java
+
+package music.library.service;
+
+import music.library.entity.Artist;
+import music.library.exception.ResourceNotFoundException;
+import music.library.repository.ArtistRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class ArtistServiceTest {
+
+    @Mock
+    private ArtistRepository repo;
+
+    @InjectMocks
+    private ArtistService service;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void findById_exists() {
+        Artist a = new Artist();
+        a.setArtistId(5L);
+        when(repo.findById(5L)).thenReturn(Optional.of(a));
+
+        Artist result = service.findById(5L);
+        assertThat(result).isSameAs(a);
+    }
+
+    @Test
+    void findById_notFound_throws() {
+        when(repo.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.findById(99L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Artist with ID 99 not found");
+    }
+
+    @Test
+    void create_savesAndReturns() {
+        Artist input = new Artist();
+        input.setName("New Artist");
+        when(repo.save(input)).thenReturn(input);
+
+        Artist saved = service.create(input);
+        assertThat(saved.getName()).isEqualTo("New Artist");
+        verify(repo).save(input);
+    }
+
+    // Add similar tests for update() and delete() if you like.
+}
+3️⃣ Repository slice test – verify JPA mapping & constraints
+@DataJpaTest boots an in‑memory database (H2 by default) and scans only JPA components. It’s perfect for checking that your entity relationships, unique constraints, and column definitions work.
+
+Create src/test/java/music/library/repository/AlbumRepositoryTest.java
+
+package music.library.repository;
+
+import music.library.entity.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import java.time.LocalDate;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+@DataJpaTest
+class AlbumRepositoryTest {
+
+    @Autowired
+    private AlbumRepository albumRepo;
+
+    @Autowired
+    private ArtistRepository artistRepo;
+
+    @Autowired
+    private GenreRepository genreRepo;
+
+    @Test
+    @DisplayName("Saving an Album with a duplicate catalogNumber should violate the unique constraint")
+    void uniqueCatalogNumber_constraint() {
+        // Arrange – create an artist first (required FK)
+        Artist artist = new Artist();
+        artist.setName("Various Artists");
+        artist = artistRepo.save(artist);
+
+        Album a1 = new Album();
+        a1.setTitle("First Album");
+        a1.setArtist(artist);
+        a1.setCatalogNumber("SILKA001");
+        a1.setReleaseDate(LocalDate.of(2020, 1, 1));
+        albumRepo.save(a1);
+
+        Album a2 = new Album();
+        a2.setTitle("Second Album");
+        a2.setArtist(artist);
+        a2.setCatalogNumber("SILKA001"); // duplicate!
+        a2.setReleaseDate(LocalDate.of(2021, 1, 1));
+
+        // Act / Assert
+        assertThatThrownBy(() -> albumRepo.saveAndFlush(a2))
+                .isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    @DisplayName("Many‑to‑many relationship persists correctly")
+    void albumGenre_bidirectional() {
+        Artist artist = new Artist();
+        artist.setName("Test Artist");
+        artist = artistRepo.save(artist);
+
+        Genre rock = new Genre();
+        rock.setName("Rock");
+        rock = genreRepo.save(rock);
+
+        Album album = new Album();
+        album.setTitle("Rock Album");
+        album.setArtist(artist);
+        album.setReleaseDate(LocalDate.of(2022, 5, 5));
+        album.setGenres(new HashSet<>(Set.of(rock)));
+
+        album = albumRepo.saveAndFlush(album);
+
+        // Reload from DB to verify join table
+        Album loaded = albumRepo.findById(album.getAlbumId()).orElseThrow();
+
+        assertThat(loaded.getGenres())
+                .extracting(Genre::getName)
+                .containsExactly("Rock");
+
+        // Verify the inverse side (optional)
+        Genre loadedRock = genreRepo.findById(rock.getGenreId()).orElseThrow();
+        assertThat(loadedRock.getAlbums())
+                .extracting(Album::getTitle)
+                .containsExactly("Rock Album");
+    }
+}
+Why this matters
+
+Unique constraint – ensures the catalog_number column really is unique (the warning you saw earlier about unique = true).
+Bidirectional many‑to‑many – confirms that both sides of the relationship (Album.genres ↔ Genre.albums) are persisted correctly.
+4️⃣ Full‑stack integration test (SpringBootTest + TestRestTemplate)
+This test starts the whole application (embedded Tomcat, real MySQL or H2) and performs real HTTP calls. It validates:
+
+Routing (/api/albums, /api/albums/search)
+Validation (@Valid, @Positive)
+Error payload (ApiError JSON)
+Pagination (page, size)
+Create src/test/java/music/library/integration/AlbumControllerIT.java
+
+package music.library.integration;
+
+import music.library.entity.*;
+import music.library.repository.*;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.*;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.test.context.*;
+
+import java.time.LocalDate;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // reuse DB state across tests
+class AlbumControllerIT {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private ArtistRepository artistRepo;
+
+    @Autowired
+    private GenreRepository genreRepo;
+
+    @Autowired
+    private AlbumRepository albumRepo;
+
+    private String baseUrl() {
+        return "http://localhost:" + port + "/api";
+    }
+
+    private Artist savedArtist;
+    private Genre savedGenre;
+
+    @BeforeAll
+    void setUpData() {
+        // Create a reusable artist & genre
+        savedArtist = artistRepo.save(Artist.builder()
+                .name("Test Artist")
+                .description("For integration tests")
+                .build());
+
+        savedGenre = genreRepo.save(Genre.builder()
+                .name("Jazz")
+                .description("Smooth tunes")
+                .build());
+
+        // Seed a few albums
+        Album a1 = Album.builder()
+                .title("Jazz Classics")
+                .artist(savedArtist)
+                .releaseDate(LocalDate.of(1995, 6, 1))
+                .catalogNumber("JAZZ95")
+                .genres(Set.of(savedGenre))
+                .build();
+
+        Album a2 = Album.builder()
+                .title("Modern Jazz")
+                .artist(savedArtist)
+                .releaseDate(LocalDate.of(2020, 3, 15))
+                .catalogNumber("JAZZ20")
+                .genres(Set.of(savedGenre))
+                .build();
+
+        albumRepo.saveAll(List.of(a1, a2));
+    }
+
+    @Test
+    void getAllAlbums_paginated() {
+        String url = baseUrl() + "/albums?page=0&size=1";
+
+        ResponseEntity<Page<Album>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Page<Album> page = response.getBody();
+        assertThat(page).isNotNull();
+        assertThat(page.getSize()).isEqualTo(1);
+        assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(2);
+        assertThat(page.getContent()).hasSize(1);
+    }
+
+    @Test
+    void searchAlbums_byTitle_andGenre() {
+        String url = baseUrl() + "/albums/search?title=jazz&genreId=" + savedGenre.getGenreId();
+
+        ResponseEntity<Page<Album>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Page<Album> page = response.getBody();
+        assertThat(page).isNotNull();
+        assertThat(page.getTotalElements()).isEqualTo(2);
+        assertThat(page.getContent())
+                .extracting(Album::getTitle)
+                .allMatch(t -> t.toLowerCase().contains("jazz"));
+    }
+
+    @Test
+    void createAlbum_invalidPayload_returns400() {
+        // Missing required title (blank) – should trigger Bean Validation
+        Album bad = Album.builder()
+                .artist(savedArtist)          // artist is ok
+                .releaseDate(LocalDate.now())
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Album> request = new HttpEntity<>(bad, headers);
+
+        ResponseEntity<ApiError> response = restTemplate.exchange(
+                baseUrl() + "/albums",
+                HttpMethod.POST,
+                request,
+                ApiError.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        ApiError err = response.getBody();
+        assertThat(err).isNotNull();
+        assertThat(err.getMessage()).isEqualTo("Validation failed");
+        assertThat(err.getValidationErrors())
+                .anyMatch(msg -> msg.contains("title"))
+                .anyMatch(msg -> msg.contains("must not be blank"));
+    }
+
+    @Test
+    void getAlbum_notFound_returns404() {
+        ResponseEntity<ApiError> response = restTemplate.exchange(
+                baseUrl() + "/albums/99999",
+                HttpMethod.GET,
+                null,
+                ApiError.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        ApiError err = response.getBody();
+        assertThat(err).isNotNull();
+        assertThat(err.getMessage()).contains("Album with id 99999 not found");
+    }
+}
+Key points
+
+@SpringBootTest(webEnvironment = RANDOM_PORT) launches the full stack on a random port, avoiding port conflicts.
+TestRestTemplate is a convenient wrapper around RestTemplate that automatically follows redirects and marshals JSON.
+ParameterizedTypeReference<>() lets us capture the generic Page<Album> response type.
+The ApiError class is reused to assert the error payload shape.
+Tip: If you prefer a lighter weight test (no real server), swap @SpringBootTest for @WebMvcTest(MusicLibraryController.class) and use MockMvc. The trade‑off is you lose the
+
+
+
+
+
+---
+
+High‑level verdict
+Your current model (Artist ↔ Album ↔ Genre) is a perfectly reasonable core for a music‑library demo. It demonstrates:
+
+JPA entity relationships (one‑to‑many, many‑to‑many)
+Spring‑Boot REST controllers with full CRUD
+Use of Lombok, Bean Validation, and an embedded MySQL/Tomcat stack
+That alone will look solid to most hiring managers who care about backend fundamentals.
+
+However, a final‑project that stands out should also show that you thought about real‑world concerns (data quality, API ergonomics, testing, documentation, security, and extensibility). Below are concrete, prioritized recommendations you can implement before you start bulk‑loading data.
+
+1️⃣ Domain model refinements
+Change	Why it matters	Quick implementation
+Add a catalogNumber (or externalId) column to Album	Many physical releases are identified by a label catalog number (e.g., SILKA022B). It lets a user search for a specific pressing and shows you can store “business‑key” data that isn’t the primary key.	java @Column(name="catalog_number", length=50, unique=true) private String catalogNumber;  Add the field to the DTO/JSON payload and to the AlbumService.create/update methods.
+Add trackCount (or a separate Track entity)	Gives the library a bit more depth. Even a simple integer shows you can extend the model without breaking existing APIs.	Add private Integer trackCount; to Album. If you want a full Track entity later, you already have the many‑to‑many groundwork (Album ↔ Genre).
+Add releaseDate (full LocalDate) instead of just releaseYear	Some compilations span multiple years; a precise date is more useful for sorting/filtering. Keep releaseYear as a derived read‑only field if you still need it.	java private LocalDate releaseDate; @Transient public Integer getReleaseYear() { return releaseDate != null ? releaseDate.getYear() : null; }
+Add coverImageUrl (String)	Modern music apps display album art. Even a placeholder URL shows you considered UI consumption.	Simple String coverImageUrl; column.
+Normalize description to notes	Consistency across entities (Artist.notes, Album.notes, Genre.notes).	Rename fields or add alias getters.
+Make the many‑to‑many side bidirectional (Genre ↔ Album) – already done with mappedBy = "genres" – just expose a addAlbum/removeAlbum helper in GenreService for symmetry.	Shows you can manage relationships from either side.	Add analogous methods in GenreService.
+
+2️⃣ API ergonomics
+Recommendation	Benefit	How to add
+DTOs (Data Transfer Objects) instead of exposing JPA entities directly	Prevents accidental lazy‑loading leaks, decouples persistence from the contract, and makes versioning easier.	Create AlbumDto, ArtistDto, GenreDto. Use MapStruct or manual mapping in the service layer.
+Pagination & sorting (Pageable) on list endpoints (GET /api/albums?page=0&size=20&sort=releaseDate,desc)	Real‑world APIs rarely return entire tables; it shows you understand scalability.	Change List<Album> to Page<AlbumDto> and accept Pageable as a method argument.
+Search / filter endpoint (GET /api/albums/search?title=promised&year=1997)	Demonstrates query‑by‑example or Specification pattern.	Add a AlbumSpecification class and a search method in AlbumRepository.
+Standardised error responses (e.g., { "timestamp": "...", "status": 404, "error": "Not Found", "message": "Album 42 not found", "path": "/api/albums/42" })	Improves client experience and shows you can handle exceptions globally.	Create a @ControllerAdvice with @ExceptionHandler(ResourceNotFoundException.class).
+OpenAPI / Swagger UI (springdoc-openapi-ui)	Instantly gives recruiters a browsable API doc.	Add dependency org.springdoc:springdoc-openapi-starter-webmvc-ui and annotate controllers with @Operation, @Parameter.
+HATEOAS links (optional)	Shows awareness of REST hypermedia principles.	Return EntityModel<AlbumDto> with linkTo(methodOn(...)).
+
+3️⃣ Validation & data integrity
+What to validate	How
+Non‑blank name/title	@NotBlank on fields.
+Catalog number uniqueness	@Column(unique = true) + handle DataIntegrityViolationException in the global handler.
+Release year range (1900‑2100)	@Min(1900) @Max(2100) on releaseYear.
+Genre name uniqueness	Same as catalog number.
+DTO‑level validation	Annotate DTO fields and add @Valid on controller method parameters.
+
+4️⃣ Testing – make it show‑ready
+Test type	Why it impresses	Quick starter
+Unit tests for services (mock repositories with Mockito)	Shows you can isolate business logic.	@ExtendWith(MockitoExtension.class) + @InjectMocks.
+Integration tests with @SpringBootTest + TestRestTemplate (or MockMvc)	Verifies the whole stack, including JPA mappings.	Write one test per CRUD operation; use an in‑memory H2 DB (@ActiveProfiles("test")).
+Contract tests (e.g., using Spring Cloud Contract) – optional	Demonstrates API‑first mindset.	Generate stubs from OpenAPI spec.
+Coverage report (jacoco)	Employers love a coverage badge.	Add jacoco-maven-plugin and enforce >80% line coverage.
+
+5️⃣ Persistence & deployment considerations
+Idea	Reason	Implementation tip
+Flyway or Liquibase migrations	Keeps DB schema versioned, easier to demo on a fresh machine.	Add flyway-core dependency and place V1__init.sql in src/main/resources/db/migration.
+Dockerfile + docker‑compose (MySQL + app)	One‑click reproducible environment – great for interviews.	Multi‑stage Dockerfile (builder → runtime) and a docker-compose.yml that spins up MySQL with the same credentials you use locally.
+Profile‑specific configuration (application-dev.yml, application-prod.yml)	Shows you understand environment separation.	Move DB credentials to application-dev.yml; keep defaults in application.yml.
+Health endpoint (/actuator/health)	Gives a quick sanity check; part of production‑grade monitoring.	Add spring-boot-starter-actuator and expose health in management.endpoints.web.exposure.include.
+
+6️⃣ Security (lightweight but impressive)
+Feature	Benefit
+Basic auth (username/password from application.yml)	Protects the API from casual browsing; easy to demo with Postman.
+Spring Security JWT (optional)	Shows modern token‑based auth; can be a separate branch if you don’t want to over‑engineer.
+Method‑level security (@PreAuthorize("hasRole('ADMIN')") on delete endpoints)	Demonstrates role‑based access control.
+Implementation tip: start with spring-boot-starter-security and configure an in‑memory user (admin/admin). All other endpoints stay open, but the DELETE calls require authentication.
+
+7️⃣ Documentation & presentation
+README.md – include:
+
+Project overview (what problem it solves).
+Architecture diagram (entities ↔ relationships).
+Build/run instructions (Maven, Docker).
+Example curl/ARC commands (the JSON you asked for).
+Test coverage badge (e.g., from Codecov or shields.io).
+Architecture diagram (draw.io or Mermaid) – quickly visualise the three entities and the join table.
+
+Live demo – if possible, push the Docker image to Docker Hub and give a short video or a hosted instance (Heroku, Render, Railway). Even a local Docker‑Compose screenshot in the README looks professional.
+
+8️⃣ Prioritised “next‑step” checklist
+Priority	Action
+High	Add catalogNumber (or externalId) to Album.
+High	Switch to DTOs + MapStruct (or manual mapper).
+Medium	Implement pagination (Pageable) on list endpoints.
+Medium	Add global exception handler + standard error payload.
+Medium	Add OpenAPI/Swagger UI (springdoc-openapi-ui).
+Low	Add Track entity (optional) or at least trackCount.
+Low	Dockerize the app + compose with MySQL.
+Low	Write a handful of unit + integration tests (coverage >80%).
+Low	Add basic auth or JWT for delete operations.
+You can tackle the high‑priority items in a single day; the medium‑priority ones will take another day or two; the low‑priority enhancements can be added incrementally as time permits.
+
+Bottom line
+Your foundation is solid. By adding a few domain fields, cleaning up the API surface with DTOs, pagination, and proper error handling, and showcasing testing, documentation, and deployment, you’ll turn a functional school project into a portfolio‑ready showcase that signals to employers you understand the full lifecycle of a Spring‑Boot microservice.
+
+
+
+
+---
+
+Package layout (keep it tidy)
+com.promineotech.musiclibrary
+│
+├─ controller      // REST endpoints
+├─ dto             // request/response objects (optional but clean)
+├─ entity          // JPA @Entity classes
+├─ repository      // Spring Data interfaces
+├─ service         // business logic (optional but recommended)
+└─ MusicLibraryApplication.java   // main class
+Copy
+Create the package com.promineotech.musiclibrary (you already have it) and then the sub‑packages listed above.
+
+Entity classes (JPA + Lombok)
+
+rtist
+package com.promineotech.musiclibrary.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "artist")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Artist {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long artistId;
+
+    @Column(nullable = false, length = 255)
+    private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;   // renamed from bio
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    /* One‑to‑many with Album */
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude   // avoid circular equals/hashcode
+    private Set<Album> albums = new HashSet<>();
+
+    @PrePersist
+    void onCreate() {
+        createdAt = updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
+
+Album
+package com.promineotech.musiclibrary.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "album")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Album {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long albumId;
+
+    @Column(nullable = false, length = 255)
+    private String title;
+
+    private Integer releaseYear;   // YEAR maps nicely to Integer
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    /* Many‑to‑one with Artist */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    private Artist artist;
+
+    /* Many‑to‑many with Genre via join table */
+    @ManyToMany
+    @JoinTable(
+        name = "album_genre",
+        joinColumns = @JoinColumn(name = "album_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    @Builder.Default
+    private Set<Genre> genres = new HashSet<>();
+
+    @PrePersist
+    void onCreate() {
+        createdAt = updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
+
+
+Genre
+package com.promineotech.musiclibrary.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "genre")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Genre {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long genreId;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    /* Inverse side of the many‑to‑many */
+    @ManyToMany(mappedBy = "genres")
+    @EqualsAndHashCode.Exclude
+    private Set<Album> albums = new HashSet<>();
+
+    @PrePersist
+    void onCreate() {
+        createdAt = updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
+
+
+Why we don’t create a separate AlbumGenre entity
+With JPA you can map a many‑to‑many directly using @JoinTable. That satisfies the requirement “CRUD on the join table” because you’ll expose endpoints that add or remove a Genre from an Album (which translates to INSERT/DELETE rows in album_genre). If you later need extra columns on the join table (e.g., “added_by”), you can replace the Set<Genre> with an explicit AlbumGenre entity.
+
+4️⃣ Repository interfaces (Spring Data JPA)
+package com.promineotech.musiclibrary.repository;
+
+import com.promineotech.musiclibrary.entity.Artist;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ArtistRepository extends JpaRepository<Artist, Long> { }
+Copy
+package com.promineotech.musiclibrary.repository;
+
+import com.promineotech.musiclibrary.entity.Album;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AlbumRepository extends JpaRepository<Album, Long> { }
+Copy
+package com.promineotech.musiclibrary.repository;
+
+import com.promineotech.musiclibrary.entity.Genre;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface GenreRepository extends JpaRepository<Genre, Long> { }
+Copy
+All basic CRUD methods (save, findAll, findById, deleteById, …) are inherited automatically.
+
+5️⃣ Service layer (optional but keeps controllers thin)
+Create a service package and a class per entity, e.g.:
+
+package com.promineotech.musiclibrary.service;
+
+import com.promineotech.musiclibrary.entity.Artist;
+import com.promineotech.musiclibrary.repository.ArtistRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ArtistService {
+
+    private final ArtistRepository repo;
+
+    public List<Artist> findAll()            => repo.findAll();
+    public Artist   findById(Long id)        => repo.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    public Artist   create(Artist a)         => repo.save(a);
+    public Artist   update(Long id, Artist a){
+        Artist existing = findById(id);
+        existing.setName(a.getName());
+        existing.setDescription(a.getDescription());
+        return repo.save(existing);
+    }
+    public void     delete(Long id)          => repo.deleteById(id);
+}
+Copy
+Repeat similar services for Album and Genre.
+For the many‑to‑many part you’ll add two extra service methods:
+
+public Album addGenre(Long albumId, Long genreId) {
+    Album album = albumRepo.findById(albumId).orElseThrow(...);
+    Genre genre = genreRepo.findById(genreId).orElseThrow(...);
+    album.getGenres().add(genre);
+    return albumRepo.save(album);   // INSERT into album_genre
+}
+
+public Album removeGenre(Long albumId, Long genreId) {
+    Album album = albumRepo.findById(albumId).orElseThrow(...);
+    Genre genre = genreRepo.findById(genreId).orElseThrow(...);
+    album.getGenres().remove(genre);
+    return albumRepo.save(album);   // DELETE from album_genre
+}
+Copy
+These two methods give you CRUD on the join table (add = Create, remove = Delete). Reading the relationship is just a normal GET on the Album.
+
+6️⃣ Controllers (REST endpoints)
+Create a controller package. Below is a compact version; you can split each entity into its own controller class if you prefer.
+
+package com.promineotech.musiclibrary.controller;
+
+import com.promineotech.musiclibrary.entity.*;
+import com.promineotech.musiclibrary.service.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
+public class MusicController {
+
+    private final ArtistService artistSvc;
+    private final AlbumService  albumSvc;
+    private final GenreService  genreSvc;
+
+    /* ---------- Artist ---------- */
+    @GetMapping("/artists")
+    public List<Artist> allArtists() { return artistSvc.findAll(); }
+
+    @PostMapping("/artists")
+    public Artist createArtist(@RequestBody Artist a) { return artistSvc.create(a); }
+
+    @GetMapping("/artists/{id}")
+    public Artist getArtist(@PathVariable Long id) { return artistSvc.findById(id); }
+
+    @PutMapping("/artists/{id}")
+    public Artist updateArtist(@PathVariable Long id, @RequestBody Artist a) { return artistSvc.update(id, a); }
+
+    @DeleteMapping("/artists/{id}")
+    public ResponseEntity<Void> deleteArtist(@PathVariable Long id) {
+        artistSvc.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /* ---------- Album ---------- */
+    @GetMapping("/albums")
+    public List<Album> allAlbums() { return albumSvc.findAll(); }
+
+    @PostMapping("/albums")
+    public Album createAlbum(@RequestBody Album a) { return albumSvc.create(a); }
+
+    @GetMapping("/albums/{id}")
+    public Album getAlbum(@PathVariable Long id) { return albumSvc.findById(id); }
+
+    @PutMapping("/albums/{id}")
+    public Album updateAlbum(@PathVariable Long id, @RequestBody Album a) { return albumSvc.update(id, a); }
+
+    @DeleteMapping("/albums/{id}")
+    public ResponseEntity<Void> deleteAlbum(@PathVariable Long id) {
+        albumSvc.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /* ---------- Genre ---------- */
+    @GetMapping("/genres")
+    public List<Genre> allGenres() { return genreSvc.findAll(); }
+
+    @PostMapping("/genres")
+    public Genre createGenre(@RequestBody Genre g) { return genreSvc.create(g); }
+
+    @GetMapping("/genres/{id}")
+    public Genre getGenre(@PathVariable Long id) { return genreSvc.findById(id); }
+
+    @PutMapping("/genres/{id}")
+    public Genre updateGenre(@PathVariable Long id, @RequestBody Genre g) { return genreSvc.update(id, g); }
+
+    @DeleteMapping("/genres/{id}")
+    public ResponseEntity<Void> deleteGenre(@PathVariable Long id) {
+        genreSvc.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /* ---------- Join‑table operations ---------- */
+    @PostMapping("/albums/{albumId}/genres/{genreId}")
+    public Album addGenreToAlbum(@PathVariable Long albumId, @PathVariable Long genreId) {
+        return albumSvc.addGenre(albumId, genreId);
+    }
+
+    @DeleteMapping("/albums/{albumId}/genres/{genreId}")
+    public Album removeGenreFromAlbum(@PathVariable Long albumId, @PathVariable Long genreId) {
+        return albumSvc.removeGenre(albumId, genreId);
+    }
+}
+Copy
+Important notes
+Jackson infinite‑recursion – Because Artist ⇆ Album ⇆ Genre are bi‑directional, you’ll get a stack overflow when serializing to JSON. Fix it with one of the following (pick one):
+
+// Option A – use Jackson annotations
+@JsonManagedReference   // on the parent side
+@JsonBackReference      // on the child side
+Copy
+// Option B – use @JsonIgnore on the back‑reference collection
+@JsonIgnore
+private Set<Album> albums;
+Copy
+Validation – Add javax.validation annotations (@NotBlank, @Size, etc.) on DTOs or entity fields and annotate controller parameters with @Valid if you want request‑body validation.
+
+Swagger / OpenAPI – If you want a UI to explore the API, add the SpringDoc dependency (see section 8).
+
+7️⃣ Run the application
+Build: mvn clean install (or use Eclipse → Run As → Maven build).
+
+Start: mvn spring-boot:run (or run MusicLibraryApplication as a Java Application).
+
+Check the console – you should see Hibernate DDL statements (because ddl-auto: update).
+
+Test – open Postman (or Swagger UI, see next section) and hit the endpoints, e.g.:
+
+POST http://localhost:8080/api/artists with body
+{"name":"DJ Alpha","description":"Electro‑house pioneer"}
+Copy
+GET http://localhost:8080/api/albums – should return an empty list initially.
+Create an Album referencing the Artist ID you just got, then add a Genre, then call
+POST http://localhost:8080/api/albums/{albumId}/genres/{genreId} to insert a row into album_genre.
+Delete the same URL with DELETE to remove the row (CRUD on the join table).
+If everything works, you have satisfied:
+
+One‑to‑many (Artist → Album)
+Many‑to‑many (Album ↔ Genre) with explicit add/remove endpoints (CRUD on the join table)
+Full CRUD on each entity (Artist, Album, Genre) – at least one entity (all three) has all four operations.
+8️⃣ (Optional) Add Swagger / OpenAPI UI
+Add the following dependency to pom.xml:
+
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.5.0</version>
+</dependency>
+Copy
+Then restart the app and visit:
+
+http://localhost:8080/swagger-ui.html
+You’ll get an interactive UI that lists all the endpoints you just coded – great for quick manual testing and for the “tested through Swagger” part of the rubric.
+
+9️⃣ Quick checklist to verify you meet every project requirement
+Requirement	How you satisfy it
+JPA persistence layer	Entities annotated with @Entity; repositories extend JpaRepository.
+All CRUD on a table	Controllers expose POST/GET/PUT/DELETE for Artist, Album, Genre.
+CRUD on join table	POST /albums/{a}/genres/{g} → INSERT, DELETE … → DELETE rows in album_genre.
+≥ 3 entities / tables	Artist, Album, Genre (join table is auto‑generated).
+One‑to‑many	Artist → Album (@OneToMany).
+Many‑to‑many	Album ↔ Genre (@ManyToMany with album_genre).
+All 4 CRUD ops on at least one entity	All three entities have full CRUD endpoints.
+REST API	@RestController with JSON payloads.
+Testable via Swagger/Postman	Swagger UI added (optional) + Postman examples provided.
+Use Spring JPA	spring-boot-starter-data-jpa in pom, JpaRepository usage.
+10️⃣ Next steps after you verify everything works
+Commit the code (including the .mwb file you saved earlier) to your Git repo.
+Write a short README that lists:
+How to start the app (mvn spring-boot:run).
+Base URL (http://localhost:8080/api).
+Sample curl/Postman requests for each endpoint.
+Link to the Swagger UI.
+Add unit/integration tests (optional but nice for grading). Use @SpringBootTest and MockMvc to hit the endpoints.
+Push the repo to GitHub/Bitbucket and share the link with your instructor.
+---
+
+
+Set Up Project Structure with Spring Boot:
+
+Use Spring Initializer to create a new project:
+Dependencies: Spring Web, Spring Data JPA, H2 Database (for testing), PostgreSQL or MySQL (if you prefer for production), Lombok (to reduce boilerplate code).
+Define Entities and Relationships:
+
+Create Java classes corresponding to each table with appropriate annotations:
+@Entity for each entity class.
+@Id for primary keys.
+@Column for other attributes.
+@OneToMany(mappedBy = "artist") in Artist (since Album has the foreign key).
+@ManyToOne in Album to reference Artist.
+@ManyToMany with @JoinTable(name = "album_genre") in both Album and Genre, along with appropriate annotations for join columns.
+Create JPA Repositories:
+
+Define interfaces extending JpaRepository<EntityClass, PrimaryKeyType> for each entity:
+ArtistRepository, AlbumRepository, GenreRepository.
+For the many-to-many relationship, you might need custom methods in Album or Genre repositories to handle operations on the join table.
+Build REST Controllers:
+
+Create controllers using @RestController and @RequestMapping annotations:
+Each controller will handle CRUD operations for its respective entity.
+Use @Autowired to inject the JPA repositories.
+Implement methods with @GetMapping, @PostMapping, @PutMapping, @DeleteMapping annotations.
+Implement CRUD Operations:
+
+For each entity, implement methods to:
+Create new records (POST).
+Read existing records (GET by ID or all).
+Update existing records (PUT/PATCH).
+Delete records (DELETE).
+For the many-to-many relationship:
+Implement endpoints to add a genre to an album and remove a genre from an album.
+Testing:
+
+Use Postman, Swagger, or ARC to test all CRUD operations for each entity and the join table.
+
+Artist Entity:
+@Entity
+@Table(name = "artist")
+public class Artist {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long artist_id;
+    @Column(length = 255)
+    private String name;
+    private String notes;
+    // ... other fields and getters/setters
+}
+
+Album Entity:
+@Entity
+@Table(name = "album")
+public class Album {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long album_id;
+    @Column(length = 255)
+    private String title;
+    private Integer release_year;
+
+    @ManyToOne
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
+
+    // ... other fields and getters/setters
+}
+
+Genre Entity:
+@Entity
+@Table(name = "genre")
+public class Genre {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long genre_id;
+    @Column(length = 100)
+    private String name;
+    private String description;
+    // ... other fields and getters/setters
+}
+
+Okay, I can definitely help you plan and structure this project! It’s a classic JPA/Spring Boot REST API with CRUD operations on multiple tables—a good learning exercise. Let’s break it down step by step.
+
+Project Overview:
+
+You need to build a REST API for managing albums, artists, and genres. The relationships are:
+
+One-to-Many: An Artist can have many Albums (Artist ↔ Album).
+Many-to-Many: An Album can belong to multiple Genres, and a Genre can be associated with multiple Albums (Album ↔ Genre via the album_genre join table).
+Entities:
+
+Artist:
+
+artist_id (Primary Key)
+name
+notes
+created_at, updated_at
+Album:
+
+album_id (Primary Key)
+title
+release_year
+artist_id (Foreign Key to Artist)
+created_at, updated_at
+Genre:
+
+genre_id (Primary Key)
+name
+description
+created_at, updated_at
+AlbumGenre (Join Table):
+
+album_id (Foreign Key to Album)
+genre_id (Foreign Key to Genre)
+created_at, updated_at
+CRUD Operations Requirements:
+
+Artist: All 4 CRUD operations (Create, Read, Update, Delete).
+Album: All 4 CRUD operations.
+Genre: At least one CRUD operation (likely Create and Read would suffice here, but check project requirements again).
+AlbumGenre: CRUD operations on the join table—adding and deleting rows in this table (i.e., associating/removing albums from genres).
+Steps to Build:
+
+Set Up Project Structure with Spring Boot:
+
+Use Spring Initializr to create a new project:
+Dependencies: Spring Web, Spring Data JPA, H2 Database (for testing), PostgreSQL or MySQL (if you prefer for production), Lombok (to reduce boilerplate code).
+Define Entities and Relationships:
+
+Create Java classes corresponding to each table with appropriate annotations:
+@Entity for each entity class.
+@Id for primary keys.
+@Column for other attributes.
+@OneToMany(mappedBy = "artist") in Artist (since Album has the foreign key).
+@ManyToOne in Album to reference Artist.
+@ManyToMany with @JoinTable(name = "album_genre") in both Album and Genre, along with appropriate annotations for join columns.
+Create JPA Repositories:
+
+Define interfaces extending JpaRepository<EntityClass, PrimaryKeyType> for each entity:
+ArtistRepository, AlbumRepository, GenreRepository.
+For the many-to-many relationship, you might need custom methods in Album or Genre repositories to handle operations on the join table.
+Build REST Controllers:
+
+Create controllers using @RestController and @RequestMapping annotations:
+Each controller will handle CRUD operations for its respective entity.
+Use @Autowired to inject the JPA repositories.
+Implement methods with @GetMapping, @PostMapping, @PutMapping, @DeleteMapping annotations.
+Implement CRUD Operations:
+
+For each entity, implement methods to:
+Create new records (POST).
+Read existing records (GET by ID or all).
+Update existing records (PUT/PATCH).
+Delete records (DELETE).
+For the many-to-many relationship:
+Implement endpoints to add a genre to an album and remove a genre from an album.
+Testing:
+
+Use Postman, Swagger, or ARC to test all CRUD operations for each entity and the join table.
+Example Code Snippets (Illustrative):
+
+Artist Entity:
+
+@Entity
+@Table(name = "artist")
+public class Artist {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long artist_id;
+    @Column(length = 255)
+    private String name;
+    private String notes;
+    // ... other fields and getters/setters
+}
+
+Album Entity:
+
+@Entity
+@Table(name = "album")
+public class Album {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long album_id;
+    @Column(length = 255)
+    private String title;
+    private Integer release_year;
+
+    @ManyToOne
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
+
+    // ... other fields and getters/setters
+}
+Genre Entity:
+
+@Entity
+@Table(name = "genre")
+public class Genre {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long genre_id;
+    @Column(length = 100)
+    private String name;
+    private String description;
+    // ... other fields and getters/setters
+}
+
+AlbumGenre Entity (Join Table):
+
+@Entity
+@Table(name = "album_genre")
+public class AlbumGenre {
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "album_id")
+    private Album album;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
+
+    // ... other fields and getters/setters
+}
+
+AlbumRepository (for handling many-to-many):
+You might need a custom method to add or remove genres from an album. For example:
+
+public interface AlbumRepository extends JpaRepository<Album, Long> {
+    @Query("SELECT ag FROM AlbumGenre ag WHERE ag.album = :album")
+    List<AlbumGenre> findGenresByAlbum(@Param("album") Album album);
+
+    // Custom method to add a genre to an album (you might implement this in service layer)
+}
+
+
+-------
+
+
+-- MySQL Script generated by MySQL Workbench
+-- Fri Nov  7 20:39:56 2025
+-- Model: New Model    Version: 1.0
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema music_library
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema music_library
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `music_library` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `music_library` ;
+
+-- -----------------------------------------------------
+-- Table `music_library`.`artist`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `music_library`.`artist` (
+  `artist_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `notes` TEXT NULL DEFAULT NULL COMMENT 'Description or other notes',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`artist_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `music_library`.`album`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `music_library`.`album` (
+  `album_id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `release_year` YEAR NULL DEFAULT NULL,
+  `artist_id` INT NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`album_id`),
+  INDEX `fk_album_artist` (`artist_id` ASC) VISIBLE,
+  CONSTRAINT `fk_album_artist`
+    FOREIGN KEY (`artist_id`)
+    REFERENCES `music_library`.`artist` (`artist_id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `music_library`.`genre`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `music_library`.`genre` (
+  `genre_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`genre_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `music_library`.`album_genre`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `music_library`.`album_genre` (
+  `album_id` INT NOT NULL,
+  `genre_id` INT NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`album_id`, `genre_id`),
+  INDEX `fk_ag_genre` (`genre_id` ASC) VISIBLE,
+  CONSTRAINT `fk_ag_album`
+    FOREIGN KEY (`album_id`)
+    REFERENCES `music_library`.`album` (`album_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_ag_genre`
+    FOREIGN KEY (`genre_id`)
+    REFERENCES `music_library`.`genre` (`genre_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+
+--------------------
+
+
+CREATE DATABASE IF NOT EXISTS music_library;
+USE music_library;
+
+-- -------------------------------------------------
+-- Artist
+-- -------------------------------------------------
+CREATE TABLE Artist (
+    artist_id   INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL,
+    bio      TEXT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- -------------------------------------------------
+-- Album
+-- -------------------------------------------------
+CREATE TABLE Album (
+    album_id    INT AUTO_INCREMENT PRIMARY KEY,
+    title       VARCHAR(255) NOT NULL,
+    release_year YEAR,
+    artist_id   INT NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_album_artist
+        FOREIGN KEY (artist_id) REFERENCES Artist(artist_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- -------------------------------------------------
+-- Genre
+-- -------------------------------------------------
+CREATE TABLE Genre (
+    genre_id    INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- -------------------------------------------------
+-- Join table (snake_case version)
+-- -------------------------------------------------
+CREATE TABLE album_genre (
+    album_id    INT NOT NULL,
+    genre_id    INT NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (album_id, genre_id),
+    CONSTRAINT fk_ag_album
+        FOREIGN KEY (album_id) REFERENCES Album(album_id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_ag_genre
+        FOREIGN KEY (genre_id) REFERENCES Genre(genre_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+--
+
+Things to keep in mind
+No Song/Track table – You’ll only be able to store album‑level metadata (title, year, etc.). 
+If you ever need per-track data (duration, composer, play count, etc.) you’ll have to 
+add a Track table later and link it to Album.
+Cascade rules – I used ON DELETE RESTRICT for Album → Artist (so you don’t accidentally delete 
+an artist and lose all their albums). The join table cascades deletes, which is usually handy 
+for cleaning up orphaned rows. Adjust to your project’s requirements.
+Indexes – MySQL automatically indexes primary keys. 
+Adding an index on Album.artist_id and on both FK columns of Album_Genre 
+can improve query speed if the dataset grows.
+
+
+
+--------------------------
+Old plan:
+--------------------------
+
+1. Entities & Tables: see image
+-
+
+2. JPA Entity Sketches
+
+// ---------- Artist ----------
+@Entity
+@Table(name = "artist")
+public class Artist {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long artistId;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(length = 2000)
+    private String bio;
+
+    @OneToMany(mappedBy = "artist",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)
+    private Set<Album> albums = new HashSet<>();
+
+    // getters / setters / constructors omitted for brevity
+}
+
+// ---------- Album ----------
+@Entity
+@Table(name = "album")
+public class Album {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long albumId;
+
+    @Column(nullable = false)
+    private String title;
+
+    private Integer releaseYear;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id", nullable = false)
+    private Artist artist;
+
+    @ManyToMany
+    @JoinTable(name = "album_genre",
+        joinColumns = @JoinColumn(name = "album_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres = new HashSet<>();
+
+    // getters / setters / constructors omitted
+}
+
+// ---------- Genre ----------
+@Entity
+@Table(name = "genre")
+public class Genre {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long genreId;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(length = 1000)
+    private String description;
+
+    @ManyToMany(mappedBy = "genres")
+    private Set<Album> albums = new HashSet<>();
+
+    // getters / setters / constructors omitted
+}
+
+The album_genre join table is created automatically because of the @ManyToMany mapping.
+
+
+-
+3. Repository Interfaces (Spring Data)
+
+public interface ArtistRepository extends JpaRepository<Artist, Long> {}
+
+public interface AlbumRepository extends JpaRepository<Album, Long> {}
+
+public interface GenreRepository extends JpaRepository<Genre, Long> {}
+
+No extra repository is needed for the join table – you’ll manipulate the relationship 
+through the Album and Genre services.
+
+-
+
+4. Service Layer (high-level responsibilities)
+ArtistService: CRUD for artists; when deleting an artist, cascade-delete all its albums 
+(thanks to orphanRemoval).
+AlbumService: CRUD for albums; methods to addGenre(albumId, genreId), removeGenre(albumId, genreId), 
+and replaceGenres(albumId, Set) – these are the CRUD operations on the many-to-many relationship.
+GenreService: CRUD for genres; optional helper to list all albums belonging to a genre.
+
+Each service validates existence of foreign keys before performing the operation and 
+throws a ResourceNotFoundException (mapped to HTTP 404).
+
+-
+
+5. REST Controllers & Endpoints (Postman-ready): see images
+All endpoints return standard JSON payloads and proper HTTP status codes 
+(201 Created on POST, 204 No Content on successful DELETE, 404 when a resource isn’t found, etc.).
+
+-
+
+6. Sample Seed Data (5‑10 rows)
+You can load this with a simple data.sql file placed in src/main/resources (Spring Boot runs it on startup).
+
+INSERT INTO artist (artist_id, name, bio) VALUES
+(1, 'The Beatles', 'Legendary English rock band'),
+(2, 'Daft Punk', 'French electronic duo');
+
+INSERT INTO genre (genre_id, name, description) VALUES
+(1, 'Rock', 'Guitar-driven popular music'),
+(2, 'Pop', 'Catchy mainstream tunes'),
+(3, 'Electronic', 'Synthesizers and drum machines');
+
+INSERT INTO album (album_id, title, release_year, artist_id) VALUES
+(1, 'Abbey Road', 1969, 1),
+(2, 'Revolver', 1966, 1),
+(3, 'Discovery', 2001, 2);
+
+-- Join rows (album ↔ genre)
+INSERT INTO album_genre (album_id, genre_id) VALUES
+(1, 1), (1, 2),          -- Abbey Road is Rock & Pop
+(2, 1),                  -- Revolver is Rock
+(3, 3);                  -- Discovery is Electronic
+
+
+That gives you 2 artists, 3 albums, 3 genres, and a handful of join rows,
+enough to test every CRUD path in Postman.
+
+-
+
+7.  Testing with Postman / ARC
+Import a collection – you can export the table above as a Postman collection (JSON) 
+or manually create the requests using the endpoint table.
+Run the “Smoke Test” sequence
+GET /api/artists → expect 2 items.
+POST /api/artists → create a new artist, capture its ID.
+POST /api/albums → create an album for that artist.
+POST /api/albums/{newAlbumId}/genres/1 → link a genre.
+GET /api/albums/{newAlbumId}/genres → verify the link exists.
+DELETE /api/albums/{newAlbumId}/genres/1 → remove the link.
+DELETE /api/artists/{newArtistId} → cascade delete the album.
+All responses should match the expected status codes; 
+any failure indicates a missing cascade or a mis-configured mapping.
+
+-
+
+8. What to Show in Your Portfolio:
+GitHub repo with a clean commit history (initial scaffold → entity creation → CRUD controllers → seed data).
+  - Demonstrates version‑control discipline.
+README that explains the domain, shows the ER diagram (Artist‑1 → * Album ‒ M ↔ * Genre), 
+lists the API endpoints, and includes a Postman collection download link.
+  - Makes it easy for anyone to spin up and test the project.
+Live demo (optional) on Render, Railway, or Fly.io – just a single docker run or heroku deploy.
+  - Shows you can ship a Spring Boot service to the cloud.
+Screenshots of Swagger UI (/swagger-ui.html) and a few Postman request/response pairs.
+  - Visual proof of a documented, testable API.
+Future roadmap (e.g., add Track entity, playlists, user authentication).
+  - Signals that the project can grow beyond the boot‑camp requirement.
+  
+-
+
+Next Steps:
+Generate the Spring Boot starter (https://start.spring.io) with dependencies: Spring Web, Spring Data JPA, H2 (or MySQL/PostgreSQL if you prefer), Lombok, Springdoc OpenAPI UI.
+Create the three entity classes exactly as shown.
+Add the repositories, services, and controllers (copy the endpoint signatures).
+Drop the data.sql file into src/main/resources to pre‑populate the DB.
+Run the app (./mvnw spring-boot:run) and open Swagger (http://localhost:8080/swagger-ui.html) to verify the API surface.
+Export a Postman collection from Swagger or manually build it, then commit everything to GitHub.
+That’s all you need to turn the music‑collection idea into a production‑ready, interview‑showcase project.

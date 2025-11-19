@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import music.library.dto.CreateArtistRequest;
 import music.library.entity.Artist;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.ArtistRepository;
-import music.library.dto.CreateArtistRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -36,11 +36,11 @@ public class ArtistService {
     public Artist create(Artist a) {
         return repo.save(a);
     }
-    
-    public Artist create(CreateArtistRequest request) {
+
+    public Artist createArtist(CreateArtistRequest request) {
         Artist artist = new Artist();
         artist.setName(request.getName());
-        artist.setDescription(request.getBio());
+        artist.setDescription(request.getDescription());
         return repo.save(artist);
     }
 
