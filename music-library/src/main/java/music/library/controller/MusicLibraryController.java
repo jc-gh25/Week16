@@ -32,6 +32,7 @@ import music.library.entity.Artist;
 import music.library.entity.Genre;
 import music.library.service.AlbumService;
 import music.library.service.ArtistService;
+import music.library.service.DatabaseResetService;
 import music.library.service.GenreService;
 
 @RestController
@@ -44,6 +45,8 @@ public class MusicLibraryController {
 	private AlbumService albumSvc;
 	@Autowired
 	private GenreService genreSvc;
+	@Autowired
+	private DatabaseResetService resetSvc;
 	
 	@Operation(
 		summary = "Create a new artist",
@@ -172,5 +175,22 @@ public class MusicLibraryController {
 	@GetMapping("/genres/{genreId}/albums")
 	public List<Album> getAlbumsByGenre(@PathVariable Long genreId) {
 		return albumSvc.findByGenreId(genreId);
+	}
+	
+	@Operation(
+		summary = "Reset database",
+		description = "Deletes all data from the database (albums, artists, and genres) in the correct order to avoid foreign key constraint violations. Use with caution - this operation cannot be undone!"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "204",
+			description = "Database successfully reset - all data deleted",
+			content = @Content(mediaType = "application/json")
+		)
+	})
+	@DeleteMapping("/reset")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void resetDatabase() {
+		resetSvc.resetDatabase();
 	}
 }
