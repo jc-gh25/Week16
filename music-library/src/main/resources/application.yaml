@@ -1,6 +1,6 @@
 # -------------------------------------------------------------
-# Spring Boot configuration – Railway + MySQL (free tier)
-# -------------------------------------------------------------
+# Spring Boot configuration for Railway (MySQL free tier)
+# -----------------------------------------------
 spring:
   datasource:
     # Railway injects DATABASE_URL automatically.
@@ -9,36 +9,32 @@ spring:
     url: ${DATABASE_URL}?useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # ----------------------------------------
-  # JPA / Hibernate
   # ---------------------------------------------------------
+  # JPA / Hibernate – let Hibernate create/update tables automatically
+  # -----------------------------------------------------
   jpa:
-    # Let Flyway run first, then start JPA. This breaks the circular‑depends‑on.
-    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: none          # Flyway will create the schema; Hibernate must not.
-    show-sql: true           # Prints SQL to the console (helpful for debugging)
+      ddl-auto: update          # creates/updates tables on the fly
+    show-sql: true             # prints SQL statements to the console (debug)
 
-  # ------------------------------------------------------
-  # Flyway – database migrations (optional, keep if you have *.sql files)
   # --------------------------------------------------
+  # Flyway – disabled for now (you can re‑enable later if you add migrations)
+  # ---------------------------------------------------------
   flyway:
-    enabled: true
-    baseline-on-migrate: true          # Safe for a brand‑new DB
-    locations: classpath:db/migration   # Default location; keep it or change as needed
+    enabled: false
 
-  # ------------------------------------------------------
+  # ----------------------------------------------
   # Springdoc / Swagger UI (nice for manual testing)
   # ---------------------------------------------------------
   springdoc:
     api-docs:
-      path: /v3/api-docs
+      path: /v3/api-docs       # default, kept explicit
     swagger-ui:
       enabled: true
-      path: /swagger-ui.html
+      path: /swagger-ui.html   # default UI entry point
 
-# ----------------------------------------------
-# Miscellaneous – we don’t want Spring to run any plain .sql scripts at startup
+# ---------------------------------------------------------
+# Prevent Spring from executing any plain .sql scripts at startup
 # ---------------------------------------------------------
 sql:
   init:
