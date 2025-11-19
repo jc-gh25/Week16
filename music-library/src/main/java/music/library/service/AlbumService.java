@@ -1,5 +1,7 @@
 package music.library.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Hibernate;    // for explicit init
@@ -10,10 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import music.library.dto.CreateAlbumRequest;
 import music.library.entity.Album;
+import music.library.entity.Artist;
 import music.library.entity.Genre;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.AlbumRepository;
+import music.library.repository.ArtistRepository;
 import music.library.repository.GenreRepository;
 import music.library.specification.AlbumSpecs;
 
@@ -25,6 +30,7 @@ public class AlbumService {
 
 	private final AlbumRepository albumRepo;
 	private final GenreRepository genreRepo;
+	private final ArtistRepository artistRepo;
 	
 	// CRUD
 
@@ -43,6 +49,34 @@ public class AlbumService {
 
 	public Album create(Album a) {
 		return albumRepo.save(a);
+	}
+
+	// Create album using DTO with artist and genre IDs
+	public Album createAlbum(CreateAlbumRequest request) {
+		// Fetch the artist
+		Artist artist = artistRepo.findById(request.getArtistId())
+			.orElseThrow(() -> new ResourceNotFoundException(
+				"Artist with ID " + request.getArtistId() + " not found"));
+		
+		// Fetch all genres
+		List<Genre> genres = new ArrayList<>();
+		if (request.getGenreIds() != null && !request.getGenreIds().isEmpty()) {
+			for (Long genreId : request.getGenreIds()) {
+				Genre genre = genreRepo.findById(genreId)
+					.orElseThrow(() -> new ResourceNotFoundException(
+						"Genre with ID " + genreId + " not found"));
+				genres.add(genre);
+			}
+		}
+		
+		// Create the album
+		Album album = new Album();
+		album.setTitle(request.getTitle());
+		album.setReleaseDate(request.getReleaseDate());
+		album.setArtist(artist);
+		album.setGenres(new HashSet<>(genres));
+		
+		return albumRepo.save(album);
 	}
 
 	public Album update(Long id, Album a) {
@@ -106,7 +140,7 @@ public class AlbumService {
 		}
 
 		// If the call supplied no criteria at all, `spec` will stay null.
-		// `JpaSpecificationExecutor.findAll(null, pageable)` treats a null spec as “match everything”.
+		// `JpaSpecificationExecutor.findAll(null, pageable)` treats a null spec as "match everything".
 		return albumRepo.findAll(spec, pageable);
 	}
 	

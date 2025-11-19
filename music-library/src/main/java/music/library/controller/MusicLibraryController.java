@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import music.library.dto.CreateAlbumRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -107,8 +108,8 @@ public class MusicLibraryController {
 	
 	@PostMapping("/albums")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Album createAlbum(@Valid @RequestBody Album a) {
-		return albumSvc.create(a);
+	public Album createAlbum(@Valid @RequestBody CreateAlbumRequest request) {
+		return albumSvc.createAlbum(request);
 	}
 	
 	@GetMapping("/albums")
