@@ -1,74 +1,197 @@
-# Music Library API
+# 🎵 Music Library API
 
-A RESTful API for managing a music library built with Spring Boot and MySQL. This project provides endpoints for managing artists, albums, and songs with full CRUD operations.
+A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This production-ready application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, relationship queries, comprehensive testing, and deployment to Railway.
+
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-Educational-yellow.svg)](LICENSE)
+
+## 📋 Table of Contents
+
+- [Project Overview](#-project-overview)
+- [Technology Stack](#️-technology-stack)
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+- [API Documentation](#-api-documentation)
+- [API Endpoints](#-api-endpoints)
+- [Data Models](#-data-models)
+- [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
+- [Project Structure](#️-project-structure)
+- [Configuration](#-configuration)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Error Handling](#-error-handling)
+
+---
 
 ## 🎵 Project Overview
 
-The Music Library API allows you to:
-- Manage artists with biographical information
-- Organize albums by artists
-- Track songs within albums
-- Perform comprehensive searches and filtering
-- Handle relationships between artists, albums, and songs
+The Music Library API is a portfolio-quality Spring Boot application that demonstrates modern backend development practices. It provides a complete solution for managing a music catalog with:
+
+- **Artists** - Musicians and bands with biographical information
+- **Albums** - Music releases with detailed metadata (release dates, cover art, track counts, catalog numbers)
+- **Genres** - Musical categories with many-to-many relationships to albums
+- **Relationship Queries** - Find albums by artist or genre
+- **Database Management** - Reset functionality for development/testing
+
+### Key Capabilities
+
+✅ Full CRUD operations for all entities  
+✅ Pagination and sorting on all list endpoints  
+✅ Input validation with detailed error messages  
+✅ Automatic timestamp tracking (createdAt, updatedAt)  
+✅ OpenAPI 3.0 specification with interactive Swagger UI  
+✅ Comprehensive test suite (unit, integration, repository tests)  
+✅ Production deployment on Railway  
+✅ Environment-based configuration  
+
+---
 
 ## 🛠️ Technology Stack
 
-- **Backend Framework**: Spring Boot 3.x
-- **Database**: MySQL 8.0+
-- **ORM**: Spring Data JPA / Hibernate
-- **API Documentation**: Swagger/OpenAPI 3
-- **Build Tool**: Maven
-- **Java Version**: 17+
+### Core Framework
+- **Spring Boot**: 3.5.7
+- **Java**: 17
+- **Maven**: Build automation and dependency management
+
+### Database & Persistence
+- **MySQL**: 8.0+ (production)
+- **H2**: In-memory database (testing)
+- **Spring Data JPA**: Data access abstraction
+- **Hibernate**: ORM implementation
+
+### API & Documentation
+- **Spring Web**: RESTful API framework
+- **SpringDoc OpenAPI**: 2.8.14 (Swagger UI)
+- **Bean Validation (JSR-380)**: Input validation
+
+### Testing
+- **JUnit 5**: Testing framework
+- **Spring Boot Test**: Integration testing support
+- **Mockito**: 5.2.0 (mocking framework with inline support)
+- **Testcontainers**: Real MySQL containers for integration tests
+- **JaCoCo**: 0.8.12 (code coverage reporting)
+
+### Utilities
+- **Lombok**: Boilerplate code reduction
+- **Jackson**: JSON serialization/deserialization
+
+---
+
+## ✨ Features
+
+### API Features
+- **RESTful Design**: Standard HTTP methods (GET, POST, PUT, DELETE)
+- **Pagination**: All list endpoints support `page`, `size`, and `sort` parameters
+- **Relationship Queries**: Get albums by artist or genre
+- **Input Validation**: Comprehensive validation with detailed error messages
+- **Standardized Errors**: Consistent `ApiError` responses with timestamps and details
+- **Automatic Timestamps**: `createdAt` and `updatedAt` tracked automatically
+- **Database Reset**: Development endpoint to reset database state
+
+### Technical Features
+- **DTO Pattern**: Separate request/response objects for clean API contracts
+- **Global Exception Handling**: Centralized error handling with `@ControllerAdvice`
+- **Bidirectional Relationships**: Properly managed JPA relationships
+- **Lazy Loading**: Optimized database queries with lazy fetching
+- **Cascade Operations**: Automatic relationship management
+- **Environment Configuration**: YAML-based config with environment variables
+- **Comprehensive Testing**: Unit, integration, and repository tests
+- **Code Coverage**: JaCoCo reports for test coverage metrics
+
+---
 
 ## 📋 Prerequisites
 
 Before running this application, ensure you have:
 
-- Java 17 or higher installed
-- MySQL 8.0+ running locally or accessible remotely
-- Maven 3.6+ for building the project
-- Git for version control
+- **Java 17** or higher installed ([Download](https://www.oracle.com/java/technologies/downloads/))
+- **MySQL 8.0+** running locally or accessible remotely ([Download](https://dev.mysql.com/downloads/))
+- **Maven 3.6+** for building the project ([Download](https://maven.apache.org/download.cgi))
+- **Git** for version control ([Download](https://git-scm.com/downloads))
+
+---
 
 ## 🚀 Getting Started
 
 ### 1. Clone the Repository
+
 ```bash
-git clone <repository-url>
-cd Week16
+git clone https://github.com/jc-gh25/MusicLibrary.git
+cd MusicLibrary
 ```
 
 ### 2. Database Setup
-Create a MySQL database for the application:
+
+Create a MySQL database and user:
+
 ```sql
 CREATE DATABASE music_library;
-CREATE USER 'music_user'@'localhost' IDENTIFIED BY 'your_password';
+CREATE USER 'music_user'@'localhost' IDENTIFIED BY 'your_secure_password';
 GRANT ALL PRIVILEGES ON music_library.* TO 'music_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-### 3. Configure Database Connection
-Update `src/main/resources/application.properties` with your database credentials:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/music_library
-spring.datasource.username=music_user
-spring.datasource.password=your_password
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+### 3. Configure Environment Variables
+
+The application uses environment variables for database configuration. Set these in your environment or create a `.env` file:
+
+```bash
+# Database Configuration
+export MYSQL_HOST=localhost
+export MYSQL_PORT=3306
+export MYSQL_DATABASE=music_library
+export MYSQL_USER=music_user
+export MYSQL_PASSWORD=your_secure_password
+
+# Server Configuration (optional)
+export PORT=8080
 ```
 
-### 4. Build and Run
+**Note**: The application uses `src/main/resources/application.yaml` which references these environment variables. See [Configuration](#-configuration) section for details.
+
+### 4. Build the Project
+
 ```bash
-# Build the project
+# Clean and compile
 mvn clean compile
 
-# Run the application
+# Run tests (optional)
+mvn test
+
+# Package the application
+mvn package
+```
+
+### 5. Run the Application
+
+```bash
+# Using Maven
 mvn spring-boot:run
+
+# Or run the JAR directly
+java -jar target/music-library-0.0.1-SNAPSHOT.jar
 ```
 
 The API will be available at `http://localhost:8080`
 
-### 5. Load Sample Data (Optional)
-To populate the database with sample data, run the provided scripts:
+### 6. Verify Installation
+
+Visit the API info endpoint:
+```bash
+curl http://localhost:8080/api
+```
+
+Or open Swagger UI in your browser:
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+### 7. Load Sample Data (Optional)
+
+To populate the database with sample data, use the provided Postman collection:
 
 **Windows:**
 ```bash
@@ -81,163 +204,738 @@ chmod +x populate-music-library.sh
 ./populate-music-library.sh
 ```
 
+Or import the Postman collection located at: `src/test/resources/Music-Library-Sample-Data.postman_collection.json`
+
+---
+
 ## 📚 API Documentation
 
-Once the application is running, you can access the interactive API documentation at:
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **OpenAPI Spec**: `http://localhost:8080/v3/api-docs`
+Once the application is running, access the interactive API documentation:
+
+- **Swagger UI (Local)**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **Swagger UI (Deployed)**: [https://javabc.up.railway.app/swagger-ui.html](https://javabc.up.railway.app/swagger-ui.html)
+- **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+- **OpenAPI YAML**: [http://localhost:8080/v3/api-docs.yaml](http://localhost:8080/v3/api-docs.yaml)
+- **API Info (Local)**: [http://localhost:8080/api](http://localhost:8080/api)
+- **API Info (Deployed)**: [https://javabc.up.railway.app/api](https://javabc.up.railway.app/api)
+
+The Swagger UI provides:
+- Interactive endpoint testing
+- Request/response schemas
+- Example payloads
+- Authentication details (if applicable)
+
+---
 
 ## 🎯 API Endpoints
 
+### General
+
+| Method | Endpoint | Description | Status |
+|--------|----------|-------------|--------|
+| GET | `/api` | API information and available endpoints | 200 |
+
 ### Artists
-- `GET /api/artists` - Get all artists (paginated)
-- `GET /api/artists/{id}` - Get artist by ID
-- `POST /api/artists` - Create new artist
-- `PUT /api/artists/{id}` - Update artist
-- `DELETE /api/artists/{id}` - Delete artist
+
+| Method | Endpoint | Description | Status |
+|--------|----------|-------------|--------|
+| POST | `/api/artists` | Create a new artist | 201 |
+| GET | `/api/artists` | Get all artists (paginated) | 200 |
+| GET | `/api/artists/{id}` | Get artist by ID | 200 |
+| PUT | `/api/artists/{id}` | Update an artist | 200 |
+| DELETE | `/api/artists/{id}` | Delete an artist | 204 |
+| GET | `/api/artists/{artistId}/albums` | Get all albums by artist | 200 |
 
 ### Albums
-- `GET /api/albums` - Get all albums (paginated)
-- `GET /api/albums/{id}` - Get album by ID
-- `GET /api/albums/artist/{artistId}` - Get albums by artist
-- `POST /api/albums` - Create new album
-- `PUT /api/albums/{id}` - Update album
-- `DELETE /api/albums/{id}` - Delete album
 
-### Songs
-- `GET /api/songs` - Get all songs (paginated)
-- `GET /api/songs/{id}` - Get song by ID
-- `GET /api/songs/album/{albumId}` - Get songs by album
-- `POST /api/songs` - Create new song
-- `PUT /api/songs/{id}` - Update song
-- `DELETE /api/songs/{id}` - Delete song
+| Method | Endpoint | Description | Status |
+|--------|----------|-------------|--------|
+| POST | `/api/albums` | Create a new album | 201 |
+| GET | `/api/albums` | Get all albums (paginated) | 200 |
+| GET | `/api/albums/{id}` | Get album by ID | 200 |
+| PUT | `/api/albums/{id}` | Update an album | 200 |
+| DELETE | `/api/albums/{id}` | Delete an album | 204 |
+
+### Genres
+
+| Method | Endpoint | Description | Status |
+|--------|----------|-------------|--------|
+| POST | `/api/genres` | Create a new genre | 201 |
+| GET | `/api/genres` | Get all genres (paginated) | 200 |
+| GET | `/api/genres/{id}` | Get genre by ID | 200 |
+| PUT | `/api/genres/{id}` | Update a genre | 200 |
+| DELETE | `/api/genres/{id}` | Delete a genre | 204 |
+| GET | `/api/genres/{genreId}/albums` | Get all albums by genre | 200 |
+
+### Database Management
+
+| Method | Endpoint | Description | Status |
+|--------|----------|-------------|--------|
+| DELETE | `/api/reset?confirm=true` | Reset database (requires confirmation) | 200 |
+
+### Query Parameters
+
+All list endpoints support pagination and sorting:
+
+- **`page`** - Page number (zero-based, default: 0)
+- **`size`** - Items per page (default: 20)
+- **`sort`** - Sort criteria (format: `field,direction`)
+  - Examples: `name,asc`, `createdAt,desc`, `title,asc`
+
+**Example Requests:**
+
+```bash
+# Get first page of artists, sorted by name
+GET /api/artists?page=0&size=10&sort=name,asc
+
+# Get second page of albums, sorted by release date descending
+GET /api/albums?page=1&size=20&sort=releaseDate,desc
+
+# Get all genres, sorted by name
+GET /api/genres?sort=name,asc
+```
+
+---
 
 ## 📊 Data Models
 
-### Artist
+### Artist Entity
+
+Represents a musician or band.
+
 ```json
 {
   "artistId": 1,
   "name": "The Rolling Stones",
-  "description": "Legendary British rock band",
-  "createdAt": "2024-01-01T00:00:00",
-  "updatedAt": "2024-01-01T00:00:00"
+  "description": "Legendary British rock band formed in 1962",
+  "createdAt": "2025-01-19T04:40:37",
+  "updatedAt": "2025-01-19T04:40:37"
 }
 ```
 
-### Album
+**Fields:**
+- `artistId` (Long) - Auto-generated primary key
+- `name` (String, required) - Artist name (max 255 characters)
+- `description` (String, optional) - Biographical information (TEXT)
+- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
+- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
+
+**Relationships:**
+- One-to-Many with Album (cascade all, orphan removal)
+
+---
+
+### Album Entity
+
+Represents a music album with detailed metadata.
+
 ```json
 {
   "albumId": 1,
   "title": "Sticky Fingers",
+  "releaseDate": "1971-04-23",
   "releaseYear": 1971,
-  "artistId": 1,
-  "createdAt": "2024-01-01T00:00:00",
-  "updatedAt": "2024-01-01T00:00:00"
+  "coverImageUrl": "https://example.com/covers/sticky-fingers.jpg",
+  "trackCount": 10,
+  "catalogNumber": "COC-59100",
+  "artist": {
+    "artistId": 1,
+    "name": "The Rolling Stones"
+  },
+  "genres": [
+    {
+      "genreId": 1,
+      "name": "Rock"
+    }
+  ],
+  "createdAt": "2025-01-19T04:40:37",
+  "updatedAt": "2025-01-19T04:40:37"
 }
 ```
 
-### Song
+**Fields:**
+- `albumId` (Long) - Auto-generated primary key
+- `title` (String, required) - Album title (max 255 characters)
+- `releaseDate` (LocalDate, optional) - Full release date
+- `releaseYear` (Integer, computed) - Derived from releaseDate (transient field)
+- `coverImageUrl` (String, optional) - URL to album cover image (max 255 characters)
+- `trackCount` (Integer, optional) - Number of tracks on the album
+- `catalogNumber` (String, optional) - Unique catalog identifier (max 50 characters)
+- `artist` (Artist, required) - Many-to-One relationship with Artist
+- `genres` (Set<Genre>, optional) - Many-to-Many relationship with Genre
+- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
+- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
+
+**Relationships:**
+- Many-to-One with Artist (required)
+- Many-to-Many with Genre (via `album_genre` join table)
+
+---
+
+### Genre Entity
+
+Represents a musical genre or category.
+
 ```json
 {
-  "songId": 1,
-  "title": "Brown Sugar",
-  "duration": 219,
-  "albumId": 1,
-  "createdAt": "2024-01-01T00:00:00",
-  "updatedAt": "2024-01-01T00:00:00"
+  "genreId": 1,
+  "name": "Rock",
+  "description": "Rock music genre characterized by electric guitars and strong rhythms",
+  "createdAt": "2025-01-19T04:40:37",
+  "updatedAt": "2025-01-19T04:40:37"
 }
 ```
 
-## 🔍 Query Parameters
+**Fields:**
+- `genreId` (Long) - Auto-generated primary key
+- `name` (String, required) - Genre name (max 100 characters)
+- `description` (String, optional) - Genre description (TEXT)
+- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
+- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
 
-Most GET endpoints support pagination and sorting:
-- `page` - Page number (default: 0)
-- `size` - Items per page (default: 20)
-- `sort` - Sort criteria (e.g., `name,asc` or `createdAt,desc`)
+**Relationships:**
+- Many-to-Many with Album (inverse side, mapped by `genres`)
 
-Example:
+---
+
+## 📦 DTOs (Data Transfer Objects)
+
+The API uses DTOs to separate internal entity representations from external API contracts.
+
+### CreateArtistRequest
+
+Used for creating new artists.
+
+```json
+{
+  "name": "The Beatles",
+  "description": "Iconic British rock band from Liverpool"
+}
 ```
-GET /api/artists?page=0&size=10&sort=name,asc
+
+### CreateAlbumRequest
+
+Used for creating new albums.
+
+```json
+{
+  "title": "Abbey Road",
+  "artistId": 1,
+  "genreIds": [1, 2],
+  "releaseDate": "1969-09-26",
+  "coverImageUrl": "https://example.com/covers/abbey-road.jpg",
+  "trackCount": 17,
+  "catalogNumber": "PCS-7088"
+}
 ```
 
-## 🧪 Testing with Postman
+### CreateGenreRequest
 
-A comprehensive Postman collection is included in the project:
-- **Collection File**: `Music-Library-Sample-Data.postman_collection.json`
-- **Documentation**: `README-SAMPLE-DATA.md`
+Used for creating new genres.
 
-Import the collection into Postman to test all endpoints with sample data.
+```json
+{
+  "name": "Progressive Rock",
+  "description": "Complex rock music with experimental elements"
+}
+```
+
+### ApiInfoResponse
+
+Returned by `GET /api` endpoint with comprehensive API information.
+
+### DatabaseResetResponse
+
+Returned by `DELETE /api/reset` endpoint with reset statistics.
+
+---
 
 ## 🏗️ Project Structure
 
 ```
-src/
-├── main/
-│   ├── java/com/javabc/musiclibrary/
-│   │   ├── controller/          # REST controllers
-│   │   ├── model/              # Entity classes
-│   │   ├── repository/         # Data access layer
-│   │   ├── service/            # Business logic
-│   │   └── MusicLibraryApplication.java
-│   └── resources/
-│       ├── application.properties
-│       └── static/             # Static web content
-└── test/                       # Unit and integration tests
+music-library/
+├── src/
+│   ├── main/
+│   │   ├── java/music/library/
+│   │   │   ├── MusicLibraryApplication.java    # Main application class
+│   │   │   ├── controller/                     # REST controllers
+│   │   │   │   └── MusicLibraryController.java
+│   │   │   ├── entity/                         # JPA entities
+│   │   │   │   ├── Artist.java
+│   │   │   │   ├── Album.java
+│   │   │   │   └── Genre.java
+│   │   │   ├── repository/                     # Spring Data repositories
+│   │   │   │   ├── ArtistRepository.java
+│   │   │   │   ├── AlbumRepository.java
+│   │   │   │   └── GenreRepository.java
+│   │   │   ├── service/                        # Business logic layer
+│   │   │   │   ├── ArtistService.java
+│   │   │   │   ├── AlbumService.java
+│   │   │   │   ├── GenreService.java
+│   │   │   │   └── DatabaseResetService.java
+│   │   │   ├── dto/                            # Data Transfer Objects
+│   │   │   │   ├── CreateArtistRequest.java
+│   │   │   │   ├── CreateAlbumRequest.java
+│   │   │   │   ├── CreateGenreRequest.java
+│   │   │   │   ├── ApiInfoResponse.java
+│   │   │   │   └── DatabaseResetResponse.java
+│   │   │   ├── exception/                      # Exception handling
+│   │   │   │   ├── ResourceNotFoundException.java
+│   │   │   │   ├── GlobalExceptionHandler.java
+│   │   │   │   └── ApiError.java
+│   │   │   ├── config/                         # Configuration classes
+│   │   │   │   └── OpenApiConfig.java
+│   │   │   └── specification/                  # JPA Specifications (if used)
+│   │   └── resources/
+│   │       ├── application.yaml                # Main configuration
+│   │       ├── application-test.yaml           # Test profile configuration
+│   │       └── db/migration/                   # Flyway migration scripts
+│   │           ├── V1__create_initial_schema.sql
+│   │           └── V2__add_sample_data.sql
+│   └── test/
+│       └── java/music/library/
+│           ├── integration/                    # Integration tests
+│           │   ├── ArtistControllerIT.java
+│           │   ├── AlbumControllerIT.java
+│           │   ├── AlbumControllerUpdateDeleteIT.java
+│           │   └── GenreControllerIT.java
+│           ├── service/                        # Service layer tests
+│           │   ├── ArtistServiceTest.java
+│           │   ├── AlbumServiceTest.java
+│           │   └── AlbumServiceBidirectionalTest.java
+│           └── repository/                     # Repository tests
+│               └── AlbumRepositoryTest.java
+├── pom.xml                                     # Maven configuration
+├── README.md                                   # This file
+├── populate-music-library.bat                  # Windows data loader
+├── populate-music-library.sh                   # Unix data loader
+└── src/test/resources/
+    └── Music-Library-Sample-Data.postman_collection.json
 ```
+
+### Package Structure
+
+The application follows a standard layered architecture:
+
+- **`music.library`** - Root package
+  - **`controller`** - REST API endpoints (presentation layer)
+  - **`service`** - Business logic (service layer)
+  - **`repository`** - Data access (persistence layer)
+  - **`entity`** - JPA entities (domain model)
+  - **`dto`** - Data Transfer Objects (API contracts)
+  - **`exception`** - Custom exceptions and error handling
+  - **`config`** - Spring configuration classes
+  - **`specification`** - JPA Specifications for dynamic queries
+
+---
 
 ## 🔧 Configuration
 
-### Application Properties
-Key configuration options in `application.properties`:
+### Application Configuration (application.yaml)
 
-```properties
-# Server configuration
-server.port=8080
+The application uses YAML configuration with environment variables for flexibility:
 
-# Database configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/music_library
-spring.datasource.username=music_user
-spring.datasource.password=your_password
+```yaml
+# Server Configuration
+server:
+  port: ${PORT:8080}  # Use Railway's dynamic PORT, fallback to 8080 locally
 
-# JPA/Hibernate configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+# Database Configuration
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=true&requireSSL=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
 
-# Swagger configuration
-springdoc.api-docs.path=/v3/api-docs
-springdoc.swagger-ui.path=/swagger-ui.html
+  # JPA / Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate          # Flyway manages schema, Hibernate only validates
+    show-sql: true                # Print SQL statements (debug)
+
+  # Flyway Configuration
+  flyway:
+    enabled: true                 # Enable Flyway for schema management
+    locations: classpath:db/migration
+
+  # Springdoc / Swagger UI
+  springdoc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui.html
+      cors-enabled: true
+      servers:
+        - url: https://javabc.up.railway.app
+
+# Prevent Spring from executing plain .sql scripts
+sql:
+  init:
+    mode: never
 ```
+
+### Environment Variables
+
+Required environment variables:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MYSQL_HOST` | MySQL server hostname | `localhost` |
+| `MYSQL_PORT` | MySQL server port | `3306` |
+| `MYSQL_DATABASE` | Database name | `music_library` |
+| `MYSQL_USER` | Database username | `music_user` |
+| `MYSQL_PASSWORD` | Database password | `your_secure_password` |
+| `PORT` | Server port (optional) | `8080` |
+
+### Test Configuration (application-test.yaml)
+
+Tests use an H2 in-memory database for fast, isolated testing:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+```
+
+---
+
+## 🧪 Testing
+
+The application includes a comprehensive test suite covering multiple layers.
+
+### Test Structure
+
+```
+src/test/java/music/library/
+├── integration/              # Full stack integration tests
+│   ├── ArtistControllerIT.java
+│   ├── AlbumControllerIT.java
+│   ├── AlbumControllerUpdateDeleteIT.java
+│   └── GenreControllerIT.java
+├── service/                  # Service layer unit tests
+│   ├── ArtistServiceTest.java
+│   ├── AlbumServiceTest.java
+│   └── AlbumServiceBidirectionalTest.java
+└── repository/               # Repository layer tests
+    └── AlbumRepositoryTest.java
+```
+
+### Test Types
+
+#### 1. Integration Tests (`*IT.java`)
+
+Full-stack tests using `@SpringBootTest` and `MockMvc`:
+
+- Test complete request/response cycle
+- Use H2 in-memory database
+- Verify HTTP status codes, headers, and response bodies
+- Test pagination, sorting, and filtering
+- Validate error handling and edge cases
+
+**Example:**
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ArtistControllerIT {
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Test
+    void testCreateArtist() throws Exception {
+        mockMvc.perform(post("/api/artists")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"The Beatles\"}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name").value("The Beatles"));
+    }
+}
+```
+
+#### 2. Service Tests (`*Test.java`)
+
+Unit tests for business logic using Mockito:
+
+- Mock repository dependencies
+- Test service methods in isolation
+- Verify exception handling
+- Test bidirectional relationship management
+
+**Example:**
+```java
+@ExtendWith(MockitoExtension.class)
+class ArtistServiceTest {
+    @Mock
+    private ArtistRepository artistRepository;
+    
+    @InjectMocks
+    private ArtistService artistService;
+    
+    @Test
+    void testFindById_Success() {
+        Artist artist = new Artist();
+        artist.setArtistId(1L);
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
+        
+        Artist result = artistService.findById(1L);
+        
+        assertNotNull(result);
+        assertEquals(1L, result.getArtistId());
+    }
+}
+```
+
+#### 3. Repository Tests
+
+Tests for custom repository queries and JPA behavior:
+
+- Test custom query methods
+- Verify relationship mappings
+- Test cascade operations
+
+### Running Tests
+
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=ArtistControllerIT
+
+# Run tests with coverage report
+mvn verify
+
+# View coverage report
+open target/site/jacoco/index.html
+```
+
+### Test Coverage
+
+The project uses **JaCoCo** for code coverage reporting:
+
+- Coverage reports generated in `target/site/jacoco/`
+- HTML reports viewable in browser
+- Integrated with Maven `verify` phase
+
+### Test Configuration
+
+Tests use a separate profile (`test`) with H2 database:
+
+```yaml
+# application-test.yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+```
+
+The Maven Surefire plugin automatically activates the test profile:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+        <systemPropertyVariables>
+            <spring.profiles.active>test</spring.profiles.active>
+        </systemPropertyVariables>
+    </configuration>
+</plugin>
+```
+
+### Test Best Practices
+
+✅ Use `@TestInstance(PER_CLASS)` for efficient test data reuse  
+✅ Clean up test data in `@AfterEach` or `@AfterAll` methods  
+✅ Use meaningful test names (e.g., `testCreateArtist_WithValidData_ReturnsCreated`)  
+✅ Test both success and failure scenarios  
+✅ Verify exception messages and error responses  
+✅ Use `@Transactional` for tests that modify data  
+
+---
+
+## 🚀 Deployment
+
+The application is deployed to **Railway** with MySQL database.
+
+### Railway Deployment
+
+**Live Application**: [https://javabc.up.railway.app/index.html](https://javabc.up.railway.app/index.html)
+**Live API Base URL**: [https://javabc.up.railway.app/api](https://javabc.up.railway.app/api)
+**Live Swagger UI**: [https://javabc.up.railway.app/swagger-ui.html](https://javabc.up.railway.app/swagger-ui.html)
+
+#### Prerequisites
+
+1. Railway account ([Sign up](https://railway.app/))
+2. Railway CLI installed (optional)
+3. GitHub repository connected to Railway
+
+#### Deployment Steps
+
+1. **Create Railway Project**
+   - Connect GitHub repository
+   - Railway auto-detects Spring Boot application
+
+2. **Add MySQL Database**
+   - Add MySQL plugin from Railway marketplace
+   - Railway automatically sets environment variables:
+     - `MYSQL_HOST`
+     - `MYSQL_PORT`
+     - `MYSQL_DATABASE`
+     - `MYSQL_USER`
+     - `MYSQL_PASSWORD`
+
+3. **Configure Environment Variables**
+   - Railway sets `PORT` automatically
+   - Add any custom variables in Railway dashboard
+
+4. **Deploy**
+   - Push to GitHub main branch
+   - Railway automatically builds and deploys
+   - Flyway migrations run on startup
+
+#### Railway Configuration
+
+The application is configured for Railway deployment:
+
+```yaml
+server:
+  port: ${PORT:8080}  # Railway provides PORT variable
+
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=true&requireSSL=true
+```
+
+#### Monitoring
+
+Railway provides:
+- Real-time logs
+- Metrics dashboard
+- Deployment history
+- Database backups
+
+#### Custom Domain (Optional)
+
+Configure custom domain in Railway dashboard:
+1. Go to Settings → Domains
+2. Add custom domain
+3. Update DNS records
+
+---
 
 ## 🚨 Error Handling
 
-The API includes comprehensive error handling with appropriate HTTP status codes:
-- `200 OK` - Successful requests
-- `201 Created` - Successful resource creation
-- `400 Bad Request` - Invalid request data
-- `404 Not Found` - Resource not found
-- `500 Internal Server Error` - Server errors
+The API uses a global exception handler (`@ControllerAdvice`) for consistent error responses.
 
-## 🤝 Contributing
+### Standard Error Response
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+All errors return an `ApiError` object:
+
+```json
+{
+  "timestamp": "2025-01-19T10:30:45",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Artist not found with id: 999",
+  "path": "/api/artists/999"
+}
+```
+
+### HTTP Status Codes
+
+| Status Code | Description | Example |
+|-------------|-------------|---------|
+| **200 OK** | Successful GET/PUT request | Artist retrieved successfully |
+| **201 Created** | Successful POST request | Artist created successfully |
+| **204 No Content** | Successful DELETE request | Artist deleted successfully |
+| **400 Bad Request** | Invalid input data | Missing required field |
+| **404 Not Found** | Resource not found | Artist with ID 999 not found |
+| **500 Internal Server Error** | Server error | Database connection failed |
+
+### Validation Errors
+
+Input validation errors return detailed field-level errors:
+
+```json
+{
+  "timestamp": "2025-01-19T10:30:45",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": {
+    "name": "Artist name must not be blank",
+    "description": "Description must be ≤ 1000 characters"
+  },
+  "path": "/api/artists"
+}
+```
+
+### Exception Types
+
+- **`ResourceNotFoundException`** - Entity not found (404)
+- **`MethodArgumentNotValidException`** - Validation failure (400)
+- **`HttpMessageNotReadableException`** - Malformed JSON (400)
+- **`DataIntegrityViolationException`** - Database constraint violation (400)
+- **`Exception`** - Generic server error (500)
+
+---
 
 ## 📝 License
 
-This project is part of a Java/MySQL bootcamp (Week 16) and is for educational purposes.
+This project is part of a Java/MySQL backend development bootcamp (Week 16) and is for **educational purposes**.
+
+---
 
 ## 📞 Support
 
-For questions or issues:
-1. Check the API documentation at `/swagger-ui.html`
-2. Review the sample data documentation in `README-SAMPLE-DATA.md`
-3. Test endpoints using the provided Postman collection
+For questions, issues, or feedback:
+
+1. **Check the API documentation**: [Swagger UI](https://javabc.up.railway.app/swagger-ui.html)
+2. **Review test examples**: See `src/test/java/music/library/`
+3. **Check Postman collection**: `src/test/resources/Music-Library-Sample-Data.postman_collection.json`
 
 ---
+
+## 🎓 Learning Outcomes
+
+This project demonstrates proficiency in:
+
+✅ **Spring Boot 3.x** - Modern Spring framework features  
+✅ **RESTful API Design** - Standard HTTP methods and status codes  
+✅ **JPA/Hibernate** - Entity relationships and lazy loading  
+✅ **Database Migrations** - Flyway version control  
+✅ **Testing** - Unit, integration, and repository tests  
+✅ **API Documentation** - OpenAPI/Swagger specification  
+✅ **Deployment** - Production deployment to Railway  
+✅ **Error Handling** - Global exception handling  
+✅ **Input Validation** - Bean Validation (JSR-380)  
+✅ **DTO Pattern** - Separation of concerns  
+✅ **Environment Configuration** - YAML with environment variables  
+
+---
+
+## 🙏 Acknowledgments
+
+- **Spring Boot Team** - Excellent framework and documentation
+- **Quickstart** - Backend development bootcamp
+- **Railway** - Simple and powerful deployment platform
+
+---
+
+**Built with ❤️ by JC - Backend Developer**
 
 **Happy coding! 🎵**
