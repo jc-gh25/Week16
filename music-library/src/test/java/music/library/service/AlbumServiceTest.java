@@ -10,16 +10,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.ActiveProfiles;
 
 import music.library.entity.Album;
 import music.library.entity.Genre;
@@ -34,6 +36,7 @@ import music.library.repository.GenreRepository;
  * Specification usage – don’t need to test the internals of AlbumSpecs here;
  * just confirm the service forwards the spec and pageable to the repository. */
 
+@ExtendWith(MockitoExtension.class)
 
 class AlbumServiceTest {
 
@@ -46,10 +49,6 @@ class AlbumServiceTest {
     @InjectMocks
     private AlbumService albumService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     /* ---------- findById ---------- */
     @Test
@@ -115,7 +114,7 @@ class AlbumServiceTest {
 
         // Mock the repository call – we don't care about the actual spec internals,
         // just that the service forwards the spec and pageable.
-        when(albumRepo.findAll(any(Specification.class), any(Pageable.class)))
+        when(albumRepo.findAll((Specification<Album>) any(), any(Pageable.class)))
                 .thenReturn(page);
 
         Page<Album> result = albumService.search("promised", 1997, 1997, null,
@@ -123,6 +122,6 @@ class AlbumServiceTest {
 
         assertThat(result.getTotalElements()).isOne();
         assertThat(result.getContent().get(0).getTitle()).containsIgnoringCase("promised");
-        verify(albumRepo).findAll(any(Specification.class), any(Pageable.class));
+        verify(albumRepo).findAll((Specification<Album>) any(), any(Pageable.class));
     }
 }

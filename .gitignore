@@ -25,10 +25,6 @@ buildNumber.properties
 *.ipr
 out/
 
-# VS Code
-.vscode/
-*.code-workspace
-
 # NetBeans
 /nbproject/private/
 /nbbuild/
@@ -75,6 +71,7 @@ application-prod.properties
 *-prod.yml
 
 # Personal Notes
+notes
 notes.txt
 TODO.txt
 *.md.backup
@@ -104,9 +101,3 @@ replay_pid*
 
 # Compiled Class Files
 *.class
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/

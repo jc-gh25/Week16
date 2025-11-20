@@ -15,12 +15,18 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import music.library.entity.Album;
 import music.library.entity.Artist;
@@ -109,11 +115,11 @@ class AlbumControllerIT {
     void getAllAlbums_paginated() {
         String url = baseUrl() + "/albums?page=0&size=1";
 
-        ResponseEntity<Page<Album>> response = restTemplate.exchange(
+        ResponseEntity<RestResponsePage<Album>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {}
+                new ParameterizedTypeReference<RestResponsePage<Album>>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -128,11 +134,11 @@ class AlbumControllerIT {
     void searchAlbums_byTitle_andGenre() {
         String url = baseUrl() + "/albums/search?title=jazz&genreId=" + savedGenre.getGenreId();
 
-        ResponseEntity<Page<Album>> response = restTemplate.exchange(
+        ResponseEntity<RestResponsePage<Album>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {}
+                new ParameterizedTypeReference<RestResponsePage<Album>>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -185,5 +191,31 @@ class AlbumControllerIT {
         ApiError err = response.getBody();
         assertThat(err).isNotNull();
         assertThat(err.getMessage()).contains("Album with id 99999 not found");
+    }
+
+    /**
+     * RestResponsePage is a Jackson-friendly wrapper for Spring Data's Page interface.
+     * Since Page is an interface, Jackson cannot instantiate it directly during deserialization.
+     * This class extends PageImpl and provides a @JsonCreator constructor that Jackson can use
+     * to properly deserialize paginated REST responses.
+     */
+    static class RestResponsePage<T> extends PageImpl<T> {
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        public RestResponsePage(@JsonProperty("content") List<T> content,
+                                @JsonProperty("number") int number,
+                                @JsonProperty("size") int size,
+                                @JsonProperty("totalElements") Long totalElements,
+                                @JsonProperty("pageable") JsonNode pageable,
+                                @JsonProperty("last") boolean last,
+                                @JsonProperty("totalPages") int totalPages,
+                                @JsonProperty("sort") JsonNode sort,
+                                @JsonProperty("first") boolean first,
+                                @JsonProperty("numberOfElements") int numberOfElements) {
+            super(content, PageRequest.of(number, size), totalElements);
+        }
+
+        public RestResponsePage(List<T> content) {
+            super(content);
+        }
     }
 }
