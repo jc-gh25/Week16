@@ -1,6 +1,10 @@
 package music.library.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,9 +29,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import music.library.dto.CreateAlbumRequest;
-import music.library.dto.CreateArtistRequest;
-import music.library.dto.CreateGenreRequest;
+28│import music.library.dto.ApiInfoResponse;
+29│import music.library.dto.ApiInfoResponse.Endpoint;
+30│import music.library.dto.ApiInfoResponse.EndpointCategory;
+31│import music.library.dto.CreateAlbumRequest;
+32│import music.library.dto.CreateArtistRequest;
+33│import music.library.dto.CreateGenreRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -98,6 +105,130 @@ public class MusicLibraryController {
 	private GenreService genreSvc;
 	@Autowired
 	private DatabaseResetService resetSvc;
+
+	/**
+	 * Welcome/Info endpoint for the Music Library API.
+	 * 
+	 * Provides comprehensive information about the API including available endpoints,
+	 * documentation links, features, and metadata. This endpoint serves as the entry
+	 * point for developers exploring the API.
+	 * 
+	 * @return ApiInfoResponse containing project information, endpoints, and resources
+	 */
+	@Operation(
+		summary = "API Welcome & Information", 
+		description = "Returns comprehensive information about the Music Library API, including available endpoints, documentation links, features, and metadata. Perfect for developers getting started with the API."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200", 
+			description = "Successfully retrieved API information",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ApiInfoResponse.class)
+			)
+		)
+	})
+	@GetMapping
+	public ApiInfoResponse getApiInfo() {
+		// Documentation links
+		Map<String, String> documentation = new LinkedHashMap<>();
+		documentation.put("swagger-ui", "/swagger-ui/index.html");
+		documentation.put("api-docs", "/v3/api-docs");
+		documentation.put("openapi-json", "/v3/api-docs.yaml");
+		documentation.put("github", "https://github.com/jc-gh25/music-library");
+		
+		// Build endpoint categories
+		List<EndpointCategory> endpoints = new ArrayList<>();
+		
+		// Artists endpoints
+		endpoints.add(new EndpointCategory(
+			"Artists",
+			"Manage music artists in the library",
+			Arrays.asList(
+				new Endpoint("POST", "/api/artists", "Create a new artist", "201"),
+				new Endpoint("GET", "/api/artists", "Get all artists (paginated)", "200"),
+				new Endpoint("GET", "/api/artists/{id}", "Get artist by ID", "200"),
+				new Endpoint("PUT", "/api/artists/{id}", "Update an artist", "200"),
+				new Endpoint("DELETE", "/api/artists/{id}", "Delete an artist", "204"),
+				new Endpoint("GET", "/api/artists/{artistId}/albums", "Get all albums by artist", "200")
+			)
+		));
+		
+		// Albums endpoints
+		endpoints.add(new EndpointCategory(
+			"Albums",
+			"Manage music albums in the library",
+			Arrays.asList(
+				new Endpoint("POST", "/api/albums", "Create a new album", "201"),
+				new Endpoint("GET", "/api/albums", "Get all albums (paginated)", "200"),
+				new Endpoint("GET", "/api/albums/{id}", "Get album by ID", "200"),
+				new Endpoint("PUT", "/api/albums/{id}", "Update an album", "200"),
+				new Endpoint("DELETE", "/api/albums/{id}", "Delete an album", "204")
+			)
+		));
+		
+		// Genres endpoints
+		endpoints.add(new EndpointCategory(
+			"Genres",
+			"Manage music genres in the library",
+			Arrays.asList(
+				new Endpoint("POST", "/api/genres", "Create a new genre", "201"),
+				new Endpoint("GET", "/api/genres", "Get all genres (paginated)", "200"),
+				new Endpoint("GET", "/api/genres/{id}", "Get genre by ID", "200"),
+				new Endpoint("PUT", "/api/genres/{id}", "Update a genre", "200"),
+				new Endpoint("DELETE", "/api/genres/{id}", "Delete a genre", "204"),
+				new Endpoint("GET", "/api/genres/{genreId}/albums", "Get all albums by genre", "200")
+			)
+		));
+		
+		// Database Management endpoints
+		endpoints.add(new EndpointCategory(
+			"Database Management",
+			"Administrative operations for database management",
+			Arrays.asList(
+				new Endpoint("DELETE", "/api/reset?confirm=true", "Reset database (requires confirmation)", "200")
+			)
+		));
+		
+		// API features
+		List<String> features = Arrays.asList(
+			"RESTful API design with standard HTTP methods",
+			"Comprehensive CRUD operations for Artists, Albums, and Genres",
+			"Pagination support on all list endpoints (page, size, sort parameters)",
+			"Relationship-based queries (albums by artist, albums by genre)",
+			"Input validation with detailed error messages",
+			"OpenAPI 3.0 specification with Swagger UI",
+			"Standardized error handling with ApiError responses",
+			"Automatic timestamp tracking (createdAt, updatedAt)",
+			"Database reset functionality for development/testing",
+			"JSON request/response format"
+		);
+		
+		// Metadata
+		Map<String, String> metadata = new LinkedHashMap<>();
+		metadata.put("framework", "Spring Boot 3.5.7");
+		metadata.put("java-version", "17");
+		metadata.put("database", "MySQL/H2");
+		metadata.put("build-tool", "Maven");
+		metadata.put("api-standard", "OpenAPI 3.0");
+		metadata.put("status", "Active Development");
+		
+		return new ApiInfoResponse(
+			"🎵 Music Library API",
+			"A comprehensive RESTful API for managing a music library with artists, albums, and genres. "
+			+ "Built with Spring Boot, this API provides full CRUD operations, pagination, relationship queries, "
+			+ "and follows industry best practices for API design and documentation.",
+			"1.0.0",
+			"Jeff - Backend Developer",
+			"jeff@jcarl.net",
+			"/api",
+			documentation,
+			endpoints,
+			features,
+			metadata
+		);
+	}
 
 	@Operation(summary = "Create a new artist", description = "Creates a new artist in the music library with the provided name and optional description. The artistId, createdAt, and updatedAt fields are automatically generated.")
 	@ApiResponses(value = {
