@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Library API - Backend Development Portfolio Project</title>
     <style>
@@ -28,7 +28,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000033;
             min-height: 100vh;
         }
 
@@ -144,8 +144,8 @@
         }
 
         .feature-card {
-            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
-            color: white;
+            background: linear-gradient(135deg, #93c5fd 0%, #bfdbfe 100%);
+            color: #1f2937;
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -183,7 +183,7 @@
         }
 
         .class-item {
-            background: var(--bg-white);
+            background: #ffffff;
             padding: 15px;
             border-radius: 6px;
             border: 1px solid var(--border-color);
@@ -327,7 +327,7 @@
                 database design, API development, testing strategies, and deployment practices. The application is deployed on Railway with full CI/CD integration.
             </p>
             <p>
-                <strong>Live API Base URL:</strong> <code class="highlight">https://javabc.up.railway.app/api</code>
+                <strong>Live API Base URL:</strong> <a href="https://javabc.up.railway.app/api" target="_blank" class="highlight" style="text-decoration: none;">https://javabc.up.railway.app/api</a>
             </p>
         </section>
 
@@ -363,7 +363,7 @@
                     <p>Interactive Swagger UI with comprehensive endpoint documentation, examples, and try-it-out functionality.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🧪 Comprehensive Testing</h4>
+                    <h4>🔬 Comprehensive Testing</h4>
                     <p>Unit tests, integration tests, and Testcontainers for database testing with JaCoCo code coverage reporting.</p>
                 </div>
                 <div class="feature-card">
@@ -386,7 +386,7 @@
                     </ul>
                 </div>
                 <div class="tech-card">
-                    <h4>Database & ORM</h4>
+                    <h4>Database &amp; ORM</h4>
                     <ul>
                         <li>MySQL (Production)</li>
                         <li>H2 Database (Testing)</li>
@@ -404,7 +404,7 @@
                     </ul>
                 </div>
                 <div class="tech-card">
-                    <h4>API & Documentation</h4>
+                    <h4>API &amp; Documentation</h4>
                     <ul>
                         <li>RESTful Architecture</li>
                         <li>SpringDoc OpenAPI 3</li>
@@ -609,7 +609,7 @@
             </div>
             <div class="api-endpoint">
                 <span class="endpoint-method method-get">GET</span>
-                <code>/api/artists?page=0&size=20&sort=name,asc</code> - Get paginated artists
+                <code>/api/artists?page=0&amp;size=20&amp;sort=name,asc</code> - Get paginated artists
             </div>
             <div class="api-endpoint">
                 <span class="endpoint-method method-get">GET</span>
@@ -635,7 +635,7 @@
             </div>
             <div class="api-endpoint">
                 <span class="endpoint-method method-get">GET</span>
-                <code>/api/albums?page=0&size=20</code> - Get paginated albums
+                <code>/api/albums?page=0&amp;size=20</code> - Get paginated albums
             </div>
             <div class="api-endpoint">
                 <span class="endpoint-method method-get">GET</span>
@@ -657,7 +657,7 @@
             </div>
             <div class="api-endpoint">
                 <span class="endpoint-method method-get">GET</span>
-                <code>/api/genres?page=0&size=20</code> - Get paginated genres
+                <code>/api/genres?page=0&amp;size=20</code> - Get paginated genres
             </div>
             <div class="api-endpoint">
                 <span class="endpoint-method method-get">GET</span>
@@ -714,7 +714,7 @@
             </div>
 
             <div class="tech-card">
-                <h4>🧪 Testing Strategy</h4>
+                <h4>✅ Testing Strategy</h4>
                 <p>Multi-layered testing approach:</p>
                 <ul>
                     <li>Unit tests with Mockito for service layer isolation</li>
@@ -765,11 +765,11 @@
                     <p>Layered architecture, separation of concerns, SOLID principles, design patterns</p>
                 </div>
                 <div class="feature-card">
-                    <h4>Testing & Quality</h4>
+                    <h4>Testing &amp; Quality</h4>
                     <p>Unit testing, integration testing, test-driven development, code coverage</p>
                 </div>
                 <div class="feature-card">
-                    <h4>DevOps & Deployment</h4>
+                    <h4>DevOps &amp; Deployment</h4>
                     <p>Docker containerization, cloud deployment, CI/CD, environment configuration</p>
                 </div>
                 <div class="feature-card">
@@ -817,5 +817,5 @@
             </div>
         </footer>
     </div>
-</body>
-</html>
+
+</body></html>
