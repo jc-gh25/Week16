@@ -4,6 +4,8 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Library API - Backend Development Portfolio Project</title>
+    <!-- Prism.js CSS for syntax highlighting (Light Theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
     <style>
         * {
             margin: 0;
@@ -129,12 +131,6 @@
             color: var(--text-dark);
         }
 
-        .tech-card li:before {
-            content: "✓ ";
-            color: var(--success-color);
-            font-weight: bold;
-            margin-right: 8px;
-        }
 
         .features-grid {
             display: grid;
@@ -233,10 +229,23 @@
             box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
         }
 
+        .btn-success {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+        }
+
         .btn-secondary {
             background: var(--bg-white);
             color: var(--primary-color);
             border: 2px solid var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn-secondary:hover {
@@ -270,8 +279,12 @@
         footer {
             text-align: center;
             padding: 30px;
-            color: white;
+            color: #b0b0b0;
             margin-top: 40px;
+        }
+
+        footer p {
+            color: #b0b0b0;
         }
 
         .highlight {
@@ -295,13 +308,92 @@
                 flex-direction: column;
             }
         }
+
+        /* Custom CSS for code wrapping */
+        pre[class*="language-"] {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        code[class*="language-"] {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Custom Prism color overrides for better readability */
+        pre[class*="language-"],
+        code[class*="language-"] {
+            background: #f8f9fa !important;
+            color: #24292e !important;
+        }
+
+        .token.comment,
+        .token.prolog,
+        .token.doctype,
+        .token.cdata {
+            color: #6a737d !important;
+        }
+
+        .token.punctuation {
+            color: #24292e !important;
+        }
+
+        .token.property,
+        .token.tag,
+        .token.boolean,
+        .token.number,
+        .token.constant,
+        .token.symbol,
+        .token.deleted {
+            color: #005cc5 !important;
+        }
+
+        .token.selector,
+        .token.attr-name,
+        .token.string,
+        .token.char,
+        .token.builtin,
+        .token.inserted {
+            color: #032f62 !important;
+        }
+
+        .token.operator,
+        .token.entity,
+        .token.url,
+        .language-css .token.string,
+        .style .token.string {
+            color: #d73a49 !important;
+        }
+
+        .token.atrule,
+        .token.attr-value,
+        .token.keyword {
+            color: #d73a49 !important;
+        }
+
+        .token.function,
+        .token.class-name {
+            color: #6f42c1 !important;
+        }
+
+        .token.annotation {
+            color: #22863a !important;
+            font-weight: bold !important;
+        }
+
+        .token.regex,
+        .token.important,
+        .token.variable {
+            color: #e36209 !important;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🎵 Music Library API</h1>
-            <p class="subtitle">A Professional RESTful API for Music Album Management</p>
+            <p class="subtitle">A RESTful API for Music Album Management</p>
             <div>
                 <span class="badge">Spring Boot 3.5.7</span>
                 <span class="badge">Java 17</span>
@@ -310,8 +402,8 @@
                 <span class="badge">RESTful</span>
             </div>
             <div class="cta-buttons">
-                <a href="https://javabc.up.railway.app/swagger-ui.html" class="btn btn-primary" target="_blank">🔧 Test the API (Swagger UI)</a>
-                <a href="https://github.com/jc-gh25/Week16/tree/main/music-library" class="btn btn-secondary" target="_blank">💻 View on GitHub</a>
+                <a href="https://javabc.up.railway.app/swagger-ui.html" class="btn btn-success" target="_blank">🔧 Test the API (Swagger UI)</a>
+                <a href="https://github.com/jc-gh25/MusicLibrary" class="btn btn-secondary" target="_blank">💻 View on GitHub</a>
             </div>
         </header>
 
@@ -323,7 +415,7 @@
                 for managing a music catalog including artists, albums, and genres with sophisticated relationship management. Album track integration can be added as the next feature.
             </p>
             <p>
-                Built with enterprise-level architecture patterns, this project showcases expertise in Spring Boot ecosystem, 
+                Built following best practices for layered architecture, this project showcases expertise in Spring Boot ecosystem, 
                 database design, API development, testing strategies, and deployment practices. The application is deployed on Railway with full CI/CD integration.
             </p>
             <p>
@@ -364,11 +456,11 @@
                 </div>
                 <div class="feature-card">
                     <h4>🔬 Comprehensive Testing</h4>
-                    <p>Unit tests, integration tests, and Testcontainers for database testing with JaCoCo code coverage reporting.</p>
+                    <p>Unit tests with Mockito, integration tests with Testcontainers for real database testing, and JaCoCo code coverage reporting.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🗄️ Database Migration</h4>
-                    <p>Flyway for version-controlled database schema management and repeatable deployments.</p>
+                    <h4>🗄️ Database Management</h4>
+                    <p>Hibernate DDL auto-update for automatic schema generation and management during development.</p>
                 </div>
             </div>
         </section>
@@ -391,7 +483,7 @@
                         <li>MySQL (Production)</li>
                         <li>H2 Database (Testing)</li>
                         <li>Hibernate ORM</li>
-                        <li>Flyway Migration</li>
+                        <li>Hibernate DDL Auto-Update</li>
                     </ul>
                 </div>
                 <div class="tech-card">
@@ -400,7 +492,7 @@
                         <li>Java 17</li>
                         <li>Maven Build Tool</li>
                         <li>Lombok</li>
-                        <li>Jackson JSON</li>
+                        <li>Jackson (JSON with Java 8 date/time)</li>
                     </ul>
                 </div>
                 <div class="tech-card">
@@ -416,9 +508,9 @@
                     <h4>Testing</h4>
                     <ul>
                         <li>JUnit 5</li>
-                        <li>Mockito</li>
-                        <li>Testcontainers</li>
-                        <li>JaCoCo Coverage</li>
+                        <li>Mockito (Unit testing framework)</li>
+                        <li>Testcontainers (Docker-based integration testing)</li>
+                        <li>JaCoCo (Code coverage analysis tool)</li>
                     </ul>
                 </div>
                 <div class="tech-card">
@@ -450,13 +542,13 @@
                 <div class="class-list">
                     <div class="class-item">
                         <h5>MusicLibraryController</h5>
-                        <code>@RestController</code>
+                        <pre><code class="language-java">@RestController</code></pre>
                         <p>Main REST controller exposing all API endpoints for Artists, Albums, and Genres. Implements comprehensive 
-                        OpenAPI annotations for documentation. Handles pagination with <code>@ParameterObject Pageable</code>.</p>
+                        OpenAPI annotations for documentation. Handles pagination with <code class="language-java">@ParameterObject Pageable</code>.</p>
                     </div>
                     <div class="class-item">
                         <h5>SwaggerRedirectController</h5>
-                        <code>@Controller</code>
+                        <pre><code class="language-java">@Controller</code></pre>
                         <p>Redirects root URL to Swagger UI for convenient API documentation access.</p>
                     </div>
                 </div>
@@ -466,24 +558,24 @@
                 <h4>⚙️ Service Layer (Business Logic)</h4>
                 <p>
                     Contains business logic, transaction management, and orchestrates operations between controllers and repositories. 
-                    Annotated with <code>@Service</code> and <code>@Transactional</code> for proper transaction boundaries.
+                    Annotated with <code class="language-java">@Service</code> and <code class="language-java">@Transactional</code> for proper transaction boundaries.
                 </p>
                 <div class="class-list">
                     <div class="class-item">
                         <h5>ArtistService</h5>
-                        <code>@Service @Transactional</code>
-                        <p>Manages artist CRUD operations with pagination support. Throws <code>ResourceNotFoundException</code> 
-                        for missing entities. Uses constructor injection via <code>@RequiredArgsConstructor</code>.</p>
+                        <pre><code class="language-java">@Service @Transactional</code></pre>
+                        <p>Manages artist CRUD operations with pagination support. Throws <code class="language-java">ResourceNotFoundException</code> 
+                        for missing entities. Uses constructor injection via <code class="language-java">@RequiredArgsConstructor</code>.</p>
                     </div>
                     <div class="class-item">
                         <h5>AlbumService</h5>
-                        <code>@Service @Transactional</code>
+                        <pre><code class="language-java">@Service @Transactional</code></pre>
                         <p>Handles album operations including complex many-to-many genre relationships. Implements advanced search 
                         using JPA Specifications. Manages bidirectional relationship synchronization with explicit Hibernate initialization.</p>
                     </div>
                     <div class="class-item">
                         <h5>GenreService</h5>
-                        <code>@Service @Transactional</code>
+                        <pre><code class="language-java">@Service @Transactional</code></pre>
                         <p>Manages genre entities and their album associations. Provides methods for adding/removing albums from genres 
                         while maintaining referential integrity.</p>
                     </div>
@@ -499,18 +591,18 @@
                 <div class="class-list">
                     <div class="class-item">
                         <h5>ArtistRepository</h5>
-                        <code>extends JpaRepository&lt;Artist, Long&gt;</code>
+                        <pre><code class="language-java">extends JpaRepository&lt;Artist, Long&gt;</code></pre>
                         <p>Data access interface for Artist entities. Inherits standard CRUD and pagination methods from JpaRepository.</p>
                     </div>
                     <div class="class-item">
                         <h5>AlbumRepository</h5>
-                        <code>extends JpaRepository, JpaSpecificationExecutor</code>
-                        <p>Repository with custom query methods: <code>findByArtist_ArtistId()</code> and <code>findByGenres_GenreId()</code>. 
+                        <pre><code class="language-java">extends JpaRepository, JpaSpecificationExecutor</code></pre>
+                        <p>Repository with custom query methods: <code class="language-java">findByArtist_ArtistId()</code> and <code class="language-java">findByGenres_GenreId()</code>. 
                         Implements JpaSpecificationExecutor for dynamic query building.</p>
                     </div>
                     <div class="class-item">
                         <h5>GenreRepository</h5>
-                        <code>extends JpaRepository&lt;Genre, Long&gt;</code>
+                        <pre><code class="language-java">extends JpaRepository&lt;Genre, Long&gt;</code></pre>
                         <p>Simple repository interface for Genre entity persistence operations.</p>
                     </div>
                 </div>
@@ -525,14 +617,14 @@
                 <div class="class-list">
                     <div class="class-item">
                         <h5>Artist</h5>
-                        <code>@Entity @Table(name="artist")</code>
+                        <pre><code class="language-java">@Entity @Table(name="artist")</code></pre>
                         <p><strong>Fields:</strong> artistId (PK), name (required, max 255), description (TEXT), createdAt, updatedAt<br>
                         <strong>Relationships:</strong> One-to-Many with Album (cascade ALL, orphan removal)<br>
                         <strong>Features:</strong> @PrePersist/@PreUpdate for timestamps, @JsonIgnore on albums collection to prevent cycles</p>
                     </div>
                     <div class="class-item">
                         <h5>Album</h5>
-                        <code>@Entity @Table(name="album")</code>
+                        <pre><code class="language-java">@Entity @Table(name="album")</code></pre>
                         <p><strong>Fields:</strong> albumId (PK), title (required), releaseDate, coverImageUrl, trackCount, catalogNumber (unique), 
                         createdAt, updatedAt<br>
                         <strong>Relationships:</strong> Many-to-One with Artist (required), Many-to-Many with Genre via join table<br>
@@ -540,7 +632,7 @@
                     </div>
                     <div class="class-item">
                         <h5>Genre</h5>
-                        <code>@Entity @Table(name="genre")</code>
+                        <pre><code class="language-java">@Entity @Table(name="genre")</code></pre>
                         <p><strong>Fields:</strong> genreId (PK), name (required, max 100), description (TEXT), createdAt, updatedAt<br>
                         <strong>Relationships:</strong> Many-to-Many with Album (inverse side, EAGER fetch for testing)<br>
                         <strong>Features:</strong> @JsonIgnore on albums to break serialization cycles, @EqualsAndHashCode.Exclude on collections</p>
@@ -556,11 +648,11 @@
                 <div class="class-list">
                     <div class="class-item">
                         <h5>AlbumSpecs</h5>
-                        <code>Specification&lt;Album&gt;</code>
+                        <pre><code class="language-java">Specification&lt;Album&gt;</code></pre>
                         <p>Provides static factory methods for album filtering:<br>
-                        • <code>titleContains(String)</code> - Case-insensitive title search<br>
-                        • <code>releasedBetween(Integer, Integer)</code> - Date range filtering<br>
-                        • <code>hasGenre(Long)</code> - Filter by genre association with JOIN</p>
+                        • <code class="language-java">titleContains(String)</code> - Case-insensitive title search<br>
+                        • <code class="language-java">releasedBetween(Integer, Integer)</code> - Date range filtering<br>
+                        • <code class="language-java">hasGenre(Long)</code> - Filter by genre association with JOIN</p>
                     </div>
                 </div>
             </div>
@@ -573,24 +665,24 @@
                 <div class="class-list">
                     <div class="class-item">
                         <h5>GlobalExceptionHandler</h5>
-                        <code>@RestControllerAdvice</code>
+                        <pre><code class="language-java">@RestControllerAdvice</code></pre>
                         <p>Handles multiple exception types with specific handlers:<br>
-                        • <code>MethodArgumentNotValidException</code> → 400 (validation errors)<br>
-                        • <code>ConstraintViolationException</code> → 400 (constraint violations)<br>
-                        • <code>ResourceNotFoundException</code> → 404 (entity not found)<br>
-                        • <code>MethodArgumentTypeMismatchException</code> → 400 (type errors)<br>
-                        • <code>HttpMessageNotReadableException</code> → 400 (malformed JSON)<br>
-                        • <code>Exception</code> → 500 (unexpected errors with logging)</p>
+                        • <code class="language-java">MethodArgumentNotValidException</code> → 400 (validation errors)<br>
+                        • <code class="language-java">ConstraintViolationException</code> → 400 (constraint violations)<br>
+                        • <code class="language-java">ResourceNotFoundException</code> → 404 (entity not found)<br>
+                        • <code class="language-java">MethodArgumentTypeMismatchException</code> → 400 (type errors)<br>
+                        • <code class="language-java">HttpMessageNotReadableException</code> → 400 (malformed JSON)<br>
+                        • <code class="language-java">Exception</code> → 500 (unexpected errors with logging)</p>
                     </div>
                     <div class="class-item">
                         <h5>ResourceNotFoundException</h5>
-                        <code>extends RuntimeException</code>
+                        <pre><code class="language-java">extends RuntimeException</code></pre>
                         <p>Custom exception thrown when requested entities don't exist. Automatically converted to 404 responses 
                         by GlobalExceptionHandler.</p>
                     </div>
                     <div class="class-item">
                         <h5>ApiError</h5>
-                        <code>@Builder</code>
+                        <pre><code class="language-java">@Builder</code></pre>
                         <p>Uniform error response DTO containing: timestamp, status code, error type, message, request path, 
                         and optional validation error list. Provides consistent error format across all endpoints.</p>
                     </div>
@@ -683,10 +775,10 @@
                 <h4>🔐 Data Validation</h4>
                 <p>Comprehensive input validation using Bean Validation (JSR-380) annotations:</p>
                 <ul>
-                    <li>@NotBlank, @Size for string fields</li>
-                    <li>@NotNull for required relationships</li>
-                    <li>@PositiveOrZero for numeric constraints</li>
-                    <li>Custom validation messages for user-friendly errors</li>
+                    <li>🛡️ @NotBlank, @Size for string fields</li>
+                    <li>🛡️ @NotNull for required relationships</li>
+                    <li>🛡️ @PositiveOrZero for numeric constraints</li>
+                    <li>🛡️ Custom validation messages for user-friendly errors</li>
                 </ul>
             </div>
 
@@ -694,11 +786,11 @@
                 <h4>🔄 Bidirectional Relationships</h4>
                 <p>Properly managed JPA relationships with:</p>
                 <ul>
-                    <li>Cascade operations for dependent entities</li>
-                    <li>Orphan removal for data integrity</li>
-                    <li>Explicit Hibernate.initialize() to prevent LazyInitializationException</li>
-                    <li>@JsonIgnore to break serialization cycles</li>
-                    <li>Custom setters for bidirectional synchronization</li>
+                    <li>🔗 Cascade operations for dependent entities</li>
+                    <li>🔗 Orphan removal for data integrity</li>
+                    <li>🔗 Explicit Hibernate.initialize() to prevent LazyInitializationException</li>
+                    <li>🔗 @JsonIgnore to break serialization cycles</li>
+                    <li>🔗 Custom setters for bidirectional synchronization</li>
                 </ul>
             </div>
 
@@ -706,10 +798,10 @@
                 <h4>📊 Advanced Querying</h4>
                 <p>Flexible data retrieval with:</p>
                 <ul>
-                    <li>Spring Data JPA derived query methods</li>
-                    <li>JPA Specifications for dynamic filtering</li>
-                    <li>Pagination and sorting support</li>
-                    <li>Property path navigation (e.g., findByArtist_ArtistId)</li>
+                    <li>🔍 Spring Data JPA derived query methods</li>
+                    <li>🔍 JPA Specifications for dynamic filtering</li>
+                    <li>🔍 Pagination and sorting support</li>
+                    <li>🔍 Property path navigation (e.g., findByArtist_ArtistId)</li>
                 </ul>
             </div>
 
@@ -717,11 +809,11 @@
                 <h4>✅ Testing Strategy</h4>
                 <p>Multi-layered testing approach:</p>
                 <ul>
-                    <li>Unit tests with Mockito for service layer isolation</li>
-                    <li>Integration tests with @SpringBootTest</li>
-                    <li>Testcontainers for real MySQL database testing</li>
-                    <li>JaCoCo for code coverage metrics</li>
-                    <li>Separate test profile with H2 in-memory database</li>
+                    <li>✔️ Unit tests with Mockito for service layer isolation</li>
+                    <li>✔️ Integration tests with @SpringBootTest</li>
+                    <li>✔️ Testcontainers for real MySQL database testing</li>
+                    <li>✔️ JaCoCo - Code coverage analysis tool that generates test coverage reports</li>
+                    <li>✔️ Separate test profile with H2 in-memory database</li>
                 </ul>
             </div>
 
@@ -729,10 +821,10 @@
                 <h4>🗄️ Database Management</h4>
                 <p>Professional database practices:</p>
                 <ul>
-                    <li>Flyway for version-controlled schema migrations</li>
-                    <li>Separate profiles for dev/test/production</li>
-                    <li>Proper indexing on foreign keys</li>
-                    <li>Timestamp tracking with @PrePersist/@PreUpdate</li>
+                    <li>⚙️ Hibernate DDL auto-update for automatic schema management</li>
+                    <li>⚙️ Separate profiles for dev/test/production</li>
+                    <li>⚙️ Proper indexing on foreign keys</li>
+                    <li>⚙️ Timestamp tracking with @PrePersist/@PreUpdate</li>
                 </ul>
             </div>
 
@@ -740,10 +832,10 @@
                 <h4>📖 API Documentation</h4>
                 <p>Comprehensive OpenAPI 3.0 documentation:</p>
                 <ul>
-                    <li>@Operation annotations with descriptions</li>
-                    <li>@ApiResponses for all status codes</li>
-                    <li>Request/response examples</li>
-                    <li>Interactive Swagger UI for testing</li>
+                    <li>📚 @Operation annotations with descriptions</li>
+                    <li>📚 @ApiResponses for all status codes</li>
+                    <li>📚 Request/response examples</li>
+                    <li>📚 Interactive Swagger UI for testing</li>
                 </ul>
             </div>
         </section>
@@ -790,7 +882,7 @@
 
             <h3>Running Locally</h3>
             <div class="api-endpoint">
-                <code>git clone https://github.com/yourusername/music-library.git</code>
+                <code>git clone https://github.com/jc-gh25/MusicLibrary.git</code>
             </div>
             <div class="api-endpoint">
                 <code>cd music-library</code>
@@ -798,7 +890,7 @@
             <div class="api-endpoint">
                 <code>mvn spring-boot:run</code>
             </div>
-            <p>Access the API at <code>http://localhost:8080/api</code> and Swagger UI at <code>http://localhost:8080/swagger-ui.html</code></p>
+            <p>Access the API at <code>https://javabc.up.railway.app/api</code> and Swagger UI at <code>https://javabc.up.railway.app/swagger-ui.html</code></p>
 
             <h3>Running Tests</h3>
             <div class="api-endpoint">
@@ -811,11 +903,14 @@
 
         <footer>
             <p>Built with ❤️ as a Backend Development Bootcamp Final Project</p>
-            <p>© 2025 Music Library API | Demonstrating Professional Backend Development Skills</p>
+            <p>Contact: <a href="mailto:jeff@jcarl.net" style="color: #3b82f6; text-decoration: none;">jeff@jcarl.net</a></p>
             <div class="cta-buttons" style="margin-top: 20px;">
                 <a href="https://javabc.up.railway.app/swagger-ui.html" class="btn btn-primary" target="_blank">Try the Live API</a>
             </div>
         </footer>
     </div>
 
+    <!-- Prism.js JavaScript for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
 </body></html>
