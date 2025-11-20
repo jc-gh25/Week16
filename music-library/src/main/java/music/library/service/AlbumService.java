@@ -167,8 +167,11 @@ public class AlbumService {
 	 * are automatically cleaned up via join table.
 	 * 
 	 * @param id the album ID to delete
+	 * @throws ResourceNotFoundException if album not found
 	 */
 	public void delete(Long id) {
+		// Check if album exists before deleting - throws 404 if not found
+		findById(id);
 		albumRepo.deleteById(id);
 	}
 

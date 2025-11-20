@@ -52,24 +52,26 @@ public class AlbumControllerIT {
     private ObjectMapper objectMapper;
 
     private String baseUrl;
-    private Artist testArtist;
-    private Genre testGenre;
+    private Long testArtistId;
+    private Long testGenreId;
 
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/api/albums";
         
-        // Create and save test artist
-        testArtist = new Artist();
+        // Create and save test artist - store only ID to avoid detached entity issues
+        Artist testArtist = new Artist();
         testArtist.setName("Test Artist");
         testArtist.setDescription("Test Description");
         testArtist = artistRepository.save(testArtist);
+        testArtistId = testArtist.getArtistId();
         
-        // Create and save test genre
-        testGenre = new Genre();
+        // Create and save test genre - store only ID to avoid detached entity issues
+        Genre testGenre = new Genre();
         testGenre.setName("Test Genre");
         testGenre.setDescription("Test Description");
         testGenre = genreRepository.save(testGenre);
+        testGenreId = testGenre.getGenreId();
     }
 
     @Test
@@ -78,8 +80,8 @@ public class AlbumControllerIT {
         CreateAlbumRequest albumRequest = new CreateAlbumRequest();
         albumRequest.setTitle("Test Album");
         albumRequest.setReleaseDate(LocalDate.of(2023, 1, 1));
-        albumRequest.setArtistId(testArtist.getArtistId());
-        albumRequest.setGenreIds(List.of(testGenre.getGenreId()));
+        albumRequest.setArtistId(testArtistId);
+        albumRequest.setGenreIds(List.of(testGenreId));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -94,14 +96,16 @@ public class AlbumControllerIT {
     }
 
     @Test
+    @Transactional
     void testGetAllAlbums() {
-        // Create test album using repository to ensure proper entity management
+        // Create test album using fresh managed entities to avoid detached entity issues
+        Artist managedArtist = artistRepository.findById(testArtistId).orElseThrow();
+        Genre managedGenre = genreRepository.findById(testGenreId).orElseThrow();
+        
         Album album = new Album();
         album.setTitle("Test Album");
         album.setReleaseDate(LocalDate.of(2023, 1, 1));
-        album.setArtist(testArtist);
-        // Use managed genre entity to avoid detached entity issues
-        Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
+        album.setArtist(managedArtist);
         album.setGenres(Set.of(managedGenre));
         albumRepository.save(album);
 
@@ -119,14 +123,16 @@ public class AlbumControllerIT {
     }
 
     @Test
+    @Transactional
     void testGetAlbumById() {
-        // Create test album using repository
+        // Create test album using fresh managed entities to avoid detached entity issues
+        Artist managedArtist = artistRepository.findById(testArtistId).orElseThrow();
+        Genre managedGenre = genreRepository.findById(testGenreId).orElseThrow();
+        
         Album album = new Album();
         album.setTitle("Test Album");
         album.setReleaseDate(LocalDate.of(2023, 1, 1));
-        album.setArtist(testArtist);
-        // Use managed genre entity to avoid detached entity issues
-        Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
+        album.setArtist(managedArtist);
         album.setGenres(Set.of(managedGenre));
         Album savedAlbum = albumRepository.save(album);
 

@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -57,6 +58,7 @@ public class AlbumControllerUpdateDeleteIT {
     private Album testAlbum;
 
     @BeforeEach
+    @Transactional
     void setUp() {
         baseUrl = "http://localhost:" + port + "/api/albums";
         
@@ -72,15 +74,8 @@ public class AlbumControllerUpdateDeleteIT {
         testGenre.setDescription("Test Description");
         testGenre = genreRepository.save(testGenre);
         
-        // Create and save test album
-        testAlbum = new Album();
-        testAlbum.setTitle("Original Album");
-        testAlbum.setReleaseDate(LocalDate.of(2023, 1, 1));
-        testAlbum.setArtist(testArtist);
-        // Use managed genre entity to avoid detached entity issues
-        Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
-        testAlbum.setGenres(Set.of(managedGenre));
-        testAlbum = albumRepository.save(testAlbum);
+        // Create and save test album with proper entity management
+        testAlbum = createTestAlbum("Original Album");
     }
 
     @Test
@@ -95,7 +90,11 @@ public class AlbumControllerUpdateDeleteIT {
         Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
         
         updatedAlbum.setArtist(managedArtist);
-        updatedAlbum.setGenres(Set.of(managedGenre));
+        
+        // Create a new HashSet and add the managed genre
+        Set<Genre> genres = new HashSet<>();
+        genres.add(managedGenre);
+        updatedAlbum.setGenres(genres);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -126,7 +125,11 @@ public class AlbumControllerUpdateDeleteIT {
         Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
         
         updatedAlbum.setArtist(managedArtist);
-        updatedAlbum.setGenres(Set.of(managedGenre));
+        
+        // Create a new HashSet and add the managed genre
+        Set<Genre> genres = new HashSet<>();
+        genres.add(managedGenre);
+        updatedAlbum.setGenres(genres);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -170,4 +173,26 @@ public class AlbumControllerUpdateDeleteIT {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Helper method to create a test album with proper entity management
+     */
+    @Transactional
+    private Album createTestAlbum(String title) {
+        Album album = new Album();
+        album.setTitle(title);
+        album.setReleaseDate(LocalDate.of(2023, 1, 1));
+        
+        // Fetch fresh managed entities to avoid detached entity issues
+        Artist managedArtist = artistRepository.findById(testArtist.getArtistId()).orElseThrow();
+        Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
+        
+        album.setArtist(managedArtist);
+        
+        // Create a new HashSet and add the managed genre to avoid detached entity issues
+        Set<Genre> genres = new HashSet<>();
+        genres.add(managedGenre);
+        album.setGenres(genres);
+        
+        return albumRepository.save(album);
+    }
 }

@@ -17,6 +17,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -92,18 +94,24 @@ public class ArtistControllerIT {
         artist.setDescription("Test Description");
         artistRepository.save(artist);
 
-        ResponseEntity<RestResponsePage<Artist>> response = restTemplate.exchange(
+        // Use a more flexible approach to handle the Page response
+        ResponseEntity<Map> response = restTemplate.exchange(
                 baseUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<RestResponsePage<Artist>>() {}
+                new ParameterizedTypeReference<Map>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).hasSize(1);
-        assertThat(response.getBody().getContent().get(0).getName()).isEqualTo("Test Artist");
-        assertThat(response.getBody().getContent().get(0).getDescription()).isEqualTo("Test Description");
+        assertThat(response.getBody()).containsKey("content");
+        
+        // Extract the content array and verify it has the expected data
+        @SuppressWarnings("unchecked")
+        java.util.List<Map<String, Object>> content = (java.util.List<Map<String, Object>>) response.getBody().get("content");
+        assertThat(content).hasSize(1);
+        assertThat(content.get(0).get("name")).isEqualTo("Test Artist");
+        assertThat(content.get(0).get("description")).isEqualTo("Test Description");
     }
 
     @Test
