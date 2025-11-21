@@ -3,6 +3,7 @@ package music.library.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Hibernate;    // for explicit init
 import org.springframework.data.domain.Page;
@@ -117,33 +118,43 @@ public class AlbumService {
 	 * @throws ResourceNotFoundException if artist or any genre ID not found
 	 */
 	public Album createAlbum(CreateAlbumRequest request) {
-		// Fetch and validate the artist exists
-		Artist artist = artistRepo.findById(request.getArtistId())
-			.orElseThrow(() -> new ResourceNotFoundException(
-				"Artist with ID " + request.getArtistId() + " not found"));
-		
-		// Fetch and validate all genres exist
-		List<Genre> genres = new ArrayList<>();
-		if (request.getGenreIds() != null && !request.getGenreIds().isEmpty()) {
-			for (Long genreId : request.getGenreIds()) {
-				Genre genre = genreRepo.findById(genreId)
-					.orElseThrow(() -> new ResourceNotFoundException(
-						"Genre with ID " + genreId + " not found"));
-				genres.add(genre);
-			}
-		}
-		
-		// Build the album entity with validated relationships
-		Album album = new Album();
-		album.setTitle(request.getTitle());
-		album.setReleaseDate(request.getReleaseDate());
-		album.setCoverImageUrl(request.getCoverImageUrl());
-		album.setTrackCount(request.getTrackCount());
-		album.setCatalogNumber(request.getCatalogNumber());
-		album.setArtist(artist);
-		album.setGenres(new HashSet<>(genres));
-
-		return albumRepo.save(album);
+	    // Fetch and validate the artist exists
+	    Artist artist = artistRepo.findById(request.getArtistId())
+	        .orElseThrow(() -> new ResourceNotFoundException(
+	            "Artist with ID " + request.getArtistId() + " not found"));
+	    
+	    // Fetch and validate all genres exist
+	    List<Genre> genres = new ArrayList<>();
+	    if (request.getGenreIds() != null && !request.getGenreIds().isEmpty()) {
+	        System.out.println("=== DEBUG: Request genreIds: " + request.getGenreIds());
+	        for (Long genreId : request.getGenreIds()) {
+	            Genre genre = genreRepo.findById(genreId)
+	                .orElseThrow(() -> new ResourceNotFoundException(
+	                    "Genre with ID " + genreId + " not found"));
+	            System.out.println("=== DEBUG: Fetched genre: " + genre.getGenreId() + " - " + genre.getName());
+	            genres.add(genre);
+	        }
+	        System.out.println("=== DEBUG: Total genres in list: " + genres.size());
+	    }
+	    
+	    // Build the album entity with validated relationships
+	    Album album = new Album();
+	    album.setTitle(request.getTitle());
+	    album.setReleaseDate(request.getReleaseDate());
+	    album.setCoverImageUrl(request.getCoverImageUrl());
+	    album.setTrackCount(request.getTrackCount());
+	    album.setCatalogNumber(request.getCatalogNumber());
+	    album.setArtist(artist);
+	    
+	    Set<Genre> genreSet = new HashSet<>(genres);
+	    System.out.println("=== DEBUG: Genres in HashSet: " + genreSet.size());
+	    for (Genre g : genreSet) {
+	        System.out.println("=== DEBUG: Genre in set: " + g.getGenreId());
+	    }
+	    
+	    album.setGenres(genreSet);
+	    
+	    return albumRepo.save(album);
 	}
 
 	/**
