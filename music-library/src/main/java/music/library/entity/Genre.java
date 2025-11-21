@@ -51,11 +51,11 @@ public class Genre {
     //Inverse side of the many-to-many.
     @JsonIgnore /*This hides the collection from the JSON representation, 
     * breaking the cycle for serialization and for OpenAPI generation.*/
-    @ManyToMany(mappedBy = "genres", fetch = FetchType.EAGER) 
-    /* Fetch eagerly so that test code 
-    *  (which runs outside a transaction) can safely call genre.getAlbums(). 
-    *  In a production API we would probably keep it lazy and wrap the test in a transaction, 
-    *  but for a bootcamp assignment the eager fetch is acceptable and keeps the code simple.*/
+    
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)  /* Changed to LAZY to prevent duplicate insert issues 
+     * when creating albums. If tests need to access genre.getAlbums(), wrap them in @Transactional
+     * or use Hibernate.initialize(genre.getAlbums()) explicitly. */
+    
     @Builder.Default  //When the builder is used, start with the value given in the field declaration 
     // unless the call explicitly sets something else.
     private Set<Album> albums = new HashSet<>();
