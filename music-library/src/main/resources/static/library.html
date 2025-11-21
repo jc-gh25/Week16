@@ -162,9 +162,10 @@
 
         .album-cover {
             width: 100%;
-            height: 250px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 250px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: block;  /* Prevents layout shift */
         }
 
         .album-info {
@@ -343,172 +344,222 @@
     </div>
 
     <script>
-        // API base URL
-        const API_BASE = '/api';
-        
-        // Current page state
-        let currentPage = 0;
-        let totalPages = 0;
-        const pageSize = 12;
+            // API base URL
+    const API_BASE = '/api';
 
-        // Load initial data when page loads
-        window.addEventListener('DOMContentLoaded', function() {
-            loadStats();
-            loadArtists();
-            loadGenres();
-            loadAlbums();
-        });
+    // Current page state
+    let currentPage = 0;
+    let totalPages = 0;
+    const pageSize = 12;
 
-        // Load statistics
-        async function loadStats() {
-            try {
-                const [albums, artists, genres] = await Promise.all([
-                    fetch(`${API_BASE}/albums?size=1`).then(r => r.json()),
-                    fetch(`${API_BASE}/artists?size=1`).then(r => r.json()),
-                    fetch(`${API_BASE}/genres?size=1`).then(r => r.json())
-                ]);
+    // Track failed images to prevent retry loops
+    const failedImages = new Set();
 
-                document.getElementById('albumCount').textContent = albums.totalElements || 0;
-                document.getElementById('artistCount').textContent = artists.totalElements || 0;
-                document.getElementById('genreCount').textContent = genres.totalElements || 0;
-            } catch (error) {
-                console.error('Error loading stats:', error);
+    // Load initial data when page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        loadStats();
+    loadArtists();
+    loadGenres();
+    loadAlbums();
+    });
+
+    // Load statistics with better error handling
+    async function loadStats() {
+        try {
+            const [albumsResponse, artistsResponse, genresResponse] = await Promise.all([
+    fetch(`${API_BASE}/albums?size=1`),
+    fetch(`${API_BASE}/artists?size=1`),
+    fetch(`${API_BASE}/genres?size=1`)
+    ]);
+
+    // Check if responses are OK
+    if (albumsResponse.ok && artistsResponse.ok && genresResponse.ok) {
+                const albums = await albumsResponse.json();
+    const artists = await artistsResponse.json();
+    const genres = await genresResponse.json();
+
+    document.getElementById('albumCount').textContent = albums.totalElements || 0;
+    document.getElementById('artistCount').textContent = artists.totalElements || 0;
+    document.getElementById('genreCount').textContent = genres.totalElements || 0;
+            } else {
+        // If API calls fail, show 0
+        document.getElementById('albumCount').textContent = '0';
+    document.getElementById('artistCount').textContent = '0';
+    document.getElementById('genreCount').textContent = '0';
             }
+        } catch (error) {
+        console.error('Error loading stats:', error);
+    // Show 0 on error
+    document.getElementById('albumCount').textContent = '0';
+    document.getElementById('artistCount').textContent = '0';
+    document.getElementById('genreCount').textContent = '0';
         }
+    }
 
-        // Load artists for filter dropdown
-        async function loadArtists() {
-            try {
-                const response = await fetch(`${API_BASE}/artists?size=100&sort=name,asc`);
-                const data = await response.json();
-                
-                const select = document.getElementById('artistFilter');
-                data.content.forEach(artist => {
-                    const option = document.createElement('option');
-                    option.value = artist.artistId;
-                    option.textContent = artist.name;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error loading artists:', error);
-            }
-        }
+    // Load artists for filter dropdown
+    async function loadArtists() {
+        try {
+            const response = await fetch(`${API_BASE}/artists?size=100&sort=name,asc`);
+    if (!response.ok) return;
 
-        // Load genres for filter dropdown
-        async function loadGenres() {
-            try {
-                const response = await fetch(`${API_BASE}/genres?size=100&sort=name,asc`);
-                const data = await response.json();
-                
-                const select = document.getElementById('genreFilter');
-                data.content.forEach(genre => {
-                    const option = document.createElement('option');
-                    option.value = genre.genreId;
-                    option.textContent = genre.name;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error loading genres:', error);
-            }
-        }
+    const data = await response.json();
 
-        // Load albums with filters
-        async function loadAlbums(page = 0) {
-            const loading = document.getElementById('loading');
-            const error = document.getElementById('error');
-            const container = document.getElementById('albumsContainer');
-            
-            // Show loading state
-            loading.style.display = 'block';
-            error.style.display = 'none';
-            container.innerHTML = '';
-
-            try {
-                // Build URL with filters
-                let url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
-                
-                const searchTerm = document.getElementById('searchInput').value.trim();
-                const artistId = document.getElementById('artistFilter').value;
-                const genreId = document.getElementById('genreFilter').value;
-
-                if (searchTerm) {
-                    url += `&title=${encodeURIComponent(searchTerm)}`;
-                }
-                if (artistId) {
-                    url += `&artistId=${artistId}`;
-                }
-                if (genreId) {
-                    url += `&genreId=${genreId}`;
-                }
-
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                loading.style.display = 'none';
-
-                if (data.content && data.content.length > 0) {
-                    currentPage = data.number;
-                    totalPages = data.totalPages;
-                    
-                    displayAlbums(data.content);
-                    displayPagination(data);
-                } else {
-                    container.innerHTML = `
-                        <div class="no-results">
-                            <p>No albums found</p>
-                            <p style="font-size: 1rem;">Try adjusting your search filters</p>
-                        </div>
-                    `;
-                }
-            } catch (err) {
-                loading.style.display = 'none';
-                error.style.display = 'block';
-                error.textContent = `Error loading albums: ${err.message}`;
-                console.error('Error:', err);
-            }
-        }
-
-        // Display albums in grid
-        function displayAlbums(albums) {
-            const container = document.getElementById('albumsContainer');
-            container.innerHTML = '';
-
-            albums.forEach(album => {
-                const card = createAlbumCard(album);
-                container.appendChild(card);
+    const select = document.getElementById('artistFilter');
+            data.content.forEach(artist => {
+                const option = document.createElement('option');
+    option.value = artist.artistId;
+    option.textContent = artist.name;
+    select.appendChild(option);
             });
+        } catch (error) {
+        console.error('Error loading artists:', error);
         }
+    }
 
-        // Create album card element
-        function createAlbumCard(album) {
-            const card = document.createElement('div');
-            card.className = 'album-card';
-            
-            // Format release date
-            const releaseYear = album.releaseDate ? new Date(album.releaseDate).getFullYear() : 'Unknown';
-            
-            // Create genre tags HTML
-            let genreTags = '';
-            if (album.genres && album.genres.length > 0) {
-                genreTags = album.genres.map(genre => 
-                    `<span class="genre-tag">${genre.name}</span>`
-                ).join('');
+    // Load genres for filter dropdown
+    async function loadGenres() {
+        try {
+            const response = await fetch(`${API_BASE}/genres?size=100&sort=name,asc`);
+    if (!response.ok) return;
+
+    const data = await response.json();
+
+    const select = document.getElementById('genreFilter');
+            data.content.forEach(genre => {
+                const option = document.createElement('option');
+    option.value = genre.genreId;
+    option.textContent = genre.name;
+    select.appendChild(option);
+            });
+        } catch (error) {
+        console.error('Error loading genres:', error);
+        }
+    }
+
+    // Load albums with filters
+    async function loadAlbums(page = 0) {
+        const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const container = document.getElementById('albumsContainer');
+
+    // Show loading state
+    loading.style.display = 'block';
+    error.style.display = 'none';
+    container.innerHTML = '';
+
+    try {
+        // Build URL with filters
+        let url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
+
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    const artistId = document.getElementById('artistFilter').value;
+    const genreId = document.getElementById('genreFilter').value;
+
+    if (searchTerm) {
+        url += `&title=${encodeURIComponent(searchTerm)}`;
+            }
+    if (artistId) {
+        url += `&artistId=${artistId}`;
+            }
+    if (genreId) {
+        url += `&genreId=${genreId}`;
             }
 
-            card.innerHTML = `
-                <img src="${album.coverImageUrl || 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'}" 
-                     alt="${album.title}" 
-                     class="album-cover"
-                     onerror="this.src='https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'">
-                <div class="album-info">
-                    <div class="album-title" title="${album.title}">${album.title}</div>
-                    <div class="album-artist">${album.artist?.name || 'Unknown Artist'}</div>
-                    <div class="album-details">
+    const response = await fetch(url);
+
+    if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+    const data = await response.json();
+
+    loading.style.display = 'none';
+
+            if (data.content && data.content.length > 0) {
+        currentPage = data.number;
+    totalPages = data.totalPages;
+
+    displayAlbums(data.content);
+    displayPagination(data);
+
+    // Reload stats after albums load
+    loadStats();
+            } else {
+        container.innerHTML = `
+                    <div class="no-results">
+                        <p>No albums found</p>
+                        <p style="font-size: 1rem;">Try adjusting your search filters</p>
+                    </div>
+                `;
+            }
+        } catch (err) {
+        loading.style.display = 'none';
+    error.style.display = 'block';
+    error.textContent = `Error loading albums: ${err.message}`;
+    console.error('Error:', err);
+        }
+    }
+
+    // Display albums in grid
+    function displayAlbums(albums) {
+        const container = document.getElementById('albumsContainer');
+    container.innerHTML = '';
+
+        albums.forEach(album => {
+            const card = createAlbumCard(album);
+    container.appendChild(card);
+        });
+    }
+
+    // Handle image loading errors
+    function handleImageError(img, albumTitle) {
+        const imageUrl = img.src;
+
+    // If this image already failed, don't try again
+    if (failedImages.has(imageUrl)) {
+            return;
+        }
+
+    // Mark as failed
+    failedImages.add(imageUrl);
+
+    // Set placeholder
+    img.src = 'https://via.placeholder.com/250x250/667eea/ffffff?text=' + encodeURIComponent(albumTitle.substring(0, 20));
+
+    // Remove the onerror to prevent infinite loop
+    img.onerror = null;
+    }
+
+    // Create album card element
+    function createAlbumCard(album) {
+        const card = document.createElement('div');
+    card.className = 'album-card';
+
+    // Format release date
+    const releaseYear = album.releaseDate ? new Date(album.releaseDate).getFullYear() : 'Unknown';
+
+    // Create genre tags HTML
+    let genreTags = '';
+        if (album.genres && album.genres.length > 0) {
+        genreTags = album.genres.map(genre =>
+            `<span class="genre-tag">${genre.name}</span>`
+        ).join('');
+        }
+
+    // Determine image URL
+    const imageUrl = album.coverImageUrl && album.coverImageUrl.trim() !== ''
+    ? album.coverImageUrl
+    : `https://via.placeholder.com/250x250/667eea/ffffff?text=${encodeURIComponent(album.title.substring(0, 20))}`;
+
+    card.innerHTML = `
+    <img src="${imageUrl}"
+        alt="${album.title}"
+        class="album-cover"
+        onerror="handleImageError(this, '${album.title.replace(/'/g, "\\'")}')">
+    <div class="album-info">
+        <div class="album-title" title="${album.title}">${album.title}</div>
+        <div class="album-artist">${album.artist?.name || 'Unknown Artist'}</div>
+        <div class="album-details">
                         📅 ${releaseYear} • 🎵 ${album.trackCount || 0} tracks
                     </div>
                     ${genreTags ? `<div class="genre-tags">${genreTags}</div>` : ''}
