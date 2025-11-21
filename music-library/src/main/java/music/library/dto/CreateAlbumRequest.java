@@ -25,6 +25,11 @@ public class CreateAlbumRequest {
     @NotEmpty(message = "At least one genre ID is required")
     private List<Long> genreIds;
     
+	private String coverImageUrl;
+    private Integer trackCount;
+    private String catalogNumber;
+
+    
     // Constructors
     public CreateAlbumRequest() {
     }
@@ -68,6 +73,30 @@ public class CreateAlbumRequest {
     public void setGenreIds(List<Long> genreIds) {
         this.genreIds = genreIds;
     }
+    
+    public String getCoverImageUrl() {
+		return coverImageUrl;
+	}
+
+	public void setCoverImageUrl(String coverImageUrl) {
+		this.coverImageUrl = coverImageUrl;
+	}
+
+	public Integer getTrackCount() {
+		return trackCount;
+	}
+
+	public void setTrackCount(Integer trackCount) {
+		this.trackCount = trackCount;
+	}
+
+	public String getCatalogNumber() {
+		return catalogNumber;
+	}
+
+	public void setCatalogNumber(String catalogNumber) {
+		this.catalogNumber = catalogNumber;
+	}
     
     @Override
     public String toString() {

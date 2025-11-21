@@ -1,6 +1,6 @@
 # 🎵 Music Library API
 
-A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This production-ready application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, relationship queries, comprehensive testing, and deployment to Railway.
+A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This production-ready application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, relationship queries, database migrations with Flyway, comprehensive testing, and deployment to Railway.
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
@@ -20,9 +20,11 @@ A comprehensive RESTful API for managing a music library built with **Spring Boo
 - [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
 - [Project Structure](#️-project-structure)
 - [Configuration](#-configuration)
+- [Database Migrations](#-database-migrations)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
 - [Error Handling](#-error-handling)
+- [Contributing](#-contributing)
 
 ---
 
@@ -44,6 +46,7 @@ The Music Library API is a portfolio-quality Spring Boot application that demons
 ✅ Automatic timestamp tracking (createdAt, updatedAt)  
 ✅ OpenAPI 3.0 specification with interactive Swagger UI  
 ✅ Comprehensive test suite (unit, integration, repository tests)  
+✅ Database migrations with Flyway  
 ✅ Production deployment on Railway  
 ✅ Environment-based configuration  
 
@@ -61,6 +64,7 @@ The Music Library API is a portfolio-quality Spring Boot application that demons
 - **H2**: In-memory database (testing)
 - **Spring Data JPA**: Data access abstraction
 - **Hibernate**: ORM implementation
+- **Flyway**: Database migration management
 
 ### API & Documentation
 - **Spring Web**: RESTful API framework
@@ -98,6 +102,7 @@ The Music Library API is a portfolio-quality Spring Boot application that demons
 - **Lazy Loading**: Optimized database queries with lazy fetching
 - **Cascade Operations**: Automatic relationship management
 - **Environment Configuration**: YAML-based config with environment variables
+- **Database Migrations**: Version-controlled schema with Flyway
 - **Comprehensive Testing**: Unit, integration, and repository tests
 - **Code Coverage**: JaCoCo reports for test coverage metrics
 
@@ -119,8 +124,8 @@ Before running this application, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/jc-gh25/MusicLibrary.git
-cd MusicLibrary
+git clone <repository-url>
+cd Week16/music-library
 ```
 
 ### 2. Database Setup
@@ -204,7 +209,7 @@ chmod +x populate-music-library.sh
 ./populate-music-library.sh
 ```
 
-Or import the Postman collection located at: `src/test/resources/Music-Library-Sample-Data.postman_collection.json`
+Or import the Postman collection: `Music-Library-Sample-Data.postman_collection.json`
 
 ---
 
@@ -212,12 +217,10 @@ Or import the Postman collection located at: `src/test/resources/Music-Library-S
 
 Once the application is running, access the interactive API documentation:
 
-- **Swagger UI (Local)**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-- **Swagger UI (Deployed)**: [https://javabc.up.railway.app/swagger-ui.html](https://javabc.up.railway.app/swagger-ui.html)
+- **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 - **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 - **OpenAPI YAML**: [http://localhost:8080/v3/api-docs.yaml](http://localhost:8080/v3/api-docs.yaml)
-- **API Info (Local)**: [http://localhost:8080/api](http://localhost:8080/api)
-- **API Info (Deployed)**: [https://javabc.up.railway.app/api](https://javabc.up.railway.app/api)
+- **API Info**: [http://localhost:8080/api](http://localhost:8080/api)
 
 The Swagger UI provides:
 - Interactive endpoint testing
@@ -509,8 +512,7 @@ music-library/
 ├── README.md                                   # This file
 ├── populate-music-library.bat                  # Windows data loader
 ├── populate-music-library.sh                   # Unix data loader
-└── src/test/resources/
-    └── Music-Library-Sample-Data.postman_collection.json
+└── Music-Library-Sample-Data.postman_collection.json
 ```
 
 ### Package Structure
@@ -604,6 +606,62 @@ spring:
   flyway:
     enabled: false
 ```
+
+---
+
+## 🗄️ Database Migrations
+
+The application uses **Flyway** for version-controlled database schema management.
+
+### Migration Scripts
+
+Migration scripts are located in `src/main/resources/db/migration/`:
+
+- **`V1__create_initial_schema.sql`** - Creates tables for Artist, Album, Genre, and join tables
+- **`V2__add_sample_data.sql`** - Populates database with sample data (optional)
+
+### Migration Naming Convention
+
+Flyway follows a strict naming convention:
+
+```
+V{version}__{description}.sql
+```
+
+Examples:
+- `V1__create_initial_schema.sql`
+- `V2__add_sample_data.sql`
+- `V3__add_catalog_number_column.sql`
+
+### Running Migrations
+
+Migrations run automatically on application startup when Flyway is enabled:
+
+```yaml
+spring:
+  flyway:
+    enabled: true
+```
+
+To manually run migrations:
+
+```bash
+mvn flyway:migrate
+```
+
+To view migration status:
+
+```bash
+mvn flyway:info
+```
+
+### Migration Best Practices
+
+1. **Never modify existing migrations** - Create new migrations instead
+2. **Test migrations locally** before deploying
+3. **Use transactions** for data migrations
+4. **Keep migrations small** and focused
+5. **Document complex migrations** with comments
 
 ---
 
@@ -773,9 +831,7 @@ The application is deployed to **Railway** with MySQL database.
 
 ### Railway Deployment
 
-**Live Application**: [https://javabc.up.railway.app/index.html](https://javabc.up.railway.app/index.html)
-**Live API Base URL**: [https://javabc.up.railway.app/api](https://javabc.up.railway.app/api)
-**Live Swagger UI**: [https://javabc.up.railway.app/swagger-ui.html](https://javabc.up.railway.app/swagger-ui.html)
+**Live API**: [https://javabc.up.railway.app](https://javabc.up.railway.app)
 
 #### Prerequisites
 
@@ -894,6 +950,65 @@ Input validation errors return detailed field-level errors:
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+### Development Workflow
+
+1. **Fork the repository**
+   ```bash
+   git clone https://github.com/yourusername/music-library.git
+   cd music-library
+   ```
+
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+
+3. **Make your changes**
+   - Follow existing code style
+   - Add tests for new features
+   - Update documentation
+
+4. **Run tests**
+   ```bash
+   mvn test
+   mvn verify  # Includes coverage report
+   ```
+
+5. **Commit your changes**
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+
+6. **Push to your fork**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+
+7. **Open a Pull Request**
+   - Describe your changes
+   - Reference any related issues
+   - Ensure CI/CD passes
+
+### Code Style
+
+- Follow Java naming conventions
+- Use Lombok annotations to reduce boilerplate
+- Add JavaDoc comments for public methods
+- Keep methods small and focused
+- Use meaningful variable names
+
+### Testing Requirements
+
+- All new features must include tests
+- Maintain or improve code coverage
+- Tests must pass before merging
+
+---
+
 ## 📝 License
 
 This project is part of a Java/MySQL backend development bootcamp (Week 16) and is for **educational purposes**.
@@ -904,9 +1019,10 @@ This project is part of a Java/MySQL backend development bootcamp (Week 16) and 
 
 For questions, issues, or feedback:
 
-1. **Check the API documentation**: [Swagger UI](https://javabc.up.railway.app/swagger-ui.html)
+1. **Check the API documentation**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 2. **Review test examples**: See `src/test/java/music/library/`
-3. **Check Postman collection**: `src/test/resources/Music-Library-Sample-Data.postman_collection.json`
+3. **Check Postman collection**: `Music-Library-Sample-Data.postman_collection.json`
+4. **Open an issue**: [GitHub Issues](https://github.com/yourusername/music-library/issues)
 
 ---
 
@@ -931,7 +1047,7 @@ This project demonstrates proficiency in:
 ## 🙏 Acknowledgments
 
 - **Spring Boot Team** - Excellent framework and documentation
-- **Quickstart** - Backend development bootcamp
+- **Promineo Tech** - Backend development bootcamp
 - **Railway** - Simple and powerful deployment platform
 
 ---

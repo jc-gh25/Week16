@@ -8,7 +8,6 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -97,12 +96,10 @@ public class Album {
 	private Artist artist;
 
 	/* Owner side of the many-to-many with Genre via join table */
-	@ManyToMany(cascade = { CascadeType.MERGE }, // Use MERGE only to avoid detached entity issues
-			// PERSIST removed to prevent trying to persist already-persisted Genre entities
-			fetch = FetchType.LAZY)
-	@JoinTable(name = "album_genre", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
-	// for JPA entities – they are mutable proxies and cause "no-row-inserted"
-	// errors.
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "album_genre", 
+	    joinColumns = @JoinColumn(name = "album_id"), 
+	    inverseJoinColumns = @JoinColumn(name = "genre_id"))
 	@Builder.Default
 	private Set<Genre> genres = new HashSet<>();
 

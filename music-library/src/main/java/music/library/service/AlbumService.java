@@ -137,9 +137,12 @@ public class AlbumService {
 		Album album = new Album();
 		album.setTitle(request.getTitle());
 		album.setReleaseDate(request.getReleaseDate());
+		album.setCoverImageUrl(request.getCoverImageUrl());
+		album.setTrackCount(request.getTrackCount());
+		album.setCatalogNumber(request.getCatalogNumber());
 		album.setArtist(artist);
 		album.setGenres(new HashSet<>(genres));
-		
+
 		return albumRepo.save(album);
 	}
 
