@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Library - Browse Albums</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(275deg, #000011 0%, #1a1a4d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #000;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #764ba2;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input,
+        .search-box select {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .search-box button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #764ba2;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .album-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .album-cover {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .album-info {
+            padding: 15px;
+        }
+
+        .album-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .album-artist {
+            color: #667eea;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .album-details {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .genre-tag {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #555;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .no-results p {
+            margin-bottom: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .current-page {
+            background: #667eea;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .albums-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .album-cover {
+                height: 150px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .search-box input,
+            .search-box select {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Music Library</h1>
+            <p style="color: #666; margin-top: 10px;">Browse and explore the album collection</p>
+            <div class="nav-links">
+                <a href="/index.html">← Back to Documentation</a>
+                <a href="/swagger-ui.html" target="_blank">API Docs</a>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search albums by title...">
+                <select id="artistFilter">
+                    <option value="">All Artists</option>
+                </select>
+                <select id="genreFilter">
+                    <option value="">All Genres</option>
+                </select>
+                <button onclick="loadAlbums()">Search</button>
+                <button onclick="clearFilters()" style="background: #999;">Clear</button>
+            </div>
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="number" id="albumCount">-</div>
+                    <div class="label">Albums</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="artistCount">-</div>
+                    <div class="label">Artists</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="genreCount">-</div>
+                    <div class="label">Genres</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            Loading albums...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="albumsContainer" class="albums-grid"></div>
+
+        <div id="pagination" class="pagination"></div>
+
+        <footer>
+            <p>Music Library API - Built with Spring Boot & Java</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                <a href="https://github.com/jc-gh25/MusicLibrary" style="color: white;" target="_blank">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // API base URL
+        const API_BASE = '/api';
+        
+        // Current page state
+        let currentPage = 0;
+        let totalPages = 0;
+        const pageSize = 12;
+
+        // Load initial data when page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            loadArtists();
+            loadGenres();
+            loadAlbums();
+        });
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const [albums, artists, genres] = await Promise.all([
+                    fetch(`${API_BASE}/albums?size=1`).then(r => r.json()),
+                    fetch(`${API_BASE}/artists?size=1`).then(r => r.json()),
+                    fetch(`${API_BASE}/genres?size=1`).then(r => r.json())
+                ]);
+
+                document.getElementById('albumCount').textContent = albums.totalElements || 0;
+                document.getElementById('artistCount').textContent = artists.totalElements || 0;
+                document.getElementById('genreCount').textContent = genres.totalElements || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load artists for filter dropdown
+        async function loadArtists() {
+            try {
+                const response = await fetch(`${API_BASE}/artists?size=100&sort=name,asc`);
+                const data = await response.json();
+                
+                const select = document.getElementById('artistFilter');
+                data.content.forEach(artist => {
+                    const option = document.createElement('option');
+                    option.value = artist.artistId;
+                    option.textContent = artist.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading artists:', error);
+            }
+        }
+
+        // Load genres for filter dropdown
+        async function loadGenres() {
+            try {
+                const response = await fetch(`${API_BASE}/genres?size=100&sort=name,asc`);
+                const data = await response.json();
+                
+                const select = document.getElementById('genreFilter');
+                data.content.forEach(genre => {
+                    const option = document.createElement('option');
+                    option.value = genre.genreId;
+                    option.textContent = genre.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading genres:', error);
+            }
+        }
+
+        // Load albums with filters
+        async function loadAlbums(page = 0) {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const container = document.getElementById('albumsContainer');
+            
+            // Show loading state
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            container.innerHTML = '';
+
+            try {
+                // Build URL with filters
+                let url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
+                
+                const searchTerm = document.getElementById('searchInput').value.trim();
+                const artistId = document.getElementById('artistFilter').value;
+                const genreId = document.getElementById('genreFilter').value;
+
+                if (searchTerm) {
+                    url += `&title=${encodeURIComponent(searchTerm)}`;
+                }
+                if (artistId) {
+                    url += `&artistId=${artistId}`;
+                }
+                if (genreId) {
+                    url += `&genreId=${genreId}`;
+                }
+
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                loading.style.display = 'none';
+
+                if (data.content && data.content.length > 0) {
+                    currentPage = data.number;
+                    totalPages = data.totalPages;
+                    
+                    displayAlbums(data.content);
+                    displayPagination(data);
+                } else {
+                    container.innerHTML = `
+                        <div class="no-results">
+                            <p>No albums found</p>
+                            <p style="font-size: 1rem;">Try adjusting your search filters</p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = `Error loading albums: ${err.message}`;
+                console.error('Error:', err);
+            }
+        }
+
+        // Display albums in grid
+        function displayAlbums(albums) {
+            const container = document.getElementById('albumsContainer');
+            container.innerHTML = '';
+
+            albums.forEach(album => {
+                const card = createAlbumCard(album);
+                container.appendChild(card);
+            });
+        }
+
+        // Create album card element
+        function createAlbumCard(album) {
+            const card = document.createElement('div');
+            card.className = 'album-card';
+            
+            // Format release date
+            const releaseYear = album.releaseDate ? new Date(album.releaseDate).getFullYear() : 'Unknown';
+            
+            // Create genre tags HTML
+            let genreTags = '';
+            if (album.genres && album.genres.length > 0) {
+                genreTags = album.genres.map(genre => 
+                    `<span class="genre-tag">${genre.name}</span>`
+                ).join('');
+            }
+
+            card.innerHTML = `
+                <img src="${album.coverImageUrl || 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'}" 
+                     alt="${album.title}" 
+                     class="album-cover"
+                     onerror="this.src='https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'">
+                <div class="album-info">
+                    <div class="album-title" title="${album.title}">${album.title}</div>
+                    <div class="album-artist">${album.artist?.name || 'Unknown Artist'}</div>
+                    <div class="album-details">
+                        📅 ${releaseYear} • 🎵 ${album.trackCount || 0} tracks
+                    </div>
+                    ${genreTags ? `<div class="genre-tags">${genreTags}</div>` : ''}
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Display pagination controls
+        function displayPagination(data) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (data.totalPages <= 1) return;
+
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = '← Previous';
+            prevBtn.disabled = data.first;
+            prevBtn.onclick = () => loadAlbums(currentPage - 1);
+            pagination.appendChild(prevBtn);
+
+            // Page info
+            const pageInfo = document.createElement('button');
+            pageInfo.textContent = `Page ${data.number + 1} of ${data.totalPages}`;
+            pageInfo.className = 'current-page';
+            pageInfo.disabled = true;
+            pagination.appendChild(pageInfo);
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Next →';
+            nextBtn.disabled = data.last;
+            nextBtn.onclick = () => loadAlbums(currentPage + 1);
+            pagination.appendChild(nextBtn);
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('artistFilter').value = '';
+            document.getElementById('genreFilter').value = '';
+            loadAlbums(0);
+        }
+
+        // Allow Enter key to trigger search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadAlbums(0);
+            }
+        });
+    </script>
+</body>
+</html>
