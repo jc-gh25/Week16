@@ -41,12 +41,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// @EqualsAndHashCode   // Keep Lombok's generation
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) //Collections should never participate in equals()/hashCode()
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Album {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Long albumId;
 
 	@Column(nullable = false, length = 255)
@@ -93,7 +94,6 @@ public class Album {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "artist_id", nullable = false)
 	@NotNull(message = "Artist must be supplied")
-	@EqualsAndHashCode.Exclude
 	private Artist artist;
 
 	/* Owner side of the many-to-many with Genre via join table */
@@ -101,14 +101,14 @@ public class Album {
 			// PERSIST removed to prevent trying to persist already-persisted Genre entities
 			fetch = FetchType.LAZY)
 	@JoinTable(name = "album_genre", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
-	@EqualsAndHashCode.Exclude // Exclude collection - Collections should never participate in equals()/hashCode()
-	// for JPA entities – they are mutable proxies and cause "no-row-inserted" errors.
+	// for JPA entities – they are mutable proxies and cause "no-row-inserted"
+	// errors.
 	@Builder.Default
 	private Set<Genre> genres = new HashSet<>();
 
-	// Setter for genres 
+	// Setter for genres
 	public void setGenres(Set<Genre> genres) {
-	    this.genres = genres;
+		this.genres = genres;
 	}
 
 	@PrePersist

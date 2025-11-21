@@ -29,11 +29,13 @@ import lombok.Setter;
 @Entity
 @Table(name = "genre")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-// @EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) //Avoids accidental recursion; prevents StackOverflowErrors
+// if you ever put Genre in a Set that relies on equals().
 public class Genre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long genreId;
 
     @Column(nullable = false, length = 100)
@@ -54,8 +56,6 @@ public class Genre {
     *  (which runs outside a transaction) can safely call genre.getAlbums(). 
     *  In a production API we would probably keep it lazy and wrap the test in a transaction, 
     *  but for a bootcamp assignment the eager fetch is acceptable and keeps the code simple.*/
-    @EqualsAndHashCode.Exclude  //Avoids accidental recursion; prevents StackOverflowErrors
-    // if you ever put Genre in a Set that relies on equals().
     @Builder.Default  //When the builder is used, start with the value given in the field declaration 
     // unless the call explicitly sets something else.
     private Set<Album> albums = new HashSet<>();
