@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Library - Browse Albums</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -305,7 +306,7 @@
                 <select id="genreFilter">
                     <option value="">All Genres</option>
                 </select>
-                <button onclick="loadAlbums()">Search</button>
+                <button onclick="searchAlbums()">Search</button>
                 <button onclick="clearFilters()" style="background: #999;">Clear</button>
             </div>
             <div class="stats" id="stats">
@@ -343,8 +344,23 @@
     </div>
 
     <script>
-        // API base URL
-        const API_BASE = '/api';
+        // API base URL - Automatically detects local vs deployed environment
+        // For local development: uses '/api'
+        // For deployed (ngrok/production): uses full URL
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? '/api' 
+            : 'https://suanne-speedless-chrissy.ngrok-free.dev/api';
+        
+        // Discogs API configuration
+        const DISCOGS_API = 'https://api.discogs.com/database/search';
+        const discogsCache = new Map(); // Cache for Discogs results
+        
+        // Current page state
+        let currentPage = 0;
+        let totalPages = 0;
+        const pageSize = 12;
+            ? '/api' 
+            : 'https://suanne-speedless-chrissy.ngrok-free.dev/api';
         
         // Current page state
         let currentPage = 0;
@@ -363,16 +379,21 @@
         async function loadStats() {
             try {
                 const [albums, artists, genres] = await Promise.all([
-                    fetch(`${API_BASE}/albums?size=1`).then(r => r.json()),
-                    fetch(`${API_BASE}/artists?size=1`).then(r => r.json()),
-                    fetch(`${API_BASE}/genres?size=1`).then(r => r.json())
+                    fetch(`${API_BASE}/albums?page=0&size=1`).then(r => r.json()),
+                    fetch(`${API_BASE}/artists?page=0&size=1`).then(r => r.json()),
+                    fetch(`${API_BASE}/genres?page=0&size=1`).then(r => r.json())
                 ]);
 
-                document.getElementById('albumCount').textContent = albums.totalElements || 0;
-                document.getElementById('artistCount').textContent = artists.totalElements || 0;
-                document.getElementById('genreCount').textContent = genres.totalElements || 0;
+                // Handle both paginated and non-paginated responses
+                document.getElementById('albumCount').textContent = albums.totalElements || albums.length || 0;
+                document.getElementById('artistCount').textContent = artists.totalElements || artists.length || 0;
+                document.getElementById('genreCount').textContent = genres.totalElements || genres.length || 0;
             } catch (error) {
                 console.error('Error loading stats:', error);
+                // Set to 0 if there's an error
+                document.getElementById('albumCount').textContent = '0';
+                document.getElementById('artistCount').textContent = '0';
+                document.getElementById('genreCount').textContent = '0';
             }
         }
 
@@ -383,7 +404,8 @@
                 const data = await response.json();
                 
                 const select = document.getElementById('artistFilter');
-                data.content.forEach(artist => {
+                const artists = data.content || data; // Handle both paginated and array responses
+                artists.forEach(artist => {
                     const option = document.createElement('option');
                     option.value = artist.artistId;
                     option.textContent = artist.name;
@@ -401,7 +423,8 @@
                 const data = await response.json();
                 
                 const select = document.getElementById('genreFilter');
-                data.content.forEach(genre => {
+                const genres = data.content || data; // Handle both paginated and array responses
+                genres.forEach(genre => {
                     const option = document.createElement('option');
                     option.value = genre.genreId;
                     option.textContent = genre.name;
@@ -440,6 +463,8 @@
                 if (genreId) {
                     url += `&genreId=${genreId}`;
                 }
+
+                console.log('Fetching albums from:', url); // Debug log
 
                 const response = await fetch(url);
                 
@@ -484,6 +509,42 @@
             });
         }
 
+        // Search Discogs API for album images
+        async function searchDiscogsImage(artist, album) {
+            const cacheKey = `${artist}|${album}`;
+            
+            // Check cache first
+            if (discogsCache.has(cacheKey)) {
+                return discogsCache.get(cacheKey);
+            }
+            
+            try {
+                const query = `${artist} ${album}`;
+                const url = `${DISCOGS_API}?q=${encodeURIComponent(query)}&type=release`;
+                
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Discogs API error');
+                
+                const data = await response.json();
+                
+                // Find first result with images
+                if (data.results && data.results.length > 0) {
+                    for (const result of data.results) {
+                        if (result.cover_image && result.cover_image !== 'https://s.discogs.com/images/default-release-cd.png') {
+                            discogsCache.set(cacheKey, result.cover_image);
+                            return result.cover_image;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.warn(`Discogs search failed for "${cacheKey}":`, error);
+            }
+            
+            // Cache null result to avoid repeated failed requests
+            discogsCache.set(cacheKey, null);
+            return null;
+        }
+
         // Create album card element
         function createAlbumCard(album) {
             const card = document.createElement('div');
@@ -500,11 +561,74 @@
                 ).join('');
             }
 
+            // Create image element with Discogs fallback
+            const imageUrl = album.coverImageUrl || 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover';
+            const artistName = album.artist?.name || 'Unknown Artist';
+            const albumTitle = album.title;
+            
+            card.innerHTML = `
+                <img src="${imageUrl}" 
+                     alt="${albumTitle}" 
+                     class="album-cover"
+                     data-artist="${artistName}"
+                     data-album="${albumTitle}"
+                     onerror="handleImageError(this)">
+                <div class="album-info">
+                    <div class="album-title" title="${albumTitle}">${albumTitle}</div>
+                    <div class="album-artist">${artistName}</div>
+                    <div class="album-details">
+                        📅 ${releaseYear} • 🎵 ${album.trackCount || 0} tracks
+                    </div>
+                    ${genreTags ? `<div class="genre-tags">${genreTags}</div>` : ''}
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Handle image load errors with Discogs fallback
+        async function handleImageError(imgElement) {
+            // Prevent infinite retry loop
+            if (imgElement.dataset.retried === 'true') {
+                imgElement.src = 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover';
+                return;
+            }
+            
+            imgElement.dataset.retried = 'true';
+            
+            const artist = imgElement.dataset.artist;
+            const album = imgElement.dataset.album;
+            
+            // Try Discogs API
+            const discogsUrl = await searchDiscogsImage(artist, album);
+            if (discogsUrl) {
+                imgElement.src = discogsUrl;
+                return;
+            }
+            
+            // Fall back to placeholder
+            imgElement.src = 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover';
+        }
+            const card = document.createElement('div');
+            card.className = 'album-card';
+            
+            // Format release date
+            const releaseYear = album.releaseDate ? new Date(album.releaseDate).getFullYear() : 'Unknown';
+            
+            // Create genre tags HTML
+            let genreTags = '';
+            if (album.genres && album.genres.length > 0) {
+                genreTags = album.genres.map(genre => 
+                    `<span class="genre-tag">${genre.name}</span>`
+                ).join('');
+            }
+
+            // FIXED: Added this.onerror=null to prevent infinite retry loop
             card.innerHTML = `
                 <img src="${album.coverImageUrl || 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'}" 
                      alt="${album.title}" 
                      class="album-cover"
-                     onerror="this.src='https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'">
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'">
                 <div class="album-info">
                     <div class="album-title" title="${album.title}">${album.title}</div>
                     <div class="album-artist">${album.artist?.name || 'Unknown Artist'}</div>
@@ -523,13 +647,43 @@
             const pagination = document.getElementById('pagination');
             pagination.innerHTML = '';
 
-            if (data.totalPages <= 1) return;
+            // Validate pagination data
+            if (!data || !data.totalPages || data.totalPages <= 1) return;
+            
+            const currentPageNum = data.number || 0;
+            const totalPagesNum = data.totalPages || 1;
 
             // Previous button
             const prevBtn = document.createElement('button');
             prevBtn.textContent = '← Previous';
+            prevBtn.disabled = data.first || currentPageNum === 0;
+            prevBtn.onclick = () => loadAlbums(currentPageNum - 1);
+            pagination.appendChild(prevBtn);
+
+            // Page info - FIXED: Properly extract page number and total pages
+            const pageInfo = document.createElement('button');
+            pageInfo.textContent = `Page ${currentPageNum + 1} of ${totalPagesNum}`;
+            pageInfo.className = 'current-page';
+            pageInfo.disabled = true;
+            pagination.appendChild(pageInfo);
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Next →';
+            nextBtn.disabled = data.last || currentPageNum >= totalPagesNum - 1;
+            nextBtn.onclick = () => loadAlbums(currentPageNum + 1);
+            pagination.appendChild(nextBtn);
+        }
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            if (data.totalPages <= 1) return;
+
+            // Previous button - FIXED: Use data.number instead of currentPage
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = '← Previous';
             prevBtn.disabled = data.first;
-            prevBtn.onclick = () => loadAlbums(currentPage - 1);
+            prevBtn.onclick = () => loadAlbums(data.number - 1);
             pagination.appendChild(prevBtn);
 
             // Page info
@@ -539,12 +693,18 @@
             pageInfo.disabled = true;
             pagination.appendChild(pageInfo);
 
-            // Next button
+            // Next button - FIXED: Use data.number instead of currentPage
             const nextBtn = document.createElement('button');
             nextBtn.textContent = 'Next →';
             nextBtn.disabled = data.last;
-            nextBtn.onclick = () => loadAlbums(currentPage + 1);
+            nextBtn.onclick = () => loadAlbums(data.number + 1);
             pagination.appendChild(nextBtn);
+        }
+
+        // FIXED: New function to search albums (resets to page 0)
+        function searchAlbums() {
+            currentPage = 0;
+            loadAlbums(0);
         }
 
         // Clear all filters
@@ -552,13 +712,14 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('artistFilter').value = '';
             document.getElementById('genreFilter').value = '';
+            currentPage = 0;
             loadAlbums(0);
         }
 
         // Allow Enter key to trigger search
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                loadAlbums(0);
+                searchAlbums();
             }
         });
     </script>
