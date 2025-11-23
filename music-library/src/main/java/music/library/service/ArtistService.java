@@ -12,6 +12,7 @@ import music.library.entity.Artist;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.ArtistRepository;
 import music.library.dto.CreateArtistRequest;
+import music.library.dto.UpdateArtistRequest;
 
 /**
  * Service layer for Artist entity business logic.
@@ -94,7 +95,33 @@ public class ArtistService {
     }
 
     /**
+     * Updates an existing artist using a DTO.
+     * This is the preferred method for API endpoints as it uses validated request objects.
+     * 
+     * Business Logic:
+     * 1. Validates artist exists (throws exception if not found)
+     * 2. Updates artist fields with new values from the DTO
+     * 3. Persists updated artist
+     * 
+     * @param id the artist ID to update
+     * @param request DTO containing updated name, bio, country, formedYear, website, and imageUrl
+     * @return the updated artist entity
+     * @throws ResourceNotFoundException if artist not found
+     */
+    public Artist updateArtist(Long id, UpdateArtistRequest request) {
+        // Fetch and validate the artist exists
+        Artist artist = findById(id);
+        
+        // Update the artist fields
+        artist.setName(request.getName());
+        artist.setDescription(request.getBio());
+        
+        return repo.save(artist);
+    }
+
+    /**
      * Updates an existing artist.
+     * Note: Prefer updateArtist(UpdateArtistRequest) for API endpoints.
      * 
      * @param id the artist ID to update
      * @param a the artist entity with updated values

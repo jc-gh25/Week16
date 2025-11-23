@@ -284,26 +284,6 @@ create_entity "/albums" "{
   \"genres\": [{\"genreId\": $genre_rock}]
 }" "Physical Graffiti"
 
-# Nirvana Albums
-create_entity "/albums" "{
-  \"title\": \"Nevermind\",
-  \"releaseDate\": \"1991-09-24\",
-  \"coverImageUrl\": \"https://upload.wikimedia.org/wikipedia/en/b/b7/NirvanaNevermindalbumcover.jpg\",
-  \"trackCount\": 12,
-  \"catalogNumber\": \"DGC-24425\",
-  \"artist\": {\"artistId\": $artist_nirvana},
-  \"genres\": [{\"genreId\": $genre_rock}]
-}" "Nevermind"
-
-create_entity "/albums" "{
-  \"title\": \"In Utero\",
-  \"releaseDate\": \"1993-09-21\",
-  \"coverImageUrl\": \"https://upload.wikimedia.org/wikipedia/en/e/e5/In_Utero_%28Nirvana%29_album_cover.jpg\",
-  \"trackCount\": 12,
-  \"catalogNumber\": \"DGC-24536\",
-  \"artist\": {\"artistId\": $artist_nirvana},
-  \"genres\": [{\"genreId\": $genre_rock}]
-}" "In Utero"
 
 # Radiohead Albums
 create_entity "/albums" "{
@@ -358,15 +338,6 @@ create_entity "/albums" "{
   \"genres\": [{\"genreId\": $genre_jazz}]
 }" "Kind of Blue"
 
-create_entity "/albums" "{
-  \"title\": \"Bitches Brew\",
-  \"releaseDate\": \"1970-03-30\",
-  \"coverImageUrl\": \"https://upload.wikimedia.org/wikipedia/en/c/c4/Bitches_brew.jpg\",
-  \"trackCount\": 6,
-  \"catalogNumber\": \"GP-26\",
-  \"artist\": {\"artistId\": $artist_miles_davis},
-  \"genres\": [{\"genreId\": $genre_jazz}]
-}" "Bitches Brew"
 
 # Taylor Swift Albums
 create_entity "/albums" "{
@@ -397,7 +368,7 @@ echo ""
 echo "Summary:"
 echo "- 8 Genres created"
 echo "- 10 Artists created"
-echo "- 20 Albums created with cover images"
+echo "- 17 Albums created with cover images"
 echo ""
 echo "You can now browse your music library at:"
 echo "$BASE_URL"

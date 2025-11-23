@@ -101,7 +101,6 @@ All album cover images are sourced from Wikimedia Commons and are publicly avail
 Example albums with cover art:
 - The Beatles - Abbey Road
 - Pink Floyd - The Dark Side of the Moon
-- Nirvana - Nevermind
 - Daft Punk - Random Access Memories
 - Miles Davis - Kind of Blue
 - And many more!

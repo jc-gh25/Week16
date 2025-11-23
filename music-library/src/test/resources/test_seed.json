@@ -26,7 +26,6 @@
     {"title":"The Wall","releaseDate":"1979-11-30","artistId":3,"genreIds":[1]},
     {"title":"A Night at the Opera","releaseDate":"1975-11-21","artistId":4,"genreIds":[1]},
     {"title":"Led Zeppelin IV","releaseDate":"1971-11-08","artistId":5,"genreIds":[1]},
-    {"title":"Nevermind","releaseDate":"1991-09-24","artistId":6,"genreIds":[1]},
     {"title":"OK Computer","releaseDate":"1997-05-21","artistId":7,"genreIds":[1]},
     {"title":"Discovery","releaseDate":"2001-03-12","artistId":8,"genreIds":[5,2]},
     {"title":"Random Access Memories","releaseDate":"2013-05-17","artistId":8,"genreIds":[5,2]},

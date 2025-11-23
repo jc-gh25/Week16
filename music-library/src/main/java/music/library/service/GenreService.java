@@ -14,6 +14,7 @@ import music.library.exception.ResourceNotFoundException;
 import music.library.repository.AlbumRepository;
 import music.library.repository.GenreRepository;
 import music.library.dto.CreateGenreRequest;
+import music.library.dto.UpdateGenreRequest;
 
 /**
  * Service layer for Genre entity business logic.
@@ -97,6 +98,13 @@ public class GenreService {
         genre.setDescription(request.getDescription());
         return repo.save(genre);
     }
+	
+	public Genre updateGenre(Long id, UpdateGenreRequest request) {
+    Genre genre = findById(id);
+    genre.setName(request.getName());
+    genre.setDescription(request.getDescription());
+    return repo.save(genre);
+}
 
     /**
      * Updates an existing genre.

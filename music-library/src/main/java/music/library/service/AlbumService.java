@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import music.library.dto.CreateAlbumRequest;
+import music.library.dto.UpdateAlbumRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -153,6 +154,61 @@ public class AlbumService {
 	    }
 	    
 	    album.setGenres(genreSet);
+	    
+	    return albumRepo.save(album);
+	}
+
+	/**
+	 * Updates an existing album using a DTO with artist and genre IDs.
+	 * This is the preferred method for API endpoints as it validates
+	 * that referenced entities exist before updating the album.
+	 * 
+	 * Business Logic:
+	 * 1. Validates album exists (throws exception if not found)
+	 * 2. Validates artist exists (throws exception if not found)
+	 * 3. Validates all genre IDs exist (throws exception if any not found)
+	 * 4. Updates album fields with new values
+	 * 5. Replaces genre associations if genreIds provided
+	 * 6. Persists updated album
+	 * 
+	 * @param id the album ID to update
+	 * @param request DTO containing updated title, releaseDate, artistId, and optional genreIds
+	 * @return the updated album entity with all relationships loaded
+	 * @throws ResourceNotFoundException if album, artist, or any genre ID not found
+	 */
+	public Album updateAlbum(Long id, UpdateAlbumRequest request) {
+	    // Fetch and validate the album exists
+	    Album album = findById(id);
+	    
+	    // Fetch and validate the artist exists
+	    Artist artist = artistRepo.findById(request.getArtistId())
+	        .orElseThrow(() -> new ResourceNotFoundException(
+	            "Artist with ID " + request.getArtistId() + " not found"));
+	    
+	    // Fetch and validate all genres exist (if provided)
+	    List<Genre> genres = new ArrayList<>();
+	    if (request.getGenreIds() != null && !request.getGenreIds().isEmpty()) {
+	        for (Long genreId : request.getGenreIds()) {
+	            Genre genre = genreRepo.findById(genreId)
+	                .orElseThrow(() -> new ResourceNotFoundException(
+	                    "Genre with ID " + genreId + " not found"));
+	            genres.add(genre);
+	        }
+	    }
+	    
+	    // Update the album fields
+	    album.setTitle(request.getTitle());
+	    album.setReleaseDate(request.getReleaseDate());
+	    album.setCoverImageUrl(request.getCoverImageUrl());
+	    album.setTrackCount(request.getTrackCount());
+	    album.setCatalogNumber(request.getCatalogNumber());
+	    album.setArtist(artist);
+	    
+	    // Update genres if provided (replaces existing genre associations)
+	    if (request.getGenreIds() != null) {
+	        Set<Genre> genreSet = new HashSet<>(genres);
+	        album.setGenres(genreSet);
+	    }
 	    
 	    return albumRepo.save(album);
 	}

@@ -33,8 +33,11 @@ import music.library.dto.ApiInfoResponse;
 import music.library.dto.ApiInfoResponse.Endpoint;
 import music.library.dto.ApiInfoResponse.EndpointCategory;
 import music.library.dto.CreateAlbumRequest;
+import music.library.dto.UpdateAlbumRequest;
 import music.library.dto.CreateArtistRequest;
+import music.library.dto.UpdateArtistRequest;
 import music.library.dto.CreateGenreRequest;
+import music.library.dto.UpdateGenreRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -270,17 +273,19 @@ public class MusicLibraryController {
 	}
 
 	/**
-	 * Updates an existing artist.
+	 * Updates an existing artist using a DTO.
+	 * Validates that the artist exists before updating.
+	 * Only updates the fields provided in the request DTO.
 	 * 
 	 * @param id the artist ID to update
-	 * @param a  the updated artist data (validated)
+	 * @param request the updated artist data (validated via DTO)
 	 * @return the updated artist entity
-	 * @throws music.library.exception.ResourceNotFoundException if artist not found
-	 *                                                           (404)
+	 * @throws music.library.exception.ResourceNotFoundException if artist not found (404)
+	 * @throws org.springframework.web.bind.MethodArgumentNotValidException if validation fails (400)
 	 */
 	@PutMapping("/artists/{id}")
-	public Artist updateArtist(@PathVariable Long id, @Valid @RequestBody Artist a) {
-		return artistSvc.update(id, a);
+	public Artist updateArtist(@PathVariable Long id, @Valid @RequestBody UpdateArtistRequest request) {
+		return artistSvc.updateArtist(id, request);
 	}
 
 	/**
@@ -342,14 +347,13 @@ public class MusicLibraryController {
 	 * Updates an existing album.
 	 * 
 	 * @param id the album ID to update
-	 * @param a  the updated album data (validated)
+	 * @param request the updated album data (validated) containing title, artistId, genreIds, etc.
 	 * @return the updated album entity
-	 * @throws music.library.exception.ResourceNotFoundException if album not found
-	 *                                                           (404)
+	 * @throws music.library.exception.ResourceNotFoundException if album, artist, or any genre not found (404)
 	 */
 	@PutMapping("/albums/{id}")
-	public Album updateAlbum(@PathVariable Long id, @Valid @RequestBody Album a) {
-		return albumSvc.update(id, a);
+	public Album updateAlbum(@PathVariable Long id, @Valid @RequestBody UpdateAlbumRequest request) {
+		return albumSvc.updateAlbum(id, request);
 	}
 
 	/**
@@ -401,16 +405,19 @@ public class MusicLibraryController {
 	}
 
 	/**
-	 * Updates an existing genre.
+	 * Updates an existing genre using a DTO.
+	 * Validates that the genre exists before updating.
+	 * Only updates the fields provided in the request DTO.
 	 * 
 	 * @param id the genre ID to update
-	 * @param g the updated genre data (validated)
+	 * @param request the updated genre data (validated via DTO)
 	 * @return the updated genre entity
 	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
+	 * @throws org.springframework.web.bind.MethodArgumentNotValidException if validation fails (400)
 	 */
 	@PutMapping("/genres/{id}")
-	public Genre updateGenre(@PathVariable Long id, @Valid @RequestBody Genre g) {
-		return genreSvc.update(id, g);
+	public Genre updateGenre(@PathVariable Long id, @Valid @RequestBody UpdateGenreRequest request) {
+		return genreSvc.updateGenre(id, request);
 	}
 
 	/**

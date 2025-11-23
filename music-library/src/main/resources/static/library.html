@@ -73,14 +73,49 @@
             flex-wrap: wrap;
         }
 
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            display: none;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .search-clear-btn:hover {
+            color: #667eea;
+        }
+
+        .search-clear-btn.visible {
+            display: block;
+        }
+
         .search-box input,
         .search-box select {
             flex: 1;
             min-width: 200px;
             padding: 12px;
+            padding-right: 40px;
             border: 2px solid #e0e0e0;
             border-radius: 5px;
             font-size: 1rem;
+        }
+
+        .search-box select {
+            padding-right: 12px;
         }
 
         .search-box button {
@@ -299,7 +334,10 @@
 
         <div class="controls">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Search albums by title...">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" placeholder="Search albums by title...">
+                    <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search">✕</button>
+                </div>
                 <select id="artistFilter">
                     <option value="">All Artists</option>
                 </select>
@@ -345,27 +383,26 @@
 
     <script>
         // API base URL - Automatically detects local vs deployed environment
-        // For local development: uses '/api'
-        // For deployed (ngrok/production): uses full URL
         const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
             ? '/api' 
             : 'https://suanne-speedless-chrissy.ngrok-free.dev/api';
         
-        // Discogs API configuration
+        // Discogs API configuration - DISABLED (requires authentication)
+        const DISCOGS_TOKEN = ''; // Leave empty to disable Discogs lookups
         const DISCOGS_API = 'https://api.discogs.com/database/search';
-        const discogsCache = new Map(); // Cache for Discogs results
+        const discogsCache = new Map();
         
         // Current page state
         let currentPage = 0;
         let totalPages = 0;
-        const pageSize = 12;
-            ? '/api' 
-            : 'https://suanne-speedless-chrissy.ngrok-free.dev/api';
+        const pageSize = 20;
         
-        // Current page state
-        let currentPage = 0;
-        let totalPages = 0;
-        const pageSize = 12;
+        // Store current filter state for pagination
+        let currentFilters = {
+            artistId: '',
+            genreId: '',
+            searchTerm: ''
+        };
 
         // Load initial data when page loads
         window.addEventListener('DOMContentLoaded', function() {
@@ -384,13 +421,18 @@
                     fetch(`${API_BASE}/genres?page=0&size=1`).then(r => r.json())
                 ]);
 
-                // Handle both paginated and non-paginated responses
-                document.getElementById('albumCount').textContent = albums.totalElements || albums.length || 0;
-                document.getElementById('artistCount').textContent = artists.totalElements || artists.length || 0;
-                document.getElementById('genreCount').textContent = genres.totalElements || genres.length || 0;
+                console.log('Stats API responses:', { albums, artists, genres });
+
+                // Extract totalElements from paginated responses with fallbacks
+                const albumTotal = albums?.totalElements ?? albums?.total ?? albums?.page?.totalElements ?? (Array.isArray(albums) ? albums.length : 0);
+                const artistTotal = artists?.totalElements ?? artists?.total ?? artists?.page?.totalElements ?? (Array.isArray(artists) ? artists.length : 0);
+                const genreTotal = genres?.totalElements ?? genres?.total ?? genres?.page?.totalElements ?? (Array.isArray(genres) ? genres.length : 0);
+
+                document.getElementById('albumCount').textContent = albumTotal;
+                document.getElementById('artistCount').textContent = artistTotal;
+                document.getElementById('genreCount').textContent = genreTotal;
             } catch (error) {
                 console.error('Error loading stats:', error);
-                // Set to 0 if there's an error
                 document.getElementById('albumCount').textContent = '0';
                 document.getElementById('artistCount').textContent = '0';
                 document.getElementById('genreCount').textContent = '0';
@@ -404,7 +446,7 @@
                 const data = await response.json();
                 
                 const select = document.getElementById('artistFilter');
-                const artists = data.content || data; // Handle both paginated and array responses
+                const artists = data.content || data;
                 artists.forEach(artist => {
                     const option = document.createElement('option');
                     option.value = artist.artistId;
@@ -423,7 +465,7 @@
                 const data = await response.json();
                 
                 const select = document.getElementById('genreFilter');
-                const genres = data.content || data; // Handle both paginated and array responses
+                const genres = data.content || data;
                 genres.forEach(genre => {
                     const option = document.createElement('option');
                     option.value = genre.genreId;
@@ -441,47 +483,118 @@
             const error = document.getElementById('error');
             const container = document.getElementById('albumsContainer');
             
-            // Show loading state
             loading.style.display = 'block';
             error.style.display = 'none';
             container.innerHTML = '';
 
             try {
-                // Build URL with filters
-                let url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
-                
-                const searchTerm = document.getElementById('searchInput').value.trim();
                 const artistId = document.getElementById('artistFilter').value;
                 const genreId = document.getElementById('genreFilter').value;
+                const searchTerm = document.getElementById('searchInput').value.trim();
 
-                if (searchTerm) {
-                    url += `&title=${encodeURIComponent(searchTerm)}`;
-                }
+                // Store current filters for pagination
+                currentFilters = { artistId, genreId, searchTerm };
+
+                let url;
+                let response;
+                let data;
+                let albums;
+                let isPaginated = false;
+
+                // Route to correct endpoint based on filters
                 if (artistId) {
-                    url += `&artistId=${artistId}`;
+                    // Use nested artist endpoint - returns array
+                    url = `${API_BASE}/artists/${artistId}/albums`;
+                    console.log('Fetching albums by artist:', url);
+                    response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    data = await response.json();
+                    albums = Array.isArray(data) ? data : [];
+                    
+                    // Apply genre filter client-side if needed
+                    if (genreId) {
+                        albums = albums.filter(album => 
+                            album.genres && album.genres.some(g => g.genreId == genreId)
+                        );
+                    }
+                    
+                    // Apply search filter client-side
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        albums = albums.filter(album => 
+                            album.title.toLowerCase().includes(term)
+                        );
+                    }
+                    
+                    // Client-side pagination for array results
+                    totalPages = Math.ceil(albums.length / pageSize);
+                    currentPage = Math.min(page, Math.max(0, totalPages - 1));
+                    const start = currentPage * pageSize;
+                    albums = albums.slice(start, start + pageSize);
+                    
+                } else if (genreId) {
+                    // Use nested genre endpoint - returns array
+                    url = `${API_BASE}/genres/${genreId}/albums`;
+                    console.log('Fetching albums by genre:', url);
+                    response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    data = await response.json();
+                    albums = Array.isArray(data) ? data : [];
+                    
+                    // Apply search filter client-side
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        albums = albums.filter(album => 
+                            album.title.toLowerCase().includes(term)
+                        );
+                    }
+                    
+                    // Client-side pagination for array results
+                    totalPages = Math.ceil(albums.length / pageSize);
+                    currentPage = Math.min(page, Math.max(0, totalPages - 1));
+                    const start = currentPage * pageSize;
+                    albums = albums.slice(start, start + pageSize);
+                    
+                } else {
+                    // Use main albums endpoint - returns paginated response
+                    url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
+                    console.log('Fetching all albums:', url);
+                    response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    data = await response.json();
+                    albums = data.content || [];
+                    
+                    // Apply search filter client-side
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        albums = albums.filter(album => 
+                            album.title.toLowerCase().includes(term)
+                        );
+                        
+                        // Recalculate pagination for filtered results
+                        totalPages = Math.ceil(albums.length / pageSize);
+                        currentPage = Math.min(page, Math.max(0, totalPages - 1));
+                        const start = currentPage * pageSize;
+                        albums = albums.slice(start, start + pageSize);
+                        isPaginated = false; // Switch to client-side pagination
+                    } else {
+                        currentPage = data.page.number || 0;
+                        totalPages = data.page.totalPages || 0;
+                        isPaginated = true;
+                    }
                 }
-                if (genreId) {
-                    url += `&genreId=${genreId}`;
-                }
-
-                console.log('Fetching albums from:', url); // Debug log
-
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
                 
                 loading.style.display = 'none';
 
-                if (data.content && data.content.length > 0) {
-                    currentPage = data.number;
-                    totalPages = data.totalPages;
-                    
-                    displayAlbums(data.content);
-                    displayPagination(data);
+                if (albums && albums.length > 0) {
+                    displayAlbums(albums);
+                    displayPagination(isPaginated ? data : null);
                 } else {
                     container.innerHTML = `
                         <div class="no-results">
@@ -489,6 +602,7 @@
                             <p style="font-size: 1rem;">Try adjusting your search filters</p>
                         </div>
                     `;
+                    document.getElementById('pagination').innerHTML = '';
                 }
             } catch (err) {
                 loading.style.display = 'none';
@@ -509,11 +623,14 @@
             });
         }
 
-        // Search Discogs API for album images
+        // Search Discogs API for album images - DISABLED unless token provided
         async function searchDiscogsImage(artist, album) {
+            if (!DISCOGS_TOKEN) {
+                return null; // Disabled - no token provided
+            }
+            
             const cacheKey = `${artist}|${album}`;
             
-            // Check cache first
             if (discogsCache.has(cacheKey)) {
                 return discogsCache.get(cacheKey);
             }
@@ -522,12 +639,21 @@
                 const query = `${artist} ${album}`;
                 const url = `${DISCOGS_API}?q=${encodeURIComponent(query)}&type=release`;
                 
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Discogs API error');
+                const response = await fetch(url, {
+                    headers: { 
+                        'User-Agent': 'MusicLibrary/1.0',
+                        'Authorization': `Discogs token=${DISCOGS_TOKEN}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.warn(`Discogs API returned ${response.status}`);
+                    discogsCache.set(cacheKey, null);
+                    return null;
+                }
                 
                 const data = await response.json();
                 
-                // Find first result with images
                 if (data.results && data.results.length > 0) {
                     for (const result of data.results) {
                         if (result.cover_image && result.cover_image !== 'https://s.discogs.com/images/default-release-cd.png') {
@@ -540,7 +666,6 @@
                 console.warn(`Discogs search failed for "${cacheKey}":`, error);
             }
             
-            // Cache null result to avoid repeated failed requests
             discogsCache.set(cacheKey, null);
             return null;
         }
@@ -550,10 +675,8 @@
             const card = document.createElement('div');
             card.className = 'album-card';
             
-            // Format release date
             const releaseYear = album.releaseDate ? new Date(album.releaseDate).getFullYear() : 'Unknown';
             
-            // Create genre tags HTML
             let genreTags = '';
             if (album.genres && album.genres.length > 0) {
                 genreTags = album.genres.map(genre => 
@@ -561,8 +684,8 @@
                 ).join('');
             }
 
-            // Create image element with Discogs fallback
-            const imageUrl = album.coverImageUrl || 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover';
+            const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Crect fill='%23667eea' width='250' height='250'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3ENo Cover%3C/text%3E%3C/svg%3E";
+            const imageUrl = album.coverImageUrl || placeholderSvg;
             const artistName = album.artist?.name || 'Unknown Artist';
             const albumTitle = album.title;
             
@@ -586,11 +709,13 @@
             return card;
         }
 
-        // Handle image load errors with Discogs fallback
+        // Handle image load errors with fallback
         async function handleImageError(imgElement) {
-            // Prevent infinite retry loop
+            imgElement.onerror = null;
+            
             if (imgElement.dataset.retried === 'true') {
-                imgElement.src = 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover';
+                const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Crect fill='%23667eea' width='250' height='250'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3ENo Cover%3C/text%3E%3C/svg%3E";
+                imgElement.src = placeholderSvg;
                 return;
             }
             
@@ -599,47 +724,23 @@
             const artist = imgElement.dataset.artist;
             const album = imgElement.dataset.album;
             
-            // Try Discogs API
-            const discogsUrl = await searchDiscogsImage(artist, album);
-            if (discogsUrl) {
-                imgElement.src = discogsUrl;
-                return;
+            // Try Discogs only if token is configured
+            if (DISCOGS_TOKEN) {
+                const discogsUrl = await searchDiscogsImage(artist, album);
+                if (discogsUrl) {
+                    imgElement.onerror = function() {
+                        this.onerror = null;
+                        const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Crect fill='%23667eea' width='250' height='250'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3ENo Cover%3C/text%3E%3C/svg%3E";
+                        this.src = placeholderSvg;
+                    };
+                    imgElement.src = discogsUrl;
+                    return;
+                }
             }
             
-            // Fall back to placeholder
-            imgElement.src = 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover';
-        }
-            const card = document.createElement('div');
-            card.className = 'album-card';
-            
-            // Format release date
-            const releaseYear = album.releaseDate ? new Date(album.releaseDate).getFullYear() : 'Unknown';
-            
-            // Create genre tags HTML
-            let genreTags = '';
-            if (album.genres && album.genres.length > 0) {
-                genreTags = album.genres.map(genre => 
-                    `<span class="genre-tag">${genre.name}</span>`
-                ).join('');
-            }
-
-            // FIXED: Added this.onerror=null to prevent infinite retry loop
-            card.innerHTML = `
-                <img src="${album.coverImageUrl || 'https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'}" 
-                     alt="${album.title}" 
-                     class="album-cover"
-                     onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250/667eea/ffffff?text=No+Cover'">
-                <div class="album-info">
-                    <div class="album-title" title="${album.title}">${album.title}</div>
-                    <div class="album-artist">${album.artist?.name || 'Unknown Artist'}</div>
-                    <div class="album-details">
-                        📅 ${releaseYear} • 🎵 ${album.trackCount || 0} tracks
-                    </div>
-                    ${genreTags ? `<div class="genre-tags">${genreTags}</div>` : ''}
-                </div>
-            `;
-
-            return card;
+            // Fallback to placeholder
+            const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Crect fill='%23667eea' width='250' height='250'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' fill='white' font-size='20' dy='.3em'%3ENo Cover%3C/text%3E%3C/svg%3E";
+            imgElement.src = placeholderSvg;
         }
 
         // Display pagination controls
@@ -647,22 +748,20 @@
             const pagination = document.getElementById('pagination');
             pagination.innerHTML = '';
 
-            // Validate pagination data
-            if (!data || !data.totalPages || data.totalPages <= 1) return;
-            
-            const currentPageNum = data.number || 0;
-            const totalPagesNum = data.totalPages || 1;
+            // Always show pagination controls
+            const isFirstPage = currentPage === 0;
+            const isLastPage = currentPage >= totalPages - 1;
 
             // Previous button
             const prevBtn = document.createElement('button');
             prevBtn.textContent = '← Previous';
-            prevBtn.disabled = data.first || currentPageNum === 0;
-            prevBtn.onclick = () => loadAlbums(currentPageNum - 1);
+            prevBtn.disabled = isFirstPage;
+            prevBtn.onclick = () => loadAlbums(currentPage - 1);
             pagination.appendChild(prevBtn);
 
-            // Page info - FIXED: Properly extract page number and total pages
+            // Page info
             const pageInfo = document.createElement('button');
-            pageInfo.textContent = `Page ${currentPageNum + 1} of ${totalPagesNum}`;
+            pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages}`;
             pageInfo.className = 'current-page';
             pageInfo.disabled = true;
             pagination.appendChild(pageInfo);
@@ -670,38 +769,12 @@
             // Next button
             const nextBtn = document.createElement('button');
             nextBtn.textContent = 'Next →';
-            nextBtn.disabled = data.last || currentPageNum >= totalPagesNum - 1;
-            nextBtn.onclick = () => loadAlbums(currentPageNum + 1);
-            pagination.appendChild(nextBtn);
-        }
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-
-            if (data.totalPages <= 1) return;
-
-            // Previous button - FIXED: Use data.number instead of currentPage
-            const prevBtn = document.createElement('button');
-            prevBtn.textContent = '← Previous';
-            prevBtn.disabled = data.first;
-            prevBtn.onclick = () => loadAlbums(data.number - 1);
-            pagination.appendChild(prevBtn);
-
-            // Page info
-            const pageInfo = document.createElement('button');
-            pageInfo.textContent = `Page ${data.number + 1} of ${data.totalPages}`;
-            pageInfo.className = 'current-page';
-            pageInfo.disabled = true;
-            pagination.appendChild(pageInfo);
-
-            // Next button - FIXED: Use data.number instead of currentPage
-            const nextBtn = document.createElement('button');
-            nextBtn.textContent = 'Next →';
-            nextBtn.disabled = data.last;
-            nextBtn.onclick = () => loadAlbums(data.number + 1);
+            nextBtn.disabled = isLastPage;
+            nextBtn.onclick = () => loadAlbums(currentPage + 1);
             pagination.appendChild(nextBtn);
         }
 
-        // FIXED: New function to search albums (resets to page 0)
+        // Search albums (resets to page 0)
         function searchAlbums() {
             currentPage = 0;
             loadAlbums(0);
@@ -716,11 +789,39 @@
             loadAlbums(0);
         }
 
+        // Clear search input and reload albums
+        function clearSearchInput() {
+            document.getElementById('searchInput').value = '';
+            toggleClearButton();
+            currentPage = 0;
+            loadAlbums(0);
+        }
+
+        // Toggle clear button visibility based on input content
+        function toggleClearButton() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('searchClearBtn');
+            
+            if (searchInput.value.trim().length > 0) {
+                clearBtn.classList.add('visible');
+            } else {
+                clearBtn.classList.remove('visible');
+            }
+        }
+
         // Allow Enter key to trigger search
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchAlbums();
             }
+        });
+
+        // Monitor search input for changes to show/hide clear button
+        document.getElementById('searchInput').addEventListener('input', toggleClearButton);
+
+        // Initialize clear button state on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            toggleClearButton();
         });
     </script>
 </body>

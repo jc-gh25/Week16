@@ -63,10 +63,6 @@ INSERT INTO album (title, release_date, cover_image_url, track_count, catalog_nu
 ('Led Zeppelin IV', '1971-11-08', 'https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg', 8, 'SD-7208', 5),
 ('Physical Graffiti', '1975-02-24', 'https://upload.wikimedia.org/wikipedia/en/e/e3/Led_Zeppelin_-_Physical_Graffiti.jpg', 15, 'SS2-200', 5);
 
--- Nirvana Albums
-INSERT INTO album (title, release_date, cover_image_url, track_count, catalog_number, artist_id) VALUES
-('Nevermind', '1991-09-24', 'https://upload.wikimedia.org/wikipedia/en/b/b7/NirvanaNevermindalbumcover.jpg', 12, 'DGC-24425', 6),
-('In Utero', '1993-09-21', 'https://upload.wikimedia.org/wikipedia/en/e/e5/In_Utero_%28Nirvana%29_album_cover.jpg', 12, 'DGC-24536', 6);
 
 -- Radiohead Albums
 INSERT INTO album (title, release_date, cover_image_url, track_count, catalog_number, artist_id) VALUES
@@ -80,8 +76,7 @@ INSERT INTO album (title, release_date, cover_image_url, track_count, catalog_nu
 
 -- Miles Davis Albums
 INSERT INTO album (title, release_date, cover_image_url, track_count, catalog_number, artist_id) VALUES
-('Kind of Blue', '1959-08-17', 'https://upload.wikimedia.org/wikipedia/en/9/9c/MilesDavisKindofBlue.jpg', 5, 'CL-1355', 9),
-('Bitches Brew', '1970-03-30', 'https://upload.wikimedia.org/wikipedia/en/c/c4/Bitches_brew.jpg', 6, 'GP-26', 9);
+('Kind of Blue', '1959-08-17', 'https://upload.wikimedia.org/wikipedia/en/9/9c/MilesDavisKindofBlue.jpg', 5, 'CL-1355', 9);
 
 -- Taylor Swift Albums
 INSERT INTO album (title, release_date, cover_image_url, track_count, catalog_number, artist_id) VALUES
@@ -122,10 +117,6 @@ INSERT INTO album_genre (album_id, genre_id) VALUES
 (11, 1),  -- Led Zeppelin IV -> Rock
 (12, 1);  -- Physical Graffiti -> Rock
 
--- Nirvana albums (Rock)
-INSERT INTO album_genre (album_id, genre_id) VALUES
-(13, 1),  -- Nevermind -> Rock
-(14, 1);  -- In Utero -> Rock
 
 -- Radiohead albums (Rock, Electronic)
 INSERT INTO album_genre (album_id, genre_id) VALUES
@@ -142,8 +133,7 @@ INSERT INTO album_genre (album_id, genre_id) VALUES
 
 -- Miles Davis albums (Jazz)
 INSERT INTO album_genre (album_id, genre_id) VALUES
-(19, 3),  -- Kind of Blue -> Jazz
-(20, 3);  -- Bitches Brew -> Jazz
+(19, 3);  -- Kind of Blue -> Jazz
 
 -- Taylor Swift albums (Pop)
 INSERT INTO album_genre (album_id, genre_id) VALUES

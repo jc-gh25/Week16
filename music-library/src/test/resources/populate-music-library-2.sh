@@ -53,10 +53,9 @@ post_json "$BASE/albums" '{"title":"The Dark Side of the Moon","releaseDate":"19
 post_json "$BASE/albums" '{"title":"The Wall","releaseDate":"1979-11-30","artistId":3,"genreIds":[1]}' "The Wall"
 post_json "$BASE/albums" '{"title":"A Night at the Opera","releaseDate":"1975-11-21","artistId":4,"genreIds":[1]}' "Night at the Opera"
 post_json "$BASE/albums" '{"title":"Led Zeppelin IV","releaseDate":"1971-11-08","artistId":5,"genreIds":[1]}' "Led Zeppelin IV"
-post_json "$BASE/albums" '{"title":"Nevermind","releaseDate":"1991-09-24","artistId":6,"genreIds":[1]}' "Nevermind"
 post_json "$BASE/albums" '{"title":"OK Computer","releaseDate":"1997-05-21","artistId":7,"genreIds":[1]}' "OK Computer"
 post_json "$BASE/albums" '{"title":"Discovery","releaseDate":"2001-03-12","artistId":8,"genreIds":[5,2]}' "Discovery"
 post_json "$BASE/albums" '{"title":"Random Access Memories","releaseDate":"2013-05-17","artistId":8,"genreIds":[5,2]}' "Random Access Memories"
 post_json "$BASE/albums" '{"title":"Kind of Blue","releaseDate":"1959-08-17","artistId":9,"genreIds":[3]}' "Kind of Blue"
 post_json "$BASE/albums" '{"title":"1989","releaseDate":"2014-10-27","artistId":10,"genreIds":[2]}' "1989"
-post_json "$BASE/albums" '{"title":"Folklore","releaseDate":"2020-07-24","artistId":10,"genreIds":[2]
+post_json "$BASE/albums" '{"title":"Folklore","releaseDate":"2020-07-24","artistId":10,"genreIds":[2]}' "Folklore"

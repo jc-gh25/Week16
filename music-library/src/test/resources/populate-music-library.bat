@@ -126,9 +126,6 @@ REM Led Zeppelin - Led Zeppelin IV
 curl -s -X POST "%API_URL%/albums" -H "Content-Type: application/json" -d "{\"title\":\"Led Zeppelin IV\",\"releaseDate\":\"1971-11-08\",\"coverImageUrl\":\"https://upload.wikimedia.org/wikipedia/en/2/26/Led_Zeppelin_-_Led_Zeppelin_IV.jpg\",\"trackCount\":8,\"catalogNumber\":\"SD-7208\",\"artist\":{\"artistId\":5},\"genres\":[{\"genreId\":1}]}"
 echo Created Led Zeppelin IV
 
-REM Nirvana - Nevermind
-curl -s -X POST "%API_URL%/albums" -H "Content-Type: application/json" -d "{\"title\":\"Nevermind\",\"releaseDate\":\"1991-09-24\",\"coverImageUrl\":\"https://upload.wikimedia.org/wikipedia/en/b/b7/NirvanaNevermindalbumcover.jpg\",\"trackCount\":12,\"catalogNumber\":\"DGC-24425\",\"artist\":{\"artistId\":6},\"genres\":[{\"genreId\":1}]}"
-echo Created Nevermind
 
 REM Radiohead - OK Computer
 curl -s -X POST "%API_URL%/albums" -H "Content-Type: application/json" -d "{\"title\":\"OK Computer\",\"releaseDate\":\"1997-05-21\",\"coverImageUrl\":\"https://upload.wikimedia.org/wikipedia/en/b/ba/Radioheadokcomputer.png\",\"trackCount\":12,\"catalogNumber\":\"CDNODATA01\",\"artist\":{\"artistId\":7},\"genres\":[{\"genreId\":1}]}"
@@ -165,7 +162,7 @@ echo.
 echo Summary:
 echo - 5 Genres created
 echo - 10 Artists created
-echo - 14 Albums created with cover images
+echo - 13 Albums created with cover images
 echo.
 echo You can now browse your music library at:
 echo %BASE_URL%

@@ -1,6 +1,6 @@
 # 🎵 Music Library API
 
-A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This production-ready application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, relationship queries, database migrations with Flyway, comprehensive testing, and deployment to Railway.
+A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This production-ready application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, search functionality, album cover images, comprehensive testing, and a rich library of 50 artists and over 100 albums.
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
@@ -46,9 +46,17 @@ The Music Library API is a portfolio-quality Spring Boot application that demons
 ✅ Automatic timestamp tracking (createdAt, updatedAt)  
 ✅ OpenAPI 3.0 specification with interactive Swagger UI  
 ✅ Comprehensive test suite (unit, integration, repository tests)  
-✅ Database migrations with Flyway  
-✅ Production deployment on Railway  
+✅ Rich music library with 50 artists and 100+ albums  
+✅ Album cover image support  
 ✅ Environment-based configuration  
+
+### Tools & Technologies
+
+**Postman**  
+Comprehensive collection with 150+ API requests for testing all endpoints and populating the database with realistic music data. Includes organized folders for Artists, Albums, Genres, and relationship queries.
+
+**Node.js Scripts**  
+Custom data processing scripts for downloading album cover images from the iTunes API and preparing JSON data for database population.
 
 ---
 
@@ -570,7 +578,7 @@ spring:
       path: /swagger-ui.html
       cors-enabled: true
       servers:
-        - url: https://javabc.up.railway.app
+        - url: https://suanne-speedless-chrissy.ngrok-free.dev
 
 # Prevent Spring from executing plain .sql scripts
 sql:
@@ -827,69 +835,60 @@ The Maven Surefire plugin automatically activates the test profile:
 
 ## 🚀 Deployment
 
-The application is deployed to **Railway** with MySQL database.
+The application runs locally with MySQL database and can be accessed via **ngrok** for external testing.
 
-### Railway Deployment
+### ngrok Deployment
 
-**Live API**: [https://javabc.up.railway.app](https://javabc.up.railway.app)
+**Live API**: [https://suanne-speedless-chrissy.ngrok-free.dev](https://suanne-speedless-chrissy.ngrok-free.dev)
 
 #### Prerequisites
 
-1. Railway account ([Sign up](https://railway.app/))
-2. Railway CLI installed (optional)
-3. GitHub repository connected to Railway
+1. Java 17 or higher installed
+2. MySQL 8.0+ running locally
+3. ngrok account ([Sign up](https://ngrok.com/))
+4. ngrok installed locally
 
 #### Deployment Steps
 
-1. **Create Railway Project**
-   - Connect GitHub repository
-   - Railway auto-detects Spring Boot application
+1. **Start the Application**
+   - Ensure MySQL is running
+   - Set environment variables for database connection
+   - Run the Spring Boot application: `mvn spring-boot:run`
 
-2. **Add MySQL Database**
-   - Add MySQL plugin from Railway marketplace
-   - Railway automatically sets environment variables:
-     - `MYSQL_HOST`
-     - `MYSQL_PORT`
-     - `MYSQL_DATABASE`
-     - `MYSQL_USER`
-     - `MYSQL_PASSWORD`
+2. **Start ngrok Tunnel**
+   - Open a terminal and run: `ngrok http 8080`
+   - ngrok will provide a public URL (e.g., https://suanne-speedless-chrissy.ngrok-free.dev)
+   - This URL forwards to your local application
 
-3. **Configure Environment Variables**
-   - Railway sets `PORT` automatically
-   - Add any custom variables in Railway dashboard
+3. **Access the API**
+   - Use the ngrok URL to access your API from anywhere
+   - Swagger UI: `https://suanne-speedless-chrissy.ngrok-free.dev/swagger-ui.html`
+   - API endpoints: `https://suanne-speedless-chrissy.ngrok-free.dev/api`
 
-4. **Deploy**
-   - Push to GitHub main branch
-   - Railway automatically builds and deploys
-   - Flyway migrations run on startup
+#### Configuration
 
-#### Railway Configuration
-
-The application is configured for Railway deployment:
+The application is configured with environment variables:
 
 ```yaml
 server:
-  port: ${PORT:8080}  # Railway provides PORT variable
+  port: ${PORT:8080}  # Default port 8080
 
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=true&requireSSL=true
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=false
 ```
 
-#### Monitoring
+#### Benefits of ngrok
 
-Railway provides:
-- Real-time logs
-- Metrics dashboard
-- Deployment history
-- Database backups
+ngrok provides:
+- Secure tunneling to localhost
+- Public URL for testing and sharing
+- Request inspection and replay
+- No deployment or hosting costs
 
-#### Custom Domain (Optional)
+#### Note
 
-Configure custom domain in Railway dashboard:
-1. Go to Settings → Domains
-2. Add custom domain
-3. Update DNS records
+The ngrok URL changes each time you restart ngrok (unless using a paid plan with reserved domains). Update the URL in your documentation and clients accordingly.
 
 ---
 
@@ -1033,11 +1032,11 @@ This project demonstrates proficiency in:
 ✅ **Spring Boot 3.x** - Modern Spring framework features  
 ✅ **RESTful API Design** - Standard HTTP methods and status codes  
 ✅ **JPA/Hibernate** - Entity relationships and lazy loading  
-✅ **Database Migrations** - Flyway version control  
 ✅ **Testing** - Unit, integration, and repository tests  
 ✅ **API Documentation** - OpenAPI/Swagger specification  
-✅ **Deployment** - Production deployment to Railway  
+✅ **Deployment** - Local development with ngrok tunneling  
 ✅ **Error Handling** - Global exception handling  
+✅ **Rich Content** - 50 artists and 100+ albums with cover images  
 ✅ **Input Validation** - Bean Validation (JSR-380)  
 ✅ **DTO Pattern** - Separation of concerns  
 ✅ **Environment Configuration** - YAML with environment variables  
@@ -1048,7 +1047,7 @@ This project demonstrates proficiency in:
 
 - **Spring Boot Team** - Excellent framework and documentation
 - **Promineo Tech** - Backend development bootcamp
-- **Railway** - Simple and powerful deployment platform
+- **ngrok** - Secure tunneling for local development
 
 ---
 
