@@ -1,34 +1,27 @@
 # -------------------------------------------------------------
-# Spring Boot configuration for Railway (MySQL free tier)
+# Spring Boot Configuration for Music Library API
 # -----------------------------------------------------
 server:
-  port: ${PORT:8080}  # Use Railway's dynamic PORT, fallback to 8080 locally
+  port: ${PORT:8080}  # Server port, fallback to 8080 if not specified
 
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=true&requireSSL=true
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     # Username & password are taken from the separate env vars
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
 
   # --------------------------------------------------------
-  # JPA / Hibernate – Flyway will manage schema, so use validate
+  # JPA / Hibernate Configuration
   # -------------------------------------------------------
   jpa:
     hibernate:
-      ddl-auto: validate          # Flyway manages schema, Hibernate only validates
-    show-sql: true                # prints SQL statements to the console (debug)
-
-  # --------------------------------------------------
-  # Flyway – ENABLED for database migrations
-  # --------------------------------------------------
-  flyway:
-    enabled: true                 # Enable Flyway for schema and data management
-    locations: classpath:db/migration  # Location of migration scripts
+      ddl-auto: update              # Hibernate manages schema updates
+    show-sql: true                # Print SQL statements (debug)
 
   # ------------------------------------------------------
-  # Springdoc / Swagger UI (optional but handy for testing)
+  # Springdoc / Swagger UI
   # --------------------------------------------------
   springdoc:
     api-docs:
@@ -36,10 +29,9 @@ spring:
     swagger-ui:
       enabled: true
       path: /swagger-ui.html
-      cors-enabled: true      # THIS ENABLES CORS for /v3/api-docs
-      # (optional) force the public base URL – uncomment if you need it
+      cors-enabled: true
       servers:
-        - url: https://javabc.up.railway.app
+        - url: https://suanne-speedless-chrissy.ngrok-free.dev
 
 # ---------------------------------------------------------
 # Prevent Spring from executing any plain .sql scripts at startup

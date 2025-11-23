@@ -545,54 +545,68 @@ music-library/
 │   │   ├── java/music/library/
 │   │   │   ├── MusicLibraryApplication.java    # Main application class
 │   │   │   ├── controller/                     # REST controllers
-│   │   │   │   └── MusicLibraryController.java
+│   │   │   │   ├── MusicLibraryController.java # Main API controller (GET, POST, PUT, DELETE)
+│   │   │   │   └── SwaggerRedirectController.java # Swagger UI redirect
 │   │   │   ├── entity/                         # JPA entities
-│   │   │   │   ├── Artist.java
-│   │   │   │   ├── Album.java
-│   │   │   │   └── Genre.java
+│   │   │   │   ├── Artist.java                 # Artist entity with albums relationship
+│   │   │   │   ├── Album.java                  # Album entity with artist and genres
+│   │   │   │   └── Genre.java                  # Genre entity with albums relationship
 │   │   │   ├── repository/                     # Spring Data repositories
-│   │   │   │   ├── ArtistRepository.java
-│   │   │   │   ├── AlbumRepository.java
-│   │   │   │   └── GenreRepository.java
+│   │   │   │   ├── ArtistRepository.java       # Artist data access
+│   │   │   │   ├── AlbumRepository.java        # Album data access
+│   │   │   │   └── GenreRepository.java        # Genre data access
 │   │   │   ├── service/                        # Business logic layer
-│   │   │   │   ├── ArtistService.java
-│   │   │   │   ├── AlbumService.java
-│   │   │   │   ├── GenreService.java
-│   │   │   │   └── DatabaseResetService.java
+│   │   │   │   ├── ArtistService.java          # Artist CRUD operations
+│   │   │   │   ├── AlbumService.java           # Album CRUD operations
+│   │   │   │   ├── GenreService.java           # Genre CRUD operations
+│   │   │   │   └── DatabaseResetService.java   # Database reset functionality
 │   │   │   ├── dto/                            # Data Transfer Objects
-│   │   │   │   ├── CreateArtistRequest.java
-│   │   │   │   ├── CreateAlbumRequest.java
-│   │   │   │   ├── CreateGenreRequest.java
-│   │   │   │   ├── ApiInfoResponse.java
-│   │   │   │   └── DatabaseResetResponse.java
+│   │   │   │   ├── CreateArtistRequest.java    # DTO for creating artists
+│   │   │   │   ├── CreateAlbumRequest.java     # DTO for creating albums
+│   │   │   │   ├── CreateGenreRequest.java     # DTO for creating genres
+│   │   │   │   ├── UpdateArtistRequest.java    # DTO for updating artists (PUT)
+│   │   │   │   ├── UpdateAlbumRequest.java     # DTO for updating albums (PUT)
+│   │   │   │   ├── UpdateGenreRequest.java     # DTO for updating genres (PUT)
+│   │   │   │   ├── ApiInfoResponse.java        # API welcome endpoint response
+│   │   │   │   └── DatabaseResetResponse.java  # Database reset response
 │   │   │   ├── exception/                      # Exception handling
-│   │   │   │   ├── ResourceNotFoundException.java
-│   │   │   │   ├── GlobalExceptionHandler.java
-│   │   │   │   └── ApiError.java
+│   │   │   │   ├── ResourceNotFoundException.java # Custom 404 exception
+│   │   │   │   ├── GlobalExceptionHandler.java # Centralized error handling
+│   │   │   │   └── ApiError.java               # Standardized error response
 │   │   │   ├── config/                         # Configuration classes
-│   │   │   │   └── OpenApiConfig.java
-│   │   │   └── specification/                  # JPA Specifications (if used)
+│   │   │   │   ├── SwaggerConfig.java          # OpenAPI/Swagger configuration
+│   │   │   │   ├── CorsConfig.java             # CORS configuration
+│   │   │   │   └── PageConfig.java             # Pagination configuration
+│   │   │   └── specification/                  # JPA Specifications
+│   │   │       └── AlbumSpecs.java             # Dynamic query specifications
 │   │   └── resources/
 │   │       ├── application.yaml                # Main configuration
 │   │       ├── application-test.yaml           # Test profile configuration
+│   │       └── static/                         # Static web resources
+│   │           ├── index.html                  # API welcome page
+│   │           ├── library.html                # Music library browser UI
+│   │           └── covers/                     # Album cover images directory
 │   └── test/
 │       └── java/music/library/
 │           ├── integration/                    # Integration tests
-│           │   ├── ArtistControllerIT.java
-│           │   ├── AlbumControllerIT.java
-│           │   ├── AlbumControllerUpdateDeleteIT.java
-│           │   └── GenreControllerIT.java
+│           │   ├── ArtistControllerIT.java     # Artist endpoint tests
+│           │   ├── AlbumControllerIT.java      # Album endpoint tests (GET, POST)
+│           │   ├── AlbumControllerUpdateDeleteIT.java # Album PUT/DELETE tests
+│           │   ├── GenreControllerIT.java      # Genre endpoint tests
+│           │   └── RestResponsePage.java       # Pagination test helper
 │           ├── service/                        # Service layer tests
-│           │   ├── ArtistServiceTest.java
-│           │   ├── AlbumServiceTest.java
-│           │   └── AlbumServiceBidirectionalTest.java
+│           │   ├── ArtistServiceTest.java      # Artist service unit tests
+│           │   ├── AlbumServiceTest.java       # Album service unit tests
+│           │   └── AlbumServiceBidirectionalTest.java # Relationship tests
 │           └── repository/                     # Repository tests
-│               └── AlbumRepositoryTest.java
+│               └── AlbumRepositoryTest.java    # Album repository tests
 ├── pom.xml                                     # Maven configuration
 ├── README.md                                   # This file
-├── populate-music-library.bat                  # Windows data loader
-├── populate-music-library.sh                   # Unix data loader
-└── Music-Library-Sample-Data.postman_collection.json
+├── populate-music-library.bat                  # Windows data loader script
+├── populate-music-library.sh                   # Unix/Mac data loader script
+├── Dockerfile                                  # Docker containerization config
+├── docker-compose.yaml                         # Docker Compose configuration
+└── Music-Library-Sample-Data.postman_collection.json # Postman API collection
 ```
 
 ### Package Structure
@@ -620,12 +634,12 @@ The application uses YAML configuration with environment variables for flexibili
 ```yaml
 # Server Configuration
 server:
-  port: ${PORT:8080}  # Use Railway's dynamic PORT, fallback to 8080 locally
+  port: ${PORT:8080}  # Server port, fallback to 8080 if not specified
 
 # Database Configuration
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=true&requireSSL=true
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
