@@ -24,6 +24,10 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("REST API for managing artists, albums, and genres"))
                 .servers(List.of(
+                        // Ngrok tunnel server - HTTPS
+                        new Server()
+                                .url("https://suanne-speedless-chrissy.ngrok-free.dev")
+                                .description("Ngrok Tunnel Server"),
                         // Production server (Railway) - HTTPS
                         new Server()
                                 .url("https://javabc.up.railway.app")
