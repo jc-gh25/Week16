@@ -176,6 +176,5 @@ This endpoint demonstrates:
 
 ---
 
-**Created by:** Postman AI Agent  
-**Date:** January 2025  
-**Project:** Music Library API - Backend Developer Portfolio
+  
+

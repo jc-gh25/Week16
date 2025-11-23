@@ -1,0 +1,46 @@
+Week 16 Research
+
+Security:
+
+1. When discussing handling of sensitive data, how do hashing and salting work? Why would we need to hash and salt certain data?
+
+ Hashing: A one-way function that transforms data into a fixed-size string of characters (the hash). It’s impossible to reverse engineer the original data from the hash.
+Salting: Adding a random, unique string (the salt) to each password before hashing it. This makes rainbow table attacks and dictionary attacks much harder because attackers can’t precompute hashes for common passwords with salts.
+Why Hash and Salt?
+
+Protecting Passwords: Even if a database is compromised, the attacker won’t get usable passwords—only salted hashes.
+Preventing Rainbow Table Attacks: Precomputed tables of hashes (rainbow tables) become useless because each password has a unique salt.
+Mitigating Dictionary Attacks: Attackers can’t use pre-made lists of common passwords and their hashes, as the salts make each hash unique.
+
+2. What are the three parts of a JSON Web Token (JWT)?
+
+Header: Contains metadata about the token type (usually “JWT”) and the hashing algorithm used to sign it (e.g., HMAC SHA256 or RSA).
+Payload: Holds the claims—statements about an entity (user) and additional data. Common claims include iss (issuer), sub (subject), aud (audience), exp (expiration time), etc.
+Signature: Created by hashing the header and payload using a secret key or private key. This ensures that the token hasn’t been tampered with.
+
+3. If a JWT can be decoded by anyone, how are they useful? What problem do they solve and how do they solve it securely?
+
+JWTs can be decoded by anyone because they are base64 encoded, not encrypted. However, their security comes from:
+
+Signature Verification: The signature is cryptographically signed using a secret key (for HMAC) or private key (for RSA). This ensures that only someone with the correct key can create valid tokens.
+Integrity Protection: If any part of the header or payload is altered, the signature will no longer match, and the token will be rejected.
+Problem Solved & How Securely
+
+JWTs solve the problem of stateless authentication. Traditionally, server-side sessions require storing user data, which can scale poorly. JWTs allow servers to verify identity without maintaining session state:
+
+The client sends the JWT with each request.
+The server verifies the signature using its secret key (or public key for RSA).
+If valid, the server trusts the claims in the payload.
+Security: The signature ensures that only authorized tokens are accepted, and the expiration time limits their validity. This makes JWTs a secure way to manage authentication and authorization without session management overhead.
+
+4. Research Spring Security.   Though not covered in this course, how to provide security is a question that many of our students have.  Take a look into some of the available resources to provide security to your application.
+
+Spring Security is a powerful and highly customizable framework for securing Java applications. Here’s an overview:
+
+Authentication: Verifies user identity (e.g., username/password, OAuth2).
+Authorization: Controls access to resources based on roles or permissions.
+Key Features:
+Filters and Interceptors: Handle security concerns before requests reach controllers.
+UserDetailsService: Loads user details from various sources (databases, LDAP).
+Role-Based Access Control (RBAC): Manages access based on roles assigned to users.
+OAuth2 Support: Integrates with OAuth2 providers for social login and API security.

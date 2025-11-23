@@ -60,6 +60,59 @@ Custom data processing scripts for downloading album cover images from the iTune
 
 ---
 
+## 🤖 Development Approach
+
+This project was developed using **AI-assisted development practices**, a modern approach that combines human expertise with AI tools to accelerate development while maintaining high code quality and architectural integrity.
+
+### Developer Responsibilities
+
+The developer was responsible for all critical aspects of the application:
+
+**Architecture & Design**
+- Database schema design with complex many-to-many relationships
+- Entity structure and relationship mapping
+- RESTful API design patterns
+- DTO pattern implementation
+
+**Problem-Solving & Debugging**
+- Created PUT methods for Album, Artist, and Genre entities
+- Fixed test scripts (corrected validation tests for "Movin' On Up")
+- Debugged and fixed search functionality in library.html
+- Resolved artist-album association issues in the database
+- Implemented data integrity solutions using programmatic variable patterns in Postman
+
+**Feature Development & Enhancement**
+- Added clear search button functionality to library.html
+- Integrated album cover images with iTunes API
+- Implemented pagination and sorting across all endpoints
+- Developed comprehensive validation and error handling
+
+**Integration & Testing**
+- Integrated multiple technologies: Spring Boot, MySQL, Postman, Node.js, ngrok
+- Created and validated comprehensive Postman collection with 150+ requests
+- Performed collection runs to ensure data integrity
+- Validated all CRUD operations and relationship queries
+
+### AI Tool Usage
+
+AI tools (primarily GitHub Copilot and ChatGPT) were used as **development accelerators** for:
+- Generating boilerplate code (entities, DTOs, repositories)
+- Suggesting implementation patterns for common Spring Boot features
+- Providing syntax assistance and code completion
+- Generating initial test structures
+
+### Why This Approach Works
+
+Modern software development increasingly leverages AI tools as productivity multipliers. This approach mirrors real-world professional development where:
+- Developers focus on architecture, design decisions, and problem-solving
+- AI tools handle repetitive coding tasks and boilerplate generation
+- Human expertise guides the overall direction and ensures quality
+- Debugging and integration remain fundamentally human skills
+
+The result is a **production-quality application** that demonstrates both technical competency and the ability to effectively leverage modern development tools—a skill increasingly valued in professional software engineering.
+
+---
+
 ## 🛠️ Technology Stack
 
 ### Core Framework
