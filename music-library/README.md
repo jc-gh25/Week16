@@ -66,7 +66,7 @@ This project was developed using **AI-assisted development practices**, a modern
 
 ### Developer Responsibilities
 
-The developer was responsible for all critical aspects of the application:
+The developer was responsible for all critical aspects of the application, including:
 
 **Architecture & Design**
 - Database schema design with complex many-to-many relationships
@@ -76,8 +76,8 @@ The developer was responsible for all critical aspects of the application:
 
 **Problem-Solving & Debugging**
 - Created PUT methods for Album, Artist, and Genre entities
-- Fixed test scripts (corrected validation tests for "Movin' On Up")
-- Debugged and fixed search functionality in library.html
+- Fixed test scripts (corrected validation tests for albums)
+- Debugged functionality in library.html
 - Resolved artist-album association issues in the database
 - Implemented data integrity solutions using programmatic variable patterns in Postman
 
@@ -85,21 +85,24 @@ The developer was responsible for all critical aspects of the application:
 - Added clear search button functionality to library.html
 - Integrated album cover images with iTunes API
 - Implemented pagination and sorting across all endpoints
-- Developed comprehensive validation and error handling
 
 **Integration & Testing**
 - Integrated multiple technologies: Spring Boot, MySQL, Postman, Node.js, ngrok
-- Created and validated comprehensive Postman collection with 150+ requests
+- Created and validated comprehensive Postman collection with 150+ API requests
 - Performed collection runs to ensure data integrity
 - Validated all CRUD operations and relationship queries
 
 ### AI Tool Usage
 
-AI tools (primarily GitHub Copilot and ChatGPT) were used as **development accelerators** for:
-- Generating boilerplate code (entities, DTOs, repositories)
-- Suggesting implementation patterns for common Spring Boot features
+AI tools including Claude Sonnet 4.5, GPT-5, DeepSeek R1, Gemini 3 Pro, and Llama 4 Maverick were used as development accelerators for:
+- Generating boilerplate code
+- Discussing implementation patterns for common Spring Boot features
 - Providing syntax assistance and code completion
 - Generating initial test structures
+- HTML/CSS/JS creation
+- Creating debugging scripts
+- Code review, method improvements, code comments
+- Data validation and error handling
 
 ### Why This Approach Works
 
@@ -109,7 +112,7 @@ Modern software development increasingly leverages AI tools as productivity mult
 - Human expertise guides the overall direction and ensures quality
 - Debugging and integration remain fundamentally human skills
 
-The result is a **production-quality application** that demonstrates both technical competency and the ability to effectively leverage modern development tools—a skill increasingly valued in professional software engineering.
+The result is a **production-quality application** that demonstrates both technical competency and the ability to effectively leverage modern development tools — a skill increasingly valued in professional software engineering.
 
 ---
 
