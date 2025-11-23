@@ -20,7 +20,6 @@ A comprehensive RESTful API for managing a music library built with **Spring Boo
 - [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
 - [Project Structure](#️-project-structure)
 - [Configuration](#-configuration)
-- [Database Migrations](#-database-migrations)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
 - [Error Handling](#-error-handling)
@@ -92,6 +91,28 @@ The developer was responsible for all critical aspects of the application, inclu
 - Performed collection runs to ensure data integrity
 - Validated all CRUD operations and relationship queries
 
+### Deployment Exploration
+
+As part of the development process, the developer explored multiple deployment strategies to gain hands-on experience with modern cloud platforms and containerization:
+
+**Railway Platform Investigation**
+- Researched Railway as a potential cloud deployment platform
+- Evaluated Railway's MySQL free tier and deployment workflow
+- Configured application for cloud deployment with environment variables
+
+**Docker Containerization**
+- Created a Dockerfile for containerizing the Spring Boot application
+- Learned Docker best practices for Java applications
+- Gained experience with container-based deployment strategies
+
+**Deployment Decision**
+- After exploring cloud options, chose local hosting with ngrok tunneling for current implementation
+- This decision provided more control over the development environment
+- Gained valuable experience with cloud platforms and containerization that will transfer to future projects
+- May explore AWS deployment (EC2, RDS, or Elastic Beanstalk) in the future
+
+This exploration demonstrates the ability to evaluate different deployment options, understand trade-offs, and make informed architectural decisions — critical skills for modern backend development.
+
 ### AI Tool Usage
 
 AI tools including Claude Sonnet 4.5, GPT-5, DeepSeek R1, Gemini 3 Pro, and Llama 4 Maverick were used as development accelerators for:
@@ -128,7 +149,6 @@ The result is a **production-quality application** that demonstrates both techni
 - **H2**: In-memory database (testing)
 - **Spring Data JPA**: Data access abstraction
 - **Hibernate**: ORM implementation
-- **Flyway**: Database migration management
 
 ### API & Documentation
 - **Spring Web**: RESTful API framework
@@ -166,7 +186,6 @@ The result is a **production-quality application** that demonstrates both techni
 - **Lazy Loading**: Optimized database queries with lazy fetching
 - **Cascade Operations**: Automatic relationship management
 - **Environment Configuration**: YAML-based config with environment variables
-- **Database Migrations**: Version-controlled schema with Flyway
 - **Comprehensive Testing**: Unit, integration, and repository tests
 - **Code Coverage**: JaCoCo reports for test coverage metrics
 
@@ -556,9 +575,6 @@ music-library/
 │   │   └── resources/
 │   │       ├── application.yaml                # Main configuration
 │   │       ├── application-test.yaml           # Test profile configuration
-│   │       └── db/migration/                   # Flyway migration scripts
-│   │           ├── V1__create_initial_schema.sql
-│   │           └── V2__add_sample_data.sql
 │   └── test/
 │       └── java/music/library/
 │           ├── integration/                    # Integration tests
@@ -617,13 +633,8 @@ spring:
   # JPA / Hibernate Configuration
   jpa:
     hibernate:
-      ddl-auto: validate          # Flyway manages schema, Hibernate only validates
+      ddl-auto: update              # Hibernate manages schema updates
     show-sql: true                # Print SQL statements (debug)
-
-  # Flyway Configuration
-  flyway:
-    enabled: true                 # Enable Flyway for schema management
-    locations: classpath:db/migration
 
   # Springdoc / Swagger UI
   springdoc:
@@ -667,65 +678,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-  flyway:
-    enabled: false
 ```
-
----
-
-## 🗄️ Database Migrations
-
-The application uses **Flyway** for version-controlled database schema management.
-
-### Migration Scripts
-
-Migration scripts are located in `src/main/resources/db/migration/`:
-
-- **`V1__create_initial_schema.sql`** - Creates tables for Artist, Album, Genre, and join tables
-- **`V2__add_sample_data.sql`** - Populates database with sample data (optional)
-
-### Migration Naming Convention
-
-Flyway follows a strict naming convention:
-
-```
-V{version}__{description}.sql
-```
-
-Examples:
-- `V1__create_initial_schema.sql`
-- `V2__add_sample_data.sql`
-- `V3__add_catalog_number_column.sql`
-
-### Running Migrations
-
-Migrations run automatically on application startup when Flyway is enabled:
-
-```yaml
-spring:
-  flyway:
-    enabled: true
-```
-
-To manually run migrations:
-
-```bash
-mvn flyway:migrate
-```
-
-To view migration status:
-
-```bash
-mvn flyway:info
-```
-
-### Migration Best Practices
-
-1. **Never modify existing migrations** - Create new migrations instead
-2. **Test migrations locally** before deploying
-3. **Use transactions** for data migrations
-4. **Keep migrations small** and focused
-5. **Document complex migrations** with comments
 
 ---
 
