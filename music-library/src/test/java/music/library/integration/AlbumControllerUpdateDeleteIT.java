@@ -2,6 +2,7 @@ package music.library.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import music.library.dto.CreateAlbumRequest;
+import music.library.dto.UpdateAlbumRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
@@ -21,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -85,21 +87,16 @@ public class AlbumControllerUpdateDeleteIT {
 
     @Test
     void testUpdateAlbum() {
-        // Create updated album data with managed entities
-        Album updatedAlbum = new Album();
-        updatedAlbum.setTitle("Updated Album Title");
-        updatedAlbum.setReleaseDate(LocalDate.of(2024, 1, 1));
-        
-        // Use managed entities by fetching them fresh to avoid detached entity issues
-        Artist managedArtist = artistRepository.findById(testArtist.getArtistId()).orElseThrow();
-        Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
-        
-        updatedAlbum.setArtist(managedArtist);
-        updatedAlbum.setGenres(Set.of(managedGenre));
+        // Create updated album data using DTO
+        UpdateAlbumRequest updateRequest = new UpdateAlbumRequest();
+        updateRequest.setTitle("Updated Album Title");
+        updateRequest.setReleaseDate(LocalDate.of(2024, 1, 1));
+        updateRequest.setArtistId(testArtist.getArtistId());
+        updateRequest.setGenreIds(Arrays.asList(testGenre.getGenreId()));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Album> request = new HttpEntity<>(updatedAlbum, headers);
+        HttpEntity<UpdateAlbumRequest> request = new HttpEntity<>(updateRequest, headers);
 
         ResponseEntity<Album> response = restTemplate.exchange(
                 baseUrl + "/" + testAlbum.getAlbumId(),
@@ -117,20 +114,16 @@ public class AlbumControllerUpdateDeleteIT {
 
     @Test
     void testUpdateAlbumNotFound() {
-        Album updatedAlbum = new Album();
-        updatedAlbum.setTitle("Updated Album Title");
-        updatedAlbum.setReleaseDate(LocalDate.of(2024, 1, 1));
-        
-        // Use managed entities
-        Artist managedArtist = artistRepository.findById(testArtist.getArtistId()).orElseThrow();
-        Genre managedGenre = genreRepository.findById(testGenre.getGenreId()).orElseThrow();
-        
-        updatedAlbum.setArtist(managedArtist);
-        updatedAlbum.setGenres(Set.of(managedGenre));
+        // Create updated album data using DTO
+        UpdateAlbumRequest updateRequest = new UpdateAlbumRequest();
+        updateRequest.setTitle("Updated Album Title");
+        updateRequest.setReleaseDate(LocalDate.of(2024, 1, 1));
+        updateRequest.setArtistId(testArtist.getArtistId());
+        updateRequest.setGenreIds(Arrays.asList(testGenre.getGenreId()));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Album> request = new HttpEntity<>(updatedAlbum, headers);
+        HttpEntity<UpdateAlbumRequest> request = new HttpEntity<>(updateRequest, headers);
 
         ResponseEntity<Album> response = restTemplate.exchange(
                 baseUrl + "/999",

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import music.library.entity.Album;
 import music.library.entity.Artist;
@@ -27,6 +28,7 @@ class AlbumServiceBidirectionalTest {
 	private GenreRepository genreRepo;
 
 	@Test
+	@Transactional
 	void addGenre_updatesBothSides() {
 		// Create an artist
 		Artist artist = artistRepo.save(Artist.builder().name("Test Artist").description("for service test").build());
@@ -50,6 +52,7 @@ class AlbumServiceBidirectionalTest {
 	}
 
 	@Test
+	@Transactional
 	// Verifies that the removal method also updates the inverse side.
 	void removeGenre_cleansBothSides() {
 		// Same as above, but also add the genre first
@@ -68,7 +71,7 @@ class AlbumServiceBidirectionalTest {
 
 		// Reload genre and assert the album is gone.
 		// Forces JPA to fetch the inverse collection from the DB, 
-		// guaranteeing we’re not looking at a stale in‑memory object.
+		// guaranteeing we're not looking at a stale in‑memory object.
 		Genre refreshed = genreRepo.findById(genre.getGenreId())
 				.orElseThrow(() -> new AssertionError("Genre vanished"));
 

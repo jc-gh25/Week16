@@ -457,7 +457,7 @@
                 </div>
                 <div class="feature-card">
                     <h4>🔬 Comprehensive Testing</h4>
-                    <p>Unit tests with Mockito, integration tests with Testcontainers for real database testing, and JaCoCo code coverage reporting.</p>
+                    <p>Unit tests with Mockito, integration tests with Testcontainers for real database testing, and Maven Surefire test reporting.</p>
                 </div>
                 <div class="feature-card">
                     <h4>🗄️ Database Management</h4>
@@ -511,7 +511,7 @@
                         <li>JUnit 5</li>
                         <li>Mockito (Unit testing framework)</li>
                         <li>Testcontainers (Docker-based integration testing)</li>
-                        <li>JaCoCo (Code coverage analysis tool)</li>
+                        <li>Maven Surefire (Test execution and reporting)</li>
                     </ul>
                 </div>
                 <div class="tech-card">
@@ -813,7 +813,7 @@
                     <li>✔️ Unit tests with Mockito for service layer isolation</li>
                     <li>✔️ Integration tests with @SpringBootTest</li>
                     <li>✔️ Testcontainers for real MySQL database testing</li>
-                    <li>✔️ JaCoCo - Code coverage analysis tool that generates test coverage reports</li>
+                    <li>✔️ Maven Surefire - Test execution framework that generates detailed test reports</li>
                     <li>✔️ Separate test profile with H2 in-memory database</li>
                 </ul>
             </div>
@@ -898,7 +898,7 @@
                 <code>mvn test</code>
             </div>
             <div class="api-endpoint">
-                <code>mvn verify</code> (includes JaCoCo coverage report)
+                <code>mvn verify</code> (runs all tests with detailed reporting)
             </div>
         </section>
 

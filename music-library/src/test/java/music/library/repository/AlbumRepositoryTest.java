@@ -11,8 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import music.library.entity.Album;
 import music.library.entity.Artist;
@@ -26,6 +29,7 @@ import music.library.entity.Genre;
  */
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 @ActiveProfiles("test")
 class AlbumRepositoryTest {
 
@@ -64,6 +68,7 @@ class AlbumRepositoryTest {
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
+	@Transactional
     @Test
     @DisplayName("Many‑to‑many relationship persists correctly")
     void albumGenre_bidirectional() {
@@ -76,15 +81,16 @@ class AlbumRepositoryTest {
         rock = genreRepo.save(rock);
 
         Album album = new Album();
-        album.setTitle("Rock Album");
-        album.setArtist(artist);
-        album.setReleaseDate(LocalDate.of(2022, 5, 5));
-        album.setGenres(new HashSet<>(Set.of(rock)));
+		album.setTitle("Rock Album");
+		album.setArtist(artist);  // ADD THIS BACK
+		album.setReleaseDate(LocalDate.of(2022, 5, 5));  // ADD THIS BACK
+		album.setGenres(new HashSet<>(Set.of(rock)));
+		rock.getAlbums().add(album);  // Maintain both sides of the relationship
 
-        album = albumRepo.saveAndFlush(album);
+		album = albumRepo.saveAndFlush(album);
 
-        // Reload from DB to verify join table
-        Album loaded = albumRepo.findById(album.getAlbumId()).orElseThrow();
+// Reload from DB to verify join table
+Album loaded = albumRepo.findById(album.getAlbumId()).orElseThrow();
 
         assertThat(loaded.getGenres())
                 .extracting(Genre::getName)

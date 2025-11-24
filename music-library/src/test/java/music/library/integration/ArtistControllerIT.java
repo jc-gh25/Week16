@@ -2,6 +2,7 @@ package music.library.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import music.library.dto.CreateArtistRequest;
+import music.library.dto.UpdateArtistRequest;
 import music.library.entity.Artist;
 import music.library.repository.ArtistRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,14 +145,14 @@ public class ArtistControllerIT {
         artist.setDescription("Original Description");
         Artist savedArtist = artistRepository.save(artist);
 
-        // Update artist
-        Artist updatedArtist = new Artist();
-        updatedArtist.setName("Updated Artist");
-        updatedArtist.setDescription("Updated Description");
+        // Update artist using DTO
+        UpdateArtistRequest updateRequest = new UpdateArtistRequest();
+        updateRequest.setName("Updated Artist");
+        updateRequest.setBio("Updated Description");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Artist> request = new HttpEntity<>(updatedArtist, headers);
+        HttpEntity<UpdateArtistRequest> request = new HttpEntity<>(updateRequest, headers);
 
         ResponseEntity<Artist> response = restTemplate.exchange(
                 baseUrl + "/" + savedArtist.getArtistId(),
