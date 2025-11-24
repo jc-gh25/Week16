@@ -12,14 +12,15 @@ This directory contains scripts and files to populate your Music Library API wit
 ## 📊 Sample Data Overview
 
 The scripts will create:
-- **8 Genres**: Rock, Pop, Jazz, Blues, Electronic, Hip Hop, Classical, Country
-- **10 Artists**: The Beatles, The Rolling Stones, Pink Floyd, Queen, Led Zeppelin, Nirvana, Radiohead, Daft Punk, Miles Davis, Taylor Swift
-- **20 Albums**: Classic albums from each artist with:
-  - Working cover image URLs (from Wikimedia Commons)
+- **10 Genres**: Rock, Pop, Jazz, Blues, Electronic, Hip Hop, Classical, Country, R&B/Soul, and Classical Crossover
+- **50 Artists**: A diverse collection spanning multiple genres and eras
+- **103 Albums**: Classic and contemporary albums from each artist with:
+  - Working cover image URLs (from iTunes Search API)
   - Release dates
   - Track counts
   - Catalog numbers
   - Genre associations
+  - Diverse music styles from classical to hip-hop
 
 ## 🚀 Usage Options
 
@@ -79,9 +80,9 @@ The scripts will create:
 
    **Option B: Run Requests Manually**
    - Expand the folders in order:
-     1. "1. Create Genres" - Run all 5 genre requests
-     2. "2. Create Artists" - Run all 10 artist requests
-     3. "3. Create Albums" - Run all 14 album requests
+     1. "1. Create Genres" - Run all 10 genre requests
+     2. "2. Create Artists" - Run all 50 artist requests
+     3. "3. Create Albums" - Run all 103 album requests
      4. "4. Verify Data" - Run these to check your data
 
 4. **Verify the Data**:
@@ -93,17 +94,18 @@ The scripts will create:
 
 ## 🖼️ Album Cover Images
 
-All album cover images are sourced from Wikimedia Commons and are publicly available. The URLs point to:
-- Wikipedia's media servers (upload.wikimedia.org)
-- These are reliable, permanent URLs
-- Images are properly licensed for use
+All album cover images are sourced from the iTunes Search API and are stored locally in the project. The images are:
+- Downloaded from iTunes Search API during data population
+- Stored in: `music-library\src\main\resources\static\covers\`
+- Served via the application's static resources
+- High-quality album artwork for all 103 albums
 
-Example albums with cover art:
-- The Beatles - Abbey Road
-- Pink Floyd - The Dark Side of the Moon
-- Daft Punk - Random Access Memories
-- Miles Davis - Kind of Blue
-- And many more!
+The music library includes a diverse collection spanning:
+- Classical music (Max Richter, Philip Glass, Andrea Bocelli)
+- Blues legends (B.B. King, Muddy Waters)
+- Classical crossover (Katherine Jenkins, Il Divo, Josh Groban)
+- Hip-hop pioneers (Grandmaster Flash, Run-DMC)
+- And many more across all 10 genres!
 
 ## 🔧 Troubleshooting
 

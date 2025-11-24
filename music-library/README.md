@@ -1,6 +1,6 @@
 # 🎵 Music Library API
 
-A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This production-ready application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, search functionality, album cover images, comprehensive testing, and a rich library of 50 artists and over 100 albums.
+A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This Java application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, search functionality, album cover images, comprehensive testing, and a Postman sample data import with 50 artists and over 100 albums.
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
@@ -91,28 +91,6 @@ The developer was responsible for all critical aspects of the application, inclu
 - Performed collection runs to ensure data integrity
 - Validated all CRUD operations and relationship queries
 
-### Deployment Exploration
-
-As part of the development process, the developer explored multiple deployment strategies to gain hands-on experience with modern cloud platforms and containerization:
-
-**Railway Platform Investigation**
-- Researched Railway as a potential cloud deployment platform
-- Evaluated Railway's MySQL free tier and deployment workflow
-- Configured application for cloud deployment with environment variables
-
-**Docker Containerization**
-- Created a Dockerfile for containerizing the Spring Boot application
-- Learned Docker best practices for Java applications
-- Gained experience with container-based deployment strategies
-
-**Deployment Decision**
-- After exploring cloud options, chose local hosting with ngrok tunneling for current implementation
-- This decision provided more control over the development environment
-- Gained valuable experience with cloud platforms and containerization that will transfer to future projects
-- May explore AWS deployment (EC2, RDS, or Elastic Beanstalk) in the future
-
-This exploration demonstrates the ability to evaluate different deployment options, understand trade-offs, and make informed architectural decisions — critical skills for modern backend development.
-
 ### AI Tool Usage
 
 AI tools including Claude Sonnet 4.5, GPT-5, DeepSeek R1, Gemini 3 Pro, and Llama 4 Maverick were used as development accelerators for:
@@ -134,6 +112,29 @@ Modern software development increasingly leverages AI tools as productivity mult
 - Debugging and integration remain fundamentally human skills
 
 The result is a **production-quality application** that demonstrates both technical competency and the ability to effectively leverage modern development tools — a skill increasingly valued in professional software engineering.
+
+
+### Deployment Exploration
+
+As part of the development process, the developer explored multiple deployment strategies to gain hands-on experience with modern cloud platforms and containerization:
+
+**Railway Platform Investigation**
+- Researched Railway as a potential cloud deployment platform
+- Evaluated Railway's MySQL free tier and deployment workflow
+- Configured application for cloud deployment with environment variables
+
+**Docker Containerization**
+- Created a Dockerfile for containerizing the Spring Boot application
+- Learned Docker best practices for Java applications
+- Gained experience with container-based deployment strategies
+
+**Deployment Decision**
+- After exploring cloud options, chose local hosting with ngrok tunneling for current implementation
+- This decision provided more control over the development environment
+- Gained valuable experience with cloud platforms and containerization that will transfer to future projects
+- May explore AWS deployment (EC2, RDS, or Elastic Beanstalk) in the future
+
+This exploration demonstrates the ability to evaluate different deployment options, understand trade-offs, and make informed architectural decisions — critical skills for modern backend development.
 
 ---
 
@@ -192,8 +193,6 @@ The result is a **production-quality application** that demonstrates both techni
 ---
 
 ## 📋 Prerequisites
-
-Before running this application, ensure you have:
 
 - **Java 17** or higher installed ([Download](https://www.oracle.com/java/technologies/downloads/))
 - **MySQL 8.0+** running locally or accessible remotely ([Download](https://dev.mysql.com/downloads/))

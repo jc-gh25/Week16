@@ -1,1 +1,0 @@
-ALTER TABLE album ADD CONSTRAINT uq_album_catalog UNIQUE (catalog_number);

@@ -28,11 +28,7 @@ public class SwaggerConfig {
                         new Server()
                                 .url("https://suanne-speedless-chrissy.ngrok-free.dev")
                                 .description("Ngrok Tunnel Server"),
-                        // Production server (Railway) - HTTPS
-                        new Server()
-                                .url("https://javabc.up.railway.app")
-                                .description("Production Server (Railway)"),
-                        // Local development server (optional)
+                        // Local development server
                         new Server()
                                 .url("http://localhost:8080")
                                 .description("Local Development Server")
