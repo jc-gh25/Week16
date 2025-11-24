@@ -560,30 +560,40 @@
                     albums = albums.slice(start, start + pageSize);
                     
                 } else {
-                    // Use main albums endpoint - returns paginated response
-                    url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
-                    console.log('Fetching all albums:', url);
-                    response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    data = await response.json();
-                    albums = data.content || [];
-                    
-                    // Apply search filter client-side
+                    // Use main albums endpoint
                     if (searchTerm) {
+                        // When searching, fetch ALL albums to search across entire library
+                        url = `${API_BASE}/albums?page=0&size=1000&sort=title,asc`;
+                        console.log('Fetching all albums for search:', url);
+                        response = await fetch(url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        data = await response.json();
+                        albums = data.content || [];
+                        
+                        // Apply search filter client-side
                         const term = searchTerm.toLowerCase();
                         albums = albums.filter(album => 
                             album.title.toLowerCase().includes(term)
                         );
                         
-                        // Recalculate pagination for filtered results
+                        // Client-side pagination for filtered results
                         totalPages = Math.ceil(albums.length / pageSize);
                         currentPage = Math.min(page, Math.max(0, totalPages - 1));
                         const start = currentPage * pageSize;
                         albums = albums.slice(start, start + pageSize);
-                        isPaginated = false; // Switch to client-side pagination
+                        isPaginated = false;
                     } else {
+                        // No search term - use server-side pagination
+                        url = `${API_BASE}/albums?page=${page}&size=${pageSize}&sort=title,asc`;
+                        console.log('Fetching all albums:', url);
+                        response = await fetch(url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        data = await response.json();
+                        albums = data.content || [];
                         currentPage = data.page.number || 0;
                         totalPages = data.page.totalPages || 0;
                         isPaginated = true;
