@@ -103,11 +103,6 @@ public class Album {
 	@Builder.Default
 	private Set<Genre> genres = new HashSet<>();
 
-	// Setter for genres
-	public void setGenres(Set<Genre> genres) {
-		this.genres = genres;
-	}
-
 	@PrePersist
 	void onCreate() {
 		createdAt = updatedAt = LocalDateTime.now();

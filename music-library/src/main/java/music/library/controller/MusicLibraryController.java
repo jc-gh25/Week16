@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springdoc.core.annotations.ParameterObject;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import music.library.dto.ApiInfoResponse;
 import music.library.dto.ApiInfoResponse.Endpoint;
@@ -97,6 +99,10 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "artist", description = "CRUD operations for artists")
+@Tag(name = "album", description = "CRUD operations for albums")
+@Tag(name = "genre", description = "CRUD operations for genres")
+@Tag(name = "database", description = "Database management operations")
 public class MusicLibraryController {
 
 	// Service layer dependencies injected via Spring's @Autowired
@@ -238,8 +244,7 @@ public class MusicLibraryController {
 			@ApiResponse(responseCode = "201", description = "Artist successfully created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Artist.class), examples = @ExampleObject(value = "{\"artistId\":1,\"name\":\"The Rolling Stones\",\"description\":\"Legendary British rock band\",\"createdAt\":\"2025-01-19T04:40:37.345906\",\"updatedAt\":\"2025-01-19T04:40:37.345906\"}"))),
 			@ApiResponse(responseCode = "400", description = "Bad Request - Invalid input data (e.g., missing required name field, name exceeds 255 characters)", content = @Content(mediaType = "application/json")) })
 	@PostMapping("/artists")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Artist createArtist(
+	public ResponseEntity<Artist> createArtist(
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Artist object to be created. The 'name' field is required (max 255 characters), and 'description' is optional. Do not include artistId, createdAt, updatedAt, or albums fields as they are auto-generated or ignored.", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = Artist.class), examples = @ExampleObject(name = "Create Artist Example", value = "{\"name\":\"The Beatles\",\"description\":\"Iconic British rock band from Liverpool\"}"))) @Valid @RequestBody CreateArtistRequest request)
 
 	{
@@ -254,6 +259,17 @@ public class MusicLibraryController {
 	 * @return paginated list of artists with metadata (totalElements, totalPages,
 	 *         etc.)
 	 */
+	@Operation(
+		summary = "Get all artists",
+		description = "Returns paginated list of artists with optional sorting. Supports pagination via query parameters: page (default: 0), size (default: 20), and sort (e.g., 'name,asc' or 'createdAt,desc')"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved paginated list of artists",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))
+		)
+	})
 	@GetMapping("/artists")
 	public Page<Artist> getAllArtists(@ParameterObject Pageable pageable) {
 		return artistSvc.findAll(pageable);
@@ -267,8 +283,26 @@ public class MusicLibraryController {
 	 * @throws music.library.exception.ResourceNotFoundException if artist not found
 	 *                                                           (404)
 	 */
+	@Operation(
+		summary = "Get artist by ID",
+		description = "Returns a single artist by their ID"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved artist",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Artist.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Artist not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@GetMapping("/artists/{id}")
-	public Artist getArtistById(@PathVariable Long id) {
+	public Artist getArtistById(
+		@Parameter(description = "ID of the artist to retrieve", required = true)
+		@PathVariable Long id) {
 		return artistSvc.findById(id);
 	}
 
@@ -283,8 +317,32 @@ public class MusicLibraryController {
 	 * @throws music.library.exception.ResourceNotFoundException if artist not found (404)
 	 * @throws org.springframework.web.bind.MethodArgumentNotValidException if validation fails (400)
 	 */
+	@Operation(
+		summary = "Update artist",
+		description = "Updates an existing artist and returns the updated entity. Only the fields provided in the request will be updated."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Artist successfully updated",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Artist.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Artist not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Bad Request - Invalid input data",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@PutMapping("/artists/{id}")
-	public Artist updateArtist(@PathVariable Long id, @Valid @RequestBody UpdateArtistRequest request) {
+	public Artist updateArtist(
+		@Parameter(description = "ID of the artist to update", required = true)
+		@PathVariable Long id, 
+		@Valid @RequestBody UpdateArtistRequest request) {
 		return artistSvc.updateArtist(id, request);
 	}
 
@@ -297,9 +355,26 @@ public class MusicLibraryController {
 	 * @throws music.library.exception.ResourceNotFoundException if artist not found
 	 *                                                           (404)
 	 */
+	@Operation(
+		summary = "Delete artist",
+		description = "Deletes an artist by ID. Note: Deletion behavior depends on cascade settings and may affect related albums."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "204",
+			description = "Artist successfully deleted"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Artist not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@DeleteMapping("/artists/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteArtist(@PathVariable Long id) {
+	public void deleteArtist(
+		@Parameter(description = "ID of the artist to delete", required = true)
+		@PathVariable Long id) {
 		artistSvc.delete(id);
 	}
 
@@ -313,6 +388,27 @@ public class MusicLibraryController {
 	 *                                                           artist or genre not
 	 *                                                           found
 	 */
+	@Operation(
+		summary = "Create new album",
+		description = "Creates an album and returns the created entity. Requires valid artistId and genreId references."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "201",
+			description = "Album successfully created",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Album.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Bad Request - Invalid input data or missing required fields",
+			content = @Content(mediaType = "application/json")
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Referenced artist or genre not found",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@PostMapping("/albums")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Album createAlbum(@Valid @RequestBody CreateAlbumRequest request) {
@@ -325,6 +421,17 @@ public class MusicLibraryController {
 	 * @param pageable pagination parameters (page, size, sort)
 	 * @return paginated list of albums with metadata
 	 */
+	@Operation(
+		summary = "Get all albums",
+		description = "Returns paginated list of albums with optional sorting. Supports pagination via query parameters: page (default: 0), size (default: 20), and sort (e.g., 'title,asc' or 'releaseYear,desc')"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved paginated list of albums",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))
+		)
+	})
 	@GetMapping("/albums")
 	public Page<Album> getAllAlbums(@ParameterObject Pageable pageable) {
 		return albumSvc.findAll(pageable);
@@ -338,8 +445,26 @@ public class MusicLibraryController {
 	 * @throws music.library.exception.ResourceNotFoundException if album not found
 	 *                                                           (404)
 	 */
+	@Operation(
+		summary = "Get album by ID",
+		description = "Returns a single album by its ID"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved album",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Album.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Album not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@GetMapping("/albums/{id}")
-	public Album getAlbumById(@PathVariable Long id) {
+	public Album getAlbumById(
+		@Parameter(description = "ID of the album to retrieve", required = true)
+		@PathVariable Long id) {
 		return albumSvc.findById(id);
 	}
 
@@ -351,8 +476,32 @@ public class MusicLibraryController {
 	 * @return the updated album entity
 	 * @throws music.library.exception.ResourceNotFoundException if album, artist, or any genre not found (404)
 	 */
+	@Operation(
+		summary = "Update album",
+		description = "Updates an existing album and returns the updated entity. Only the fields provided in the request will be updated."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Album successfully updated",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Album.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Album, artist, or genre not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Bad Request - Invalid input data",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@PutMapping("/albums/{id}")
-	public Album updateAlbum(@PathVariable Long id, @Valid @RequestBody UpdateAlbumRequest request) {
+	public Album updateAlbum(
+		@Parameter(description = "ID of the album to update", required = true)
+		@PathVariable Long id, 
+		@Valid @RequestBody UpdateAlbumRequest request) {
 		return albumSvc.updateAlbum(id, request);
 	}
 
@@ -363,9 +512,26 @@ public class MusicLibraryController {
 	 * @throws music.library.exception.ResourceNotFoundException if album not found
 	 *                                                           (404)
 	 */
+	@Operation(
+		summary = "Delete album",
+		description = "Deletes an album by ID"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "204",
+			description = "Album successfully deleted"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Album not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@DeleteMapping("/albums/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteAlbum(@PathVariable Long id) {
+	public void deleteAlbum(
+		@Parameter(description = "ID of the album to delete", required = true)
+		@PathVariable Long id) {
 		albumSvc.delete(id);
 	}
 
@@ -375,6 +541,22 @@ public class MusicLibraryController {
 	 * @param request the genre creation request containing name and optional description
 	 * @return the created genre entity with generated ID and timestamps
 	 */
+	@Operation(
+		summary = "Create new genre",
+		description = "Creates a genre and returns the created entity"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "201",
+			description = "Genre successfully created",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Genre.class))
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Bad Request - Invalid input data or missing required fields",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@PostMapping("/genres")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Genre createGenre(@Valid @RequestBody CreateGenreRequest request) {
@@ -387,6 +569,17 @@ public class MusicLibraryController {
 	 * @param pageable pagination parameters (page, size, sort)
 	 * @return paginated list of genres with metadata
 	 */
+	@Operation(
+		summary = "Get all genres",
+		description = "Returns paginated list of genres with optional sorting. Supports pagination via query parameters: page (default: 0), size (default: 20), and sort (e.g., 'name,asc' or 'createdAt,desc')"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved paginated list of genres",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class))
+		)
+	})
 	@GetMapping("/genres")
 	public Page<Genre> getAllGenres(@ParameterObject Pageable pageable) {
 		return genreSvc.findAll(pageable);
@@ -399,8 +592,26 @@ public class MusicLibraryController {
 	 * @return the genre entity
 	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
 	 */
+	@Operation(
+		summary = "Get genre by ID",
+		description = "Returns a single genre by its ID"
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved genre",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Genre.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Genre not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@GetMapping("/genres/{id}")
-	public Genre getGenreById(@PathVariable Long id) {
+	public Genre getGenreById(
+		@Parameter(description = "ID of the genre to retrieve", required = true)
+		@PathVariable Long id) {
 		return genreSvc.findById(id);
 	}
 
@@ -415,8 +626,32 @@ public class MusicLibraryController {
 	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
 	 * @throws org.springframework.web.bind.MethodArgumentNotValidException if validation fails (400)
 	 */
+	@Operation(
+		summary = "Update genre",
+		description = "Updates an existing genre and returns the updated entity. Only the fields provided in the request will be updated."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Genre successfully updated",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Genre.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Genre not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Bad Request - Invalid input data",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@PutMapping("/genres/{id}")
-	public Genre updateGenre(@PathVariable Long id, @Valid @RequestBody UpdateGenreRequest request) {
+	public Genre updateGenre(
+		@Parameter(description = "ID of the genre to update", required = true)
+		@PathVariable Long id, 
+		@Valid @RequestBody UpdateGenreRequest request) {
 		return genreSvc.updateGenre(id, request);
 	}
 
@@ -427,9 +662,26 @@ public class MusicLibraryController {
 	 * @param id the genre ID to delete
 	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
 	 */
+	@Operation(
+		summary = "Delete genre",
+		description = "Deletes a genre by ID. Note: Deletion may fail if albums reference this genre."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "204",
+			description = "Genre successfully deleted"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Genre not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@DeleteMapping("/genres/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteGenre(@PathVariable Long id) {
+	public void deleteGenre(
+		@Parameter(description = "ID of the genre to delete", required = true)
+		@PathVariable Long id) {
 		genreSvc.delete(id);
 	}
 
@@ -440,8 +692,26 @@ public class MusicLibraryController {
 	 * @return list of albums by the artist (empty list if none found)
 	 * @throws music.library.exception.ResourceNotFoundException if artist not found (404)
 	 */
+	@Operation(
+		summary = "Get albums by artist",
+		description = "Returns all albums by a specific artist. Returns an empty list if the artist has no albums."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved albums by artist",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Album.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Artist not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@GetMapping("/artists/{artistId}/albums")
-	public List<Album> getAlbumsByArtist(@PathVariable Long artistId) {
+	public List<Album> getAlbumsByArtist(
+		@Parameter(description = "ID of the artist whose albums to retrieve", required = true)
+		@PathVariable Long artistId) {
 		return albumSvc.findByArtistId(artistId);
 	}
 
@@ -452,8 +722,26 @@ public class MusicLibraryController {
 	 * @return list of albums in the genre (empty list if none found)
 	 * @throws music.library.exception.ResourceNotFoundException if genre not found (404)
 	 */
+	@Operation(
+		summary = "Get albums by genre",
+		description = "Returns all albums in a specific genre. Returns an empty list if the genre has no albums."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "Successfully retrieved albums by genre",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = Album.class))
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Genre not found with the provided ID",
+			content = @Content(mediaType = "application/json")
+		)
+	})
 	@GetMapping("/genres/{genreId}/albums")
-	public List<Album> getAlbumsByGenre(@PathVariable Long genreId) {
+	public List<Album> getAlbumsByGenre(
+		@Parameter(description = "ID of the genre whose albums to retrieve", required = true)
+		@PathVariable Long genreId) {
 		return albumSvc.findByGenreId(genreId);
 	}
 
@@ -469,6 +757,7 @@ public class MusicLibraryController {
 					content = @Content(mediaType = "application/json")) })
 	@DeleteMapping("/reset")
 	public ResponseEntity<DatabaseResetResponse> resetDatabase(
+			@Parameter(description = "Confirmation flag - must be set to 'true' to execute the reset", required = true)
 			@RequestParam(value = "confirm", required = false, defaultValue = "false") boolean confirm) {
 		if (!confirm) {
 			throw new IllegalArgumentException(

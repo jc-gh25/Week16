@@ -1,6 +1,7 @@
 package music.library.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * Data Transfer Object for updating an existing Genre.
@@ -11,9 +12,11 @@ import jakarta.validation.constraints.NotBlank;
  */
 public class UpdateGenreRequest {
     
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Name must not be blank")
+    @Size(max = 255, message = "Name must not exceed 255 characters")
     private String name;
     
+    @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String description;
 
     

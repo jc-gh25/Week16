@@ -19,15 +19,21 @@ services:
       - mysql-data:/var/lib/mysql
 
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: music-library:latest
+    container_name: music-library-app
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/music_library?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: music_library
-      SPRING_DATASOURCE_PASSWORD: music_library
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none   # Flyway will manage schema
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: music_library
+      MYSQL_USER: music_library
+      MYSQL_PASSWORD: music_library
+      PORT: 8080
     ports:
       - "8080:8080"
 

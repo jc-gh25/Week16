@@ -3,7 +3,11 @@ package music.library.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +53,20 @@ public class ArtistService {
     
     /**
      * Retrieves all artists with pagination support.
+     * Applies default sorting by name in ascending order if no sort is specified.
      * 
      * @param pageable pagination parameters (page, size, sort)
      * @return paginated list of artists
      */
     public Page<Artist> findAll(Pageable pageable) {
+        // Apply default sort if none specified
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("name").ascending()
+            );
+        }
         return repo.findAll(pageable);
     }
 
@@ -85,13 +98,14 @@ public class ArtistService {
      * This is the preferred method for API endpoints as it uses validated request objects.
      * 
      * @param request DTO containing name and bio
-     * @return the created artist entity with generated ID and timestamps
+     * @return ResponseEntity with HTTP 201 (CREATED) status and the created artist entity
      */
-    public Artist create(CreateArtistRequest request) {
+    public ResponseEntity<Artist> create(CreateArtistRequest request) {
         Artist artist = new Artist();
         artist.setName(request.getName());
         artist.setDescription(request.getBio());
-        return repo.save(artist);
+        Artist savedArtist = repo.save(artist);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedArtist);
     }
 
     /**
@@ -137,11 +151,12 @@ public class ArtistService {
 
     /**
      * Deletes an artist by ID.
-     * Note: Cascade behavior depends on entity configuration. If albums reference
-     * this artist, the operation may fail with a constraint violation.
+     * Transactional annotation ensures clean deletion with cascade of orphaned albums.
+     * This guarantees database consistency when deleting artists.
      * 
      * @param id the artist ID to delete
      */
+    @Transactional
     public void delete(Long id) {
         repo.deleteById(id);
     }

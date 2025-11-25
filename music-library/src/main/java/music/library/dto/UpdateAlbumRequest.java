@@ -2,6 +2,9 @@ package music.library.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,18 +19,25 @@ import java.util.List;
  */
 public class UpdateAlbumRequest {
     
-    @NotBlank(message = "Title is required")
+    @NotBlank(message = "Title must not be blank")
+    @Size(max = 255, message = "Title must not exceed 255 characters")
     private String title;
     
     private LocalDate releaseDate;
     
-    @NotNull(message = "Artist must be supplied")
+    @NotNull(message = "Artist ID is required")
+    @Positive(message = "Artist ID must be a positive number")
     private Long artistId;
     
-    private List<Long> genreIds;
+    private List<@Positive(message = "Genre ID must be a positive number") Long> genreIds;
     
+    @Size(max = 500, message = "Cover image URL must not exceed 500 characters")
     private String coverImageUrl;
+    
+    @Min(value = 1, message = "Track count must be at least 1")
     private Integer trackCount;
+    
+    @Size(max = 100, message = "Catalog number must not exceed 100 characters")
     private String catalogNumber;
 
     

@@ -2,6 +2,7 @@ package music.library.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -40,6 +41,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecific
      * @param artistId the artist's ID
      * @return list of albums by the artist (empty if none found)
      */
+    @EntityGraph(attributePaths = {"artist", "genres"})
     List<Album> findByArtist_ArtistId(Long artistId);
     
     /**
@@ -49,6 +51,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecific
      * @param genreId the genre's ID
      * @return list of albums in the genre (empty if none found)
      */
+    @EntityGraph(attributePaths = {"artist", "genres"})
     List<Album> findByGenres_GenreId(Long genreId);
     
 }
