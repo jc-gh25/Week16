@@ -2,14 +2,11 @@
 
 A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This Java application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, search functionality, album cover images, comprehensive testing, and a Postman sample data import with 50 artists and over 100 albums.
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-Educational-yellow.svg)](LICENSE)
-
 ## 📋 Table of Contents
 
 - [Project Overview](#-project-overview)
+  - [Key Capabilities](#key-capabilities)
+- [Development Approach](#-development-approach)
 - [Technology Stack](#️-technology-stack)
 - [Features](#-features)
 - [Prerequisites](#-prerequisites)
@@ -20,14 +17,21 @@ A comprehensive RESTful API for managing a music library built with **Spring Boo
 - [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
 - [Project Structure](#️-project-structure)
 - [Configuration](#-configuration)
+  - [Test Configuration](#test-configuration-application-testyaml)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
 - [Error Handling](#-error-handling)
-- [Contributing](#-contributing)
+- [Support](#-support)
+- [License](#-license)
 
 ---
 
 ## 🎵 Project Overview
+
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-Educational-yellow.svg)](LICENSE)
 
 The Music Library API is a portfolio-quality Spring Boot application that demonstrates modern backend development practices. It provides a complete solution for managing a music catalog with:
 
@@ -194,8 +198,8 @@ This exploration demonstrates the ability to evaluate different deployment optio
 
 ## 📋 Prerequisites
 
-- **Java 17** or higher installed ([Download](https://www.oracle.com/java/technologies/downloads/))
-- **MySQL 8.0+** running locally or accessible remotely ([Download](https://dev.mysql.com/downloads/))
+- **Java 17** or higher installed ([Download](https://www.oracle.com/java/technologies/downloads/#java17))
+- **MySQL 8.0+** running locally or accessible remotely ([Download](https://dev.mysql.com/downloads/mysql/))
 - **Maven 3.6+** for building the project ([Download](https://maven.apache.org/download.cgi))
 - **Git** for version control ([Download](https://git-scm.com/downloads))
 
@@ -237,7 +241,17 @@ export MYSQL_PASSWORD=your_secure_password
 export PORT=8080
 ```
 
-**Note**: The application uses `src/main/resources/application.yaml` which references these environment variables. See [Configuration](#-configuration) section for details.
+**Note**: The application uses `src/main/resources/application.yaml` which references these environment variables:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:music_library}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:password}
+```
+
+See [Configuration](#-configuration) section for complete details.
 
 ### 4. Build the Project
 
@@ -647,9 +661,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update              # Hibernate manages schema updates
-    show-sql: true                # Print SQL statements (debug)
+    show-sql: true                  # Print SQL statements (debug)
 
-  # Springdoc / Swagger UI
+  # Springdoc / Swagger UI Configuration
   springdoc:
     api-docs:
       path: /v3/api-docs
