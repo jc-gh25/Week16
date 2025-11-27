@@ -18,6 +18,7 @@ import music.library.dto.UpdateAlbumRequest;
 import music.library.entity.Album;
 import music.library.entity.Artist;
 import music.library.entity.Genre;
+import music.library.exception.DuplicateResourceException;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.AlbumRepository;
 import music.library.repository.ArtistRepository;
@@ -100,6 +101,10 @@ public class AlbumService {
 	 * @return the persisted album with generated ID and timestamps
 	 */
 	public Album create(Album a) {
+		// Check for duplicate album title (case-insensitive)
+		if (albumRepo.existsByTitleIgnoreCase(a.getTitle())) {
+			throw new DuplicateResourceException("Album with title '" + a.getTitle() + "' already exists");
+		}
 		return albumRepo.save(a);
 	}
 
@@ -119,6 +124,11 @@ public class AlbumService {
 	 * @throws ResourceNotFoundException if artist or any genre ID not found
 	 */
 	public Album createAlbum(CreateAlbumRequest request) {
+	    // Check for duplicate album title (case-insensitive)
+	    if (albumRepo.existsByTitleIgnoreCase(request.getTitle())) {
+	        throw new DuplicateResourceException("Album with title '" + request.getTitle() + "' already exists");
+	    }
+	    
 	    // Fetch and validate the artist exists
 	    Artist artist = artistRepo.findById(request.getArtistId())
 	        .orElseThrow(() -> new ResourceNotFoundException(

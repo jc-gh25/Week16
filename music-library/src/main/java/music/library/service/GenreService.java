@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import music.library.entity.Album;
 import music.library.entity.Genre;
+import music.library.exception.DuplicateResourceException;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.AlbumRepository;
 import music.library.repository.GenreRepository;
@@ -28,6 +29,7 @@ import music.library.dto.UpdateGenreRequest;
  * - DTO-based creation for API endpoints
  * - Managing many-to-many relationships with albums
  * - Pagination support for list operations
+ * - Duplicate prevention for genre names
  * 
  * @author JC - Backend Developer Bootcamp Portfolio
  * @see Genre
@@ -76,23 +78,36 @@ public class GenreService {
 
     /**
      * Creates a new genre from a Genre entity.
+     * Checks for duplicate genre names before saving.
      * Note: Prefer create(CreateGenreRequest) for API endpoints.
      * 
      * @param g the genre entity to create
      * @return the persisted genre with generated ID and timestamps
+     * @throws DuplicateResourceException if a genre with the same name already exists
      */
     public Genre create(Genre g) {
+        // Check for duplicate genre name (case-insensitive)
+        if (repo.existsByNameIgnoreCase(g.getName())) {
+            throw new DuplicateResourceException("Genre with name '" + g.getName() + "' already exists");
+        }
         return repo.save(g);
     }
     
     /**
      * Creates a new genre using a DTO.
+     * Checks for duplicate genre names before saving.
      * This is the preferred method for API endpoints as it uses validated request objects.
      * 
      * @param request DTO containing name and description
      * @return the created genre entity with generated ID and timestamps
+     * @throws DuplicateResourceException if a genre with the same name already exists
      */
     public Genre create(CreateGenreRequest request) {
+        // Check for duplicate genre name (case-insensitive)
+        if (repo.existsByNameIgnoreCase(request.getName())) {
+            throw new DuplicateResourceException("Genre with name '" + request.getName() + "' already exists");
+        }
+        
         Genre genre = new Genre();
         genre.setName(request.getName());
         genre.setDescription(request.getDescription());

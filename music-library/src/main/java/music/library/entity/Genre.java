@@ -38,7 +38,7 @@ public class Genre {
     @EqualsAndHashCode.Include
     private Long genreId;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String name;
 
     @Column(columnDefinition = "TEXT")

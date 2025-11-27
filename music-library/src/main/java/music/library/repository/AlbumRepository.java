@@ -1,6 +1,7 @@
 package music.library.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -54,4 +55,21 @@ public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecific
     @EntityGraph(attributePaths = {"artist", "genres"})
     List<Album> findByGenres_GenreId(Long genreId);
     
+    /**
+     * Finds an album by title (case-insensitive).
+     * Used for duplicate checking before creating new albums.
+     * 
+     * @param title the album title to search for
+     * @return Optional containing the album if found, empty otherwise
+     */
+    Optional<Album> findByTitleIgnoreCase(String title);
+    
+    /**
+     * Checks if an album with the given title exists (case-insensitive).
+     * More efficient than findByTitleIgnoreCase when only existence check is needed.
+     * 
+     * @param title the album title to check
+     * @return true if an album with this title exists, false otherwise
+     */
+    boolean existsByTitleIgnoreCase(String title);
 }

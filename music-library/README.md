@@ -991,7 +991,7 @@ This project is part of a Java/MySQL backend development bootcamp (Week 16) and 
 
 ---
 
-## 📞 Support
+## ❓ Support
 
 For questions, issues, or feedback:
 

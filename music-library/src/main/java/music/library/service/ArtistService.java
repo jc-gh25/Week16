@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import music.library.entity.Artist;
+import music.library.exception.DuplicateResourceException;
 import music.library.exception.ResourceNotFoundException;
 import music.library.repository.ArtistRepository;
 import music.library.dto.CreateArtistRequest;
@@ -28,6 +29,7 @@ import music.library.dto.UpdateArtistRequest;
  * - Artist CRUD operations
  * - DTO-based creation for API endpoints
  * - Pagination support for list operations
+ * - Duplicate prevention for artist names
  * 
  * @author JC - Backend Developer Bootcamp Portfolio
  * @see Artist
@@ -84,23 +86,36 @@ public class ArtistService {
 
     /**
      * Creates a new artist from an Artist entity.
+     * Checks for duplicate artist names before saving.
      * Note: Prefer create(CreateArtistRequest) for API endpoints.
      * 
      * @param a the artist entity to create
      * @return the persisted artist with generated ID and timestamps
+     * @throws DuplicateResourceException if an artist with the same name already exists
      */
     public Artist create(Artist a) {
+        // Check for duplicate artist name (case-insensitive)
+        if (repo.existsByNameIgnoreCase(a.getName())) {
+            throw new DuplicateResourceException("Artist with name '" + a.getName() + "' already exists");
+        }
         return repo.save(a);
     }
     
     /**
      * Creates a new artist using a DTO.
+     * Checks for duplicate artist names before saving.
      * This is the preferred method for API endpoints as it uses validated request objects.
      * 
      * @param request DTO containing name and bio
      * @return ResponseEntity with HTTP 201 (CREATED) status and the created artist entity
+     * @throws DuplicateResourceException if an artist with the same name already exists
      */
     public ResponseEntity<Artist> create(CreateArtistRequest request) {
+        // Check for duplicate artist name (case-insensitive)
+        if (repo.existsByNameIgnoreCase(request.getName())) {
+            throw new DuplicateResourceException("Artist with name '" + request.getName() + "' already exists");
+        }
+        
         Artist artist = new Artist();
         artist.setName(request.getName());
         artist.setDescription(request.getBio());

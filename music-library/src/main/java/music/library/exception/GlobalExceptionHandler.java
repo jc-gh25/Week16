@@ -25,7 +25,7 @@ import jakarta.validation.ConstraintViolationException;
  based on exception type specificity, not on declaration order.
  But placing the most specific handlers before the catch-all Exception handler makes the file 
  easier to read and mirrors the logical flow: 
- Specific → Validation → Type-mismatch → JSON parsing → Not-found → Fallback.
+ Specific → Validation → Type-mismatch → JSON parsing → Not-found → Duplicate → Fallback.
 */
 
 @RestControllerAdvice
@@ -88,6 +88,21 @@ public class GlobalExceptionHandler {
 				.validationErrors(null).build();
 
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+
+	/*
+	 * --------------------------------------------------------- 
+	 * 409 – Duplicate resource (custom exception)
+	 * ---------------------------------------------------------
+	 */
+	@ExceptionHandler(DuplicateResourceException.class)
+	public ResponseEntity<ApiError> handleDuplicateResource(DuplicateResourceException ex, HttpServletRequest request) {
+
+		ApiError error = ApiError.builder().timestamp(Instant.now()).status(HttpStatus.CONFLICT.value())
+				.error(HttpStatus.CONFLICT.getReasonPhrase()).message(ex.getMessage()).path(request.getRequestURI())
+				.validationErrors(null).build();
+
+		return new ResponseEntity<>(error, HttpStatus.CONFLICT);
 	}
 
 	/*

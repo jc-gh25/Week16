@@ -38,7 +38,7 @@ public class Artist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long artistId;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 255, unique = true)
     @NotBlank(message = "Artist name must not be blank")
     @Size(max = 255, message = "Artist name must be ≤ 255 characters")
     private String name;
