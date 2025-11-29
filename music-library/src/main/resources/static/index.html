@@ -403,7 +403,7 @@
             </div>
             <div class="cta-buttons">
 				<a href="/library.html" class="btn btn-primary">🎵 Browse Music Library</a>
-                <a href="https://suanne-speedless-chrissy.ngrok-free.dev/swagger-ui.html" class="btn btn-success" target="_blank">🔧 Test the API (Swagger UI)</a>
+                <a href="http://54.212.239.199:8080/swagger-ui.html" class="btn btn-success" target="_blank">🔧 Test the Live API (AWS)</a>
                 <a href="https://github.com/jc-gh25/MusicLibrary" class="btn btn-secondary" target="_blank">💻 View on GitHub</a>
             </div>
         </header>
@@ -417,10 +417,11 @@
             </p>
             <p>
                 Built following best practices for layered architecture, this project showcases expertise in Spring Boot ecosystem, 
-                database design, API development, testing strategies, and deployment practices. The application features a comprehensive music library with 50 artists and over 100 albums, accessible through ngrok for development and testing.
+                database design, API development, testing strategies, and cloud deployment practices. The application features a comprehensive music library with 50 artists and over 100 albums, now deployed on AWS cloud infrastructure with production-grade reliability.
             </p>
             <p>
-                <strong>Live API Base URL:</strong> <span class="highlight">https://suanne-speedless-chrissy.ngrok-free.dev/api</span>
+                <strong>🌐 Live AWS Production API:</strong> <span class="highlight">http://54.212.239.199:8080/api</span><br>
+                <strong>Deployment Status:</strong> <span class="highlight">✅ Validated with 121 requests, 484 tests, 100% pass rate</span>
             </p>
         </section>
 
@@ -515,12 +516,13 @@
                     </ul>
                 </div>
                 <div class="tech-card">
-                    <h4>Deployment</h4>
+                    <h4>Cloud Deployment (AWS)</h4>
                     <ul>
-                        <li>ngrok Tunneling</li>
-                        <li>Local Development Server</li>
-                        <li>MySQL Database</li>
-                        <li>Environment Profiles</li>
+                        <li>AWS RDS MySQL (Production Database)</li>
+                        <li>AWS ECR (Container Registry)</li>
+                        <li>AWS ECS Fargate (Serverless Containers)</li>
+                        <li>AWS CodeBuild (CI/CD Pipeline)</li>
+                        <li>Docker Containerization</li>
                     </ul>
                 </div>
             </div>
@@ -842,6 +844,105 @@
         </section>
 
         <section class="section">
+            <h2>☁️ AWS Cloud Deployment</h2>
+            <p>
+                The Music Library API is deployed on <strong>Amazon Web Services (AWS)</strong> using modern cloud-native technologies 
+                and best practices for production-grade applications. The deployment leverages containerization and serverless compute 
+                for scalability, reliability, and cost-effectiveness.
+            </p>
+
+            <h3>🏗️ AWS Architecture</h3>
+            <div class="tech-stack">
+                <div class="tech-card">
+                    <h4>🗄️ AWS RDS MySQL</h4>
+                    <ul>
+                        <li>Managed relational database service</li>
+                        <li>Automatic backups and point-in-time recovery</li>
+                        <li>Multi-AZ deployment for high availability</li>
+                        <li>Automated patching and maintenance</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>🐳 Docker Containerization</h4>
+                    <ul>
+                        <li>Application packaged as Docker container</li>
+                        <li>Consistent environment across dev/prod</li>
+                        <li>Isolated dependencies and runtime</li>
+                        <li>Efficient resource utilization</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>📦 AWS ECR (Elastic Container Registry)</h4>
+                    <ul>
+                        <li>Private Docker image repository</li>
+                        <li>Secure image storage and versioning</li>
+                        <li>Integration with ECS for deployment</li>
+                        <li>Automated vulnerability scanning</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>🚀 AWS ECS Fargate</h4>
+                    <ul>
+                        <li>Serverless container orchestration</li>
+                        <li>No server management required</li>
+                        <li>Automatic scaling and load balancing</li>
+                        <li>Pay-per-use pricing model</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <h4>🔧 AWS CodeBuild</h4>
+                    <ul>
+                        <li>Automated CI/CD pipeline</li>
+                        <li>Build and test automation</li>
+                        <li>Docker image creation and push to ECR</li>
+                        <li>Integration with GitHub repository</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>🌐 Deployment Options</h3>
+            <div class="architecture-layer">
+                <h4>☁️ AWS (Production)</h4>
+                <p>
+                    <strong>Live URL:</strong> <code>http://54.212.239.199:8080/api</code><br>
+                    <strong>Status:</strong> Production-ready with 100% test pass rate (121 requests, 484 tests)<br>
+                    <strong>Features:</strong> High availability, automatic scaling, managed database, container orchestration<br>
+                    <strong>Use Case:</strong> Production deployment with enterprise-grade reliability and performance
+                </p>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>🚂 Railway (Alternative Cloud Platform)</h4>
+                <p>
+                    <strong>Features:</strong> Simple deployment, automatic HTTPS, built-in database<br>
+                    <strong>Use Case:</strong> Quick prototyping and alternative cloud deployment option
+                </p>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>🔌 ngrok (Local Development)</h4>
+                <p>
+                    <strong>URL:</strong> <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code><br>
+                    <strong>Features:</strong> Secure tunneling, temporary public URLs, webhook testing<br>
+                    <strong>Use Case:</strong> Local development, testing, and demonstration purposes
+                </p>
+            </div>
+
+            <h3>✅ Deployment Validation</h3>
+            <p>
+                The AWS deployment has been thoroughly validated using Postman collection runner with comprehensive test coverage:
+            </p>
+            <ul style="margin-left: 20px; color: var(--text-dark);">
+                <li>✔️ <strong>121 API requests</strong> executed successfully</li>
+                <li>✔️ <strong>484 automated tests</strong> passed (100% success rate)</li>
+                <li>✔️ All CRUD operations verified across Artists, Albums, and Genres</li>
+                <li>✔️ Pagination, filtering, and relationship management tested</li>
+                <li>✔️ Error handling and validation confirmed</li>
+                <li>✔️ Database connectivity and persistence validated</li>
+            </ul>
+        </section>
+
+        <section class="section">
             <h2>🎯 Learning Outcomes</h2>
             <p>This project demonstrates proficiency in:</p>
             <div class="features-grid">
@@ -862,8 +963,8 @@
                     <p>Unit testing, integration testing, test-driven development, code coverage</p>
                 </div>
                 <div class="feature-card">
-                    <h4>DevOps &amp; Deployment</h4>
-                    <p>Docker containerization, cloud deployment, CI/CD, environment configuration</p>
+                    <h4>DevOps &amp; Cloud Deployment</h4>
+                    <p>AWS cloud services (RDS, ECR, ECS, CodeBuild), Docker containerization, CI/CD pipelines, infrastructure as code</p>
                 </div>
                 <div class="feature-card">
                     <h4>Best Practices</h4>
@@ -891,7 +992,8 @@
             <div class="api-endpoint">
                 <code>mvn spring-boot:run</code>
             </div>
-            <p>Access the API at <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code> and Swagger UI at <code>https://suanne-speedless-chrissy.ngrok-free.dev/swagger-ui.html</code></p>
+            <p>Access the API at <code>http://localhost:8080/api</code> and Swagger UI at <code>http://localhost:8080/swagger-ui.html</code></p>
+            <p><strong>For public access:</strong> Use the AWS production URL: <code>http://54.212.239.199:8080/api</code> or ngrok for local tunneling: <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code></p>
 
             <h3>Running Tests</h3>
             <div class="api-endpoint">
@@ -906,7 +1008,7 @@
             <p>Built with ❤️ as a Backend Development Bootcamp Final Project</p>
             <p>Contact: <a href="mailto:jeff@jcarl.net" style="color: #3b82f6; text-decoration: none;">jeff@jcarl.net</a></p>
             <div class="cta-buttons" style="margin-top: 20px;">
-                <a href="https://suanne-speedless-chrissy.ngrok-free.dev/swagger-ui.html" class="btn btn-primary" target="_blank">Try the Live API</a>
+                <a href="http://54.212.239.199:8080/swagger-ui.html" class="btn btn-primary" target="_blank">Try the AWS Production API</a>
             </div>
         </footer>
     </div>

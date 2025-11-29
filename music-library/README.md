@@ -118,27 +118,74 @@ Modern software development increasingly leverages AI tools as productivity mult
 The result is a **production-quality application** that demonstrates both technical competency and the ability to effectively leverage modern development tools — a skill increasingly valued in professional software engineering.
 
 
-### Deployment Exploration
+### AWS Cloud Deployment
 
-As part of the development process, the developer explored multiple deployment strategies to gain hands-on experience with modern cloud platforms and containerization:
+The application has been successfully deployed to **Amazon Web Services (AWS)** using a modern containerized architecture with managed services. This production deployment demonstrates enterprise-grade cloud infrastructure skills and DevOps practices.
 
-**Railway Platform Investigation**
-- Researched Railway as a potential cloud deployment platform
-- Evaluated Railway's MySQL free tier and deployment workflow
-- Configured application for cloud deployment with environment variables
+**Live Production API**: [http://54.212.239.199:8080/api](http://54.212.239.199:8080/api)
 
-**Docker Containerization**
-- Created a Dockerfile for containerizing the Spring Boot application
-- Learned Docker best practices for Java applications
-- Gained experience with container-based deployment strategies
+#### AWS Architecture
 
-**Deployment Decision**
-- After exploring cloud options, chose local hosting with ngrok tunneling for current implementation
-- This decision provided more control over the development environment
-- Gained valuable experience with cloud platforms and containerization that will transfer to future projects
-- May explore AWS deployment (EC2, RDS, or Elastic Beanstalk) in the future
+The deployment leverages multiple AWS services in a scalable, secure architecture:
 
-This exploration demonstrates the ability to evaluate different deployment options, understand trade-offs, and make informed architectural decisions — critical skills for modern backend development.
+- **AWS RDS MySQL**: Managed database service for production data
+  - Endpoint: `music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com:3306`
+  - Automated backups, monitoring, and maintenance
+  - Security group configured for ECS access only
+
+- **AWS ECR**: Private Docker container registry
+  - Repository: `913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library`
+  - Secure image storage and versioning
+
+- **AWS ECS Fargate**: Serverless container orchestration
+  - Cluster: `music-library-cluster1`
+  - Service: `music-library-service`
+  - No server management required
+  - Auto-scaling capabilities
+
+- **AWS CodeBuild**: Automated CI/CD pipeline
+  - Builds Docker images from source
+  - Pushes to ECR automatically
+  - Configured via `buildspec.yml`
+
+- **AWS S3**: Build artifact storage
+- **AWS IAM**: Role-based access control and security
+
+#### Docker Containerization
+
+The application uses a **multi-stage Docker build** for optimal image size and security:
+
+```dockerfile
+# Stage 1: Build with Maven
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime with OpenJDK
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+**Benefits**:
+- Smaller final image (only JRE, not full JDK)
+- Build dependencies not included in runtime
+- Faster deployments and reduced attack surface
+
+#### Deployment Validation
+
+The AWS deployment was thoroughly tested using Postman:
+- **182 API requests** executed successfully
+- **600 tests** passed (100% pass rate)
+- All CRUD operations validated
+- Relationship queries verified
+- Performance metrics collected
+
+This comprehensive testing ensures production readiness and API reliability.
 
 ---
 
@@ -166,6 +213,15 @@ This exploration demonstrates the ability to evaluate different deployment optio
 - **Mockito**: 5.2.0 (mocking framework with inline support)
 - **Testcontainers**: Real MySQL containers for integration tests
 - **JaCoCo**: 0.8.12 (code coverage reporting)
+
+### Containerization & Deployment
+- **Docker**: Multi-stage containerization with Maven and OpenJDK
+- **AWS RDS**: Managed MySQL database service
+- **AWS ECR**: Elastic Container Registry for Docker images
+- **AWS ECS Fargate**: Serverless container orchestration
+- **AWS CodeBuild**: CI/CD pipeline for automated builds
+- **AWS S3**: Storage for build artifacts
+- **AWS IAM**: Identity and access management
 
 ### Utilities
 - **Lombok**: Boilerplate code reduction
@@ -869,13 +925,302 @@ The Maven Surefire plugin automatically activates the test profile:
 
 ---
 
-## 🚀 Deployment
+## 🚀 Deployment Options
 
-The application runs locally with MySQL database and can be accessed via **ngrok** for external testing.
+The Music Library API supports multiple deployment strategies, from local development to production cloud infrastructure.
 
-### ngrok Deployment
+---
+
+### 1. AWS Cloud Deployment (Production)
+
+**Live Production API**: [http://54.212.239.199:8080/api](http://54.212.239.199:8080/api)  
+**Swagger UI**: [http://54.212.239.199:8080/swagger-ui/index.html](http://54.212.239.199:8080/swagger-ui/index.html)
+
+The application is deployed on AWS using a containerized, serverless architecture with managed services.
+
+#### AWS Services Used
+
+| Service | Purpose | Configuration |
+|---------|---------|---------------|
+| **RDS MySQL** | Production database | `music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com` |
+| **ECR** | Docker image registry | `913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library` |
+| **ECS Fargate** | Container orchestration | Cluster: `music-library-cluster1` |
+| **CodeBuild** | CI/CD pipeline | Automated builds with `buildspec.yml` |
+| **S3** | Build artifacts | Secure storage for deployment files |
+| **IAM** | Access management | Role-based security policies |
+
+#### Step-by-Step AWS Deployment Process
+
+##### 1. Database Setup (RDS)
+
+```bash
+# Create RDS MySQL instance
+aws rds create-db-instance \
+  --db-instance-identifier music-library-db \
+  --db-instance-class db.t3.micro \
+  --engine mysql \
+  --master-username admin \
+  --master-user-password <password> \
+  --allocated-storage 20 \
+  --vpc-security-group-ids <security-group-id>
+
+# Configure security group to allow ECS access
+aws ec2 authorize-security-group-ingress \
+  --group-id <rds-security-group-id> \
+  --protocol tcp \
+  --port 3306 \
+  --source-group <ecs-security-group-id>
+```
+
+**RDS Endpoint**: `music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com:3306`
+
+##### 2. Container Registry Setup (ECR)
+
+```bash
+# Create ECR repository
+aws ecr create-repository \
+  --repository-name music-library \
+  --region us-west-2
+
+# Authenticate Docker to ECR
+aws ecr get-login-password --region us-west-2 | \
+  docker login --username AWS \
+  --password-stdin 913212790762.dkr.ecr.us-west-2.amazonaws.com
+
+# Build and push Docker image
+docker build -t music-library .
+docker tag music-library:latest \
+  913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
+docker push 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
+```
+
+**ECR Repository**: `913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library`
+
+##### 3. CodeBuild Configuration (CI/CD)
+
+Create `buildspec.yml` in project root:
+
+```yaml
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 913212790762.dkr.ecr.us-west-2.amazonaws.com
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t music-library .
+      - docker tag music-library:latest 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
+```
+
+```bash
+# Create CodeBuild project
+aws codebuild create-project \
+  --name music-library-build \
+  --source type=GITHUB,location=<github-repo-url> \
+  --artifacts type=NO_ARTIFACTS \
+  --environment type=LINUX_CONTAINER,image=aws/codebuild/standard:7.0,computeType=BUILD_GENERAL1_SMALL \
+  --service-role <codebuild-role-arn>
+```
+
+##### 4. ECS Cluster Setup
+
+```bash
+# Create ECS cluster
+aws ecs create-cluster \
+  --cluster-name music-library-cluster1 \
+  --region us-west-2
+
+# Register task definition
+aws ecs register-task-definition \
+  --family music-library-task \
+  --network-mode awsvpc \
+  --requires-compatibilities FARGATE \
+  --cpu 256 \
+  --memory 512 \
+  --container-definitions '[
+    {
+      "name": "music-library",
+      "image": "913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest",
+      "portMappings": [{"containerPort": 8080, "protocol": "tcp"}],
+      "environment": [
+        {"name": "MYSQL_HOST", "value": "music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com"},
+        {"name": "MYSQL_PORT", "value": "3306"},
+        {"name": "MYSQL_DATABASE", "value": "music_library"},
+        {"name": "MYSQL_USER", "value": "admin"},
+        {"name": "MYSQL_PASSWORD", "value": "<password>"}
+      ]
+    }
+  ]'
+```
+
+##### 5. ECS Service Creation
+
+```bash
+# Create ECS service
+aws ecs create-service \
+  --cluster music-library-cluster1 \
+  --service-name music-library-service \
+  --task-definition music-library-task \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={
+    subnets=[<subnet-id>],
+    securityGroups=[<security-group-id>],
+    assignPublicIp=ENABLED
+  }"
+```
+
+**ECS Service**: `music-library-service` in cluster `music-library-cluster1`
+
+#### Security Configuration
+
+##### ECS Security Group
+
+```bash
+# Allow HTTP traffic on port 8080
+aws ec2 authorize-security-group-ingress \
+  --group-id <ecs-security-group-id> \
+  --protocol tcp \
+  --port 8080 \
+  --cidr 0.0.0.0/0
+
+# Allow outbound to RDS
+aws ec2 authorize-security-group-egress \
+  --group-id <ecs-security-group-id> \
+  --protocol tcp \
+  --port 3306 \
+  --destination-group <rds-security-group-id>
+```
+
+##### RDS Security Group
+
+```bash
+# Allow inbound from ECS only
+aws ec2 authorize-security-group-ingress \
+  --group-id <rds-security-group-id> \
+  --protocol tcp \
+  --port 3306 \
+  --source-group <ecs-security-group-id>
+```
+
+#### Environment Variables
+
+The application is configured via environment variables in the ECS task definition:
+
+```yaml
+environment:
+  - MYSQL_HOST=music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com
+  - MYSQL_PORT=3306
+  - MYSQL_DATABASE=music_library
+  - MYSQL_USER=admin
+  - MYSQL_PASSWORD=<secure-password>
+  - PORT=8080
+```
+
+These variables are referenced in `application.yaml`:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=false
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+server:
+  port: ${PORT:8080}
+```
+
+#### Docker Multi-Stage Build
+
+The `Dockerfile` uses a multi-stage build for optimization:
+
+```dockerfile
+# Stage 1: Build application with Maven
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Create runtime image
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+**Benefits**:
+- **Smaller image size**: Only JRE in final image (~150MB vs ~600MB)
+- **Faster deployments**: Less data to transfer
+- **Better security**: Build tools not in production image
+- **Layer caching**: Maven dependencies cached separately
+
+#### Deployment Validation
+
+The AWS deployment was validated using comprehensive Postman testing:
+
+- ✅ **182 API requests** executed successfully
+- ✅ **600 tests** passed (100% pass rate)
+- ✅ **19.2 seconds** total execution time
+- ✅ All CRUD operations verified
+- ✅ Relationship queries validated
+- ✅ Error handling confirmed
+- ✅ Pagination and sorting tested
+
+#### AWS Deployment Benefits
+
+- **Scalability**: ECS Fargate auto-scales based on demand
+- **Reliability**: Managed services with built-in redundancy
+- **Security**: VPC isolation, security groups, IAM roles
+- **Maintenance**: Automated backups, patching, monitoring
+- **Cost-effective**: Pay only for resources used
+- **CI/CD**: Automated builds and deployments with CodeBuild
+
+---
+
+### 2. Railway Platform (Alternative Cloud Option)
+
+Railway is a modern cloud platform that simplifies deployment with automatic CI/CD from GitHub.
+
+#### Railway Setup
+
+1. **Create Railway Account**: [railway.app](https://railway.app)
+2. **Create New Project**: Connect GitHub repository
+3. **Add MySQL Database**: Railway provides managed MySQL
+4. **Configure Environment Variables**:
+   ```
+   MYSQL_HOST=${{MYSQLHOST}}
+   MYSQL_PORT=${{MYSQLPORT}}
+   MYSQL_DATABASE=${{MYSQLDATABASE}}
+   MYSQL_USER=${{MYSQLUSER}}
+   MYSQL_PASSWORD=${{MYSQLPASSWORD}}
+   ```
+5. **Deploy**: Railway automatically builds and deploys on git push
+
+#### Railway Benefits
+
+- Zero-configuration deployments
+- Automatic HTTPS certificates
+- Built-in monitoring and logs
+- Free tier available for testing
+- GitHub integration for CI/CD
+
+---
+
+### 3. ngrok Tunneling (Local Development)
 
 **Live API**: [https://suanne-speedless-chrissy.ngrok-free.dev](https://suanne-speedless-chrissy.ngrok-free.dev)
+
+ngrok provides secure tunneling to expose your local development server to the internet.
 
 #### Prerequisites
 
@@ -916,15 +1261,29 @@ spring:
 
 #### Benefits of ngrok
 
-ngrok provides:
-- Secure tunneling to localhost
-- Public URL for testing and sharing
-- Request inspection and replay
-- No deployment or hosting costs
+- **Quick setup**: No deployment configuration needed
+- **Secure tunneling**: HTTPS encryption to localhost
+- **Request inspection**: Built-in debugging tools
+- **Zero cost**: Free tier for development
+- **Instant sharing**: Share local work with team/clients
 
 #### Note
 
-The ngrok URL could change each time you restart ngrok (unless using a paid plan with reserved domains). Update the URL in your documentation and clients accordingly.
+The ngrok URL changes each time you restart ngrok (unless using a paid plan with reserved domains). Update the URL in your documentation and clients accordingly.
+
+---
+
+### Deployment Comparison
+
+| Feature | AWS (Production) | Railway | ngrok (Dev) |
+|---------|------------------|---------|-------------|
+| **Cost** | Pay-as-you-go | Free tier available | Free tier available |
+| **Scalability** | Auto-scaling | Auto-scaling | Not scalable |
+| **Reliability** | 99.99% SLA | 99.9% uptime | Depends on local machine |
+| **Setup Complexity** | High (full control) | Low (automated) | Very low |
+| **CI/CD** | CodeBuild | Built-in GitHub integration | Manual |
+| **Custom Domain** | Yes (Route 53) | Yes | Paid plans only |
+| **Best For** | Production apps | Small-medium projects | Development/testing |
 
 ---
 
@@ -1010,7 +1369,8 @@ This project demonstrates proficiency in:
 ✅ **JPA/Hibernate** - Entity relationships and lazy loading  
 ✅ **Testing** - Unit, integration, and repository tests  
 ✅ **API Documentation** - OpenAPI/Swagger specification  
-✅ **Deployment** - Local development with ngrok tunneling  
+✅ **Cloud Deployment** - AWS ECS Fargate with RDS, ECR, and CodeBuild  
+✅ **Containerization** - Docker multi-stage builds  
 ✅ **Error Handling** - Global exception handling  
 ✅ **Rich Content** - 50 artists and 100+ albums with cover images  
 ✅ **Input Validation** - Bean Validation (JSR-380)  
@@ -1023,7 +1383,8 @@ This project demonstrates proficiency in:
 
 - **Spring Boot Team** - Open-source Java framework
 - **Quickstart** - Backend development bootcamp | quickstart.com/bootcamp
-- **ngrok** - Secure tunneling API gateway for local development | ngrok.com
+- **Amazon Web Services (AWS)** - Cloud infrastructure and managed services | aws.amazon.com
+- **ngrok** - Secure tunneling for local development | ngrok.com
 - **Postman** - The World's Leading API Platform | postman.com
 
 ---
