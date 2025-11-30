@@ -5,7 +5,7 @@
 		"description": "Music Library API configured for AWS RDS MySQL deployment. The application runs locally but connects to AWS RDS database at music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com. Use this collection to test the API with cloud database backend.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "50127363",
-		"_collection_link": "https://jc-postman-2025-9026430.postman.co/workspace/42e4eb41-599e-456d-b1f9-dc755e791d71/collection/50127363-8023cc1f-f52f-4c34-9db8-2c4bed97cd19?action=share&source=collection_link&creator=50127363"
+		"_collection_link": "https://jc-postman-2025-9026430.postman.co/workspace/Week16~42e4eb41-599e-456d-b1f9-dc755e791d71/collection/50127363-8023cc1f-f52f-4c34-9db8-2c4bed97cd19?action=share&source=collection_link&creator=50127363"
 	},
 	"item": [
 		{
