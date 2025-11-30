@@ -122,7 +122,8 @@ The result is a **production-quality application** that demonstrates both techni
 
 The application has been successfully deployed to **Amazon Web Services (AWS)** using a modern containerized architecture with managed services. This production deployment demonstrates enterprise-grade cloud infrastructure skills and DevOps practices.
 
-**Live Production API**: [http://54.212.239.199:8080/api](http://54.212.239.199:8080/api)
+**Live Production API**: [http://project.jcarl.net:8080/api](http://project.jcarl.net:8080/api)  
+**Custom Domain**: `project.jcarl.net` (via AWS Route 53)
 
 #### AWS Architecture
 
@@ -142,6 +143,13 @@ The deployment leverages multiple AWS services in a scalable, secure architectur
   - Service: `music-library-service`
   - No server management required
   - Auto-scaling capabilities
+  - Dynamic IP address management
+
+- **AWS Route 53**: DNS management and domain routing
+  - Hosted Zone: `jcarl.net` (ID: Z08164103KW73VKOVN6GY)
+  - A Record: `project.jcarl.net` → ECS Fargate public IP
+  - Automated DNS updates via container startup scripts
+  - TTL: 300 seconds
 
 - **AWS CodeBuild**: Automated CI/CD pipeline
   - Builds Docker images from source
@@ -150,6 +158,43 @@ The deployment leverages multiple AWS services in a scalable, secure architectur
 
 - **AWS S3**: Build artifact storage
 - **AWS IAM**: Role-based access control and security
+  - Task Role: `ECS-Task-Route53-Role` with Route 53 update permissions
+  - Policy: `ECS-Route53-Update-Policy` (route53:ChangeResourceRecordSets, route53:GetChange)
+
+#### Solving the Dynamic IP Challenge
+
+**Problem**: AWS ECS Fargate assigns dynamic public IP addresses that change whenever tasks restart, making it difficult to maintain a consistent API endpoint for users and documentation.
+
+**Solution**: Implemented a container-based automated DNS management system that updates Route 53 at startup:
+
+1. **Container Scripts**: Created `/update-route53.sh` and `/startup.sh` scripts embedded in the Docker image
+2. **IP Detection**: Uses ECS Task Metadata Endpoint V4 (`$ECS_CONTAINER_METADATA_URI_V4/task`) to retrieve the Fargate task's public IP
+3. **DNS Update**: AWS CLI executes `route53 change-resource-record-sets` with UPSERT action to update the A record
+4. **Startup Integration**: Docker ENTRYPOINT runs `startup.sh` which calls the Route 53 update script before starting the application
+5. **IAM Task Role**: `ECS-Task-Route53-Role` with `ECS-Route53-Update-Policy` grants permissions for:
+   - `route53:ChangeResourceRecordSets` on hosted zone `Z08164103KW73VKOVN6GY`
+   - `route53:GetChange` on change resources
+6. **Required Tools**: Container includes `aws-cli`, `jq`, and `curl` (installed in Alpine Linux base image)
+7. **Error Handling**: Graceful degradation - application starts even if DNS update fails
+
+**Technical Implementation**:
+```bash
+# Container detects its own IP and updates DNS
+TASK_METADATA=$(curl -s $ECS_CONTAINER_METADATA_URI_V4/task)
+PUBLIC_IP=$(echo $TASK_METADATA | jq -r '.Containers[0].Networks[0].IPv4Addresses[0]')
+aws route53 change-resource-record-sets --hosted-zone-id Z08164103KW73VKOVN6GY \
+  --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{...}}]}'
+```
+
+**Benefits**:
+- ✅ Consistent API endpoint regardless of infrastructure changes
+- ✅ Self-contained solution - no external Lambda functions required
+- ✅ Updates DNS within seconds of container startup
+- ✅ Fully automated - no manual intervention required
+- ✅ Professional custom domain instead of raw IP addresses
+- ✅ Demonstrates container-based automation and AWS IAM integration
+
+This solution showcases real-world DevOps problem-solving: identifying infrastructure limitations and implementing automated solutions using container-native approaches and cloud IAM security.
 
 #### Docker Containerization
 
@@ -189,6 +234,207 @@ This comprehensive testing ensures production readiness and API reliability.
 
 ---
 
+### AWS Cost Management
+
+Understanding and managing AWS costs is crucial for maintaining a cost-effective deployment. This section provides guidance on optimizing your AWS spending while keeping the application available when needed.
+
+#### Cost Breakdown
+
+The Music Library API deployment incurs the following monthly costs:
+
+| Service | Cost | Notes |
+|---------|------|-------|
+| **RDS MySQL (db.t3.micro)** | ~$13/month | ~$0.017/hour, runs continuously |
+| **ECS Fargate** | ~$1.20/day when running | ~$0.05/hour, only when tasks are active |
+| **ECR + S3** | ~$0.10/month | Storage for Docker images and artifacts |
+| **Data Transfer** | Variable | Minimal for development/demo usage |
+
+**Total Cost Scenarios:**
+- **Always Running**: ~$49/month (RDS + ECS 24/7)
+- **Daily Use** (ECS stopped overnight): ~$25/month
+- **On-Demand** (both stopped): ~$0.10/month (storage only)
+
+#### How to Stop the Deployment
+
+To minimize costs when not actively using the application:
+
+##### Stop ECS Service (Recommended for Daily Savings)
+
+1. **Navigate to ECS Console**:
+   - Go to [AWS ECS Console](https://console.aws.amazon.com/ecs/)
+   - Select region: **us-west-2**
+   - Click on cluster: **music-library-cluster1**
+
+2. **Update Service**:
+   - Click on service: **music-library-service**
+   - Click **Update** button (top right)
+   - Under **Desired tasks**, change from `1` to `0`
+   - Click **Update** at the bottom
+
+3. **Verify**:
+   - Wait 1-2 minutes for task to stop
+   - Service status should show "0 running tasks"
+   - **Savings**: ~$1.20/day (~$36/month)
+
+##### Stop RDS Database (For Extended Breaks)
+
+⚠️ **Note**: RDS can only be stopped for 7 days maximum. After 7 days, AWS automatically restarts it.
+
+1. **Navigate to RDS Console**:
+   - Go to [AWS RDS Console](https://console.aws.amazon.com/rds/)
+   - Select region: **us-west-2**
+   - Click on database: **music-library-db**
+
+2. **Stop Database**:
+   - Click **Actions** dropdown
+   - Select **Stop temporarily**
+   - Confirm the action
+
+3. **Verify**:
+   - Status changes to "Stopping" then "Stopped"
+   - **Savings**: ~$13/month (while stopped)
+   - **Important**: Database will auto-restart after 7 days
+
+#### How to Start the Deployment
+
+When you need to use the application again:
+
+##### Start RDS Database (If Stopped)
+
+1. **Navigate to RDS Console**:
+   - Go to [AWS RDS Console](https://console.aws.amazon.com/rds/)
+   - Select region: **us-west-2**
+   - Click on database: **music-library-db**
+
+2. **Start Database**:
+   - Click **Actions** dropdown
+   - Select **Start**
+   - Wait 3-5 minutes for database to become available
+
+3. **Verify**:
+   - Status changes to "Starting" then "Available"
+   - Endpoint becomes accessible
+
+##### Start ECS Service
+
+1. **Navigate to ECS Console**:
+   - Go to [AWS ECS Console](https://console.aws.amazon.com/ecs/)
+   - Select region: **us-west-2**
+   - Click on cluster: **music-library-cluster1**
+
+2. **Update Service**:
+   - Click on service: **music-library-service**
+   - Click **Update** button
+   - Under **Desired tasks**, change from `0` to `1`
+   - Click **Update**
+
+3. **Wait for Deployment**:
+   - Task status changes to "PROVISIONING" → "PENDING" → "RUNNING"
+   - **Expected time**: 2-3 minutes
+   - Health checks must pass before accepting traffic
+
+4. **Verify Application**:
+   ```bash
+   curl http://54.212.239.199:8080/api
+   ```
+   - Should return API information
+   - Swagger UI should be accessible
+
+#### Best Practices
+
+Choose a cost management strategy based on your usage pattern:
+
+##### For Daily Development
+- **Stop ECS overnight** (set desired tasks to 0)
+- **Keep RDS running** for quick morning startups
+- **Cost**: ~$25/month
+- **Startup time**: 2-3 minutes (ECS only)
+- **Best for**: Active development, frequent testing
+
+##### For Weekend/Short Breaks (1-7 days)
+- **Stop both ECS and RDS**
+- **Cost**: ~$0.10/month (storage only)
+- **Startup time**: 5-8 minutes (RDS + ECS)
+- **Best for**: Weekends, short vacations
+
+##### For Long Breaks (7+ days)
+- **Stop ECS** (set desired tasks to 0)
+- **Keep RDS running** (it will auto-restart anyway)
+- **Cost**: ~$13/month
+- **Startup time**: 2-3 minutes when needed
+- **Best for**: Extended breaks, infrequent use
+
+##### For Job Hunting/Portfolio Demos
+- **Keep both stopped** by default
+- **Start on-demand** before interviews/demos
+- **Cost**: ~$0.10/month + usage
+- **Startup time**: 5-8 minutes
+- **Best for**: Showing to employers, portfolio demonstrations
+
+#### AWS CLI Quick Commands
+
+For faster management, use AWS CLI commands:
+
+##### Stop Services
+```bash
+# Stop ECS service (set desired count to 0)
+aws ecs update-service \
+  --cluster music-library-cluster1 \
+  --service music-library-service \
+  --desired-count 0 \
+  --region us-west-2
+
+# Stop RDS database
+aws rds stop-db-instance \
+  --db-instance-identifier music-library-db \
+  --region us-west-2
+```
+
+##### Start Services
+```bash
+# Start RDS database
+aws rds start-db-instance \
+  --db-instance-identifier music-library-db \
+  --region us-west-2
+
+# Wait for RDS to be available (optional)
+aws rds wait db-instance-available \
+  --db-instance-identifier music-library-db \
+  --region us-west-2
+
+# Start ECS service (set desired count to 1)
+aws ecs update-service \
+  --cluster music-library-cluster1 \
+  --service music-library-service \
+  --desired-count 1 \
+  --region us-west-2
+```
+
+##### Check Status
+```bash
+# Check ECS service status
+aws ecs describe-services \
+  --cluster music-library-cluster1 \
+  --services music-library-service \
+  --region us-west-2 \
+  --query 'services[0].[serviceName,runningCount,desiredCount]' \
+  --output table
+
+# Check RDS status
+aws rds describe-db-instances \
+  --db-instance-identifier music-library-db \
+  --region us-west-2 \
+  --query 'DBInstances[0].[DBInstanceIdentifier,DBInstanceStatus]' \
+  --output table
+```
+
+**Prerequisites for CLI commands:**
+- Install [AWS CLI](https://aws.amazon.com/cli/)
+- Configure credentials: `aws configure`
+- Set default region to `us-west-2`
+
+---
+
 ## 🛠️ Technology Stack
 
 ### Core Framework
@@ -219,6 +465,9 @@ This comprehensive testing ensures production readiness and API reliability.
 - **AWS RDS**: Managed MySQL database service
 - **AWS ECR**: Elastic Container Registry for Docker images
 - **AWS ECS Fargate**: Serverless container orchestration
+- **AWS Route 53**: DNS management with automated updates
+- **AWS Lambda**: Serverless functions for infrastructure automation
+- **AWS EventBridge**: Event-driven task monitoring
 - **AWS CodeBuild**: CI/CD pipeline for automated builds
 - **AWS S3**: Storage for build artifacts
 - **AWS IAM**: Identity and access management
@@ -487,15 +736,15 @@ Represents a music album with detailed metadata.
 ```json
 {
   "albumId": 1,
-  "title": "Sticky Fingers",
-  "releaseDate": "1971-04-23",
-  "releaseYear": 1971,
-  "coverImageUrl": "https://example.com/covers/sticky-fingers.jpg",
+490│  "title": "Abbey Road",
+491│  "releaseDate": "1969-09-26",
+492│  "releaseYear": 1969,
+493│  "coverImageUrl": "https://example.com/covers/abbey-road.jpg",
   "trackCount": 10,
   "catalogNumber": "COC-59100",
   "artist": {
     "artistId": 1,
-    "name": "The Rolling Stones"
+498│    "name": "The Beatles"
   },
   "genres": [
     {
@@ -933,8 +1182,9 @@ The Music Library API supports multiple deployment strategies, from local develo
 
 ### 1. AWS Cloud Deployment (Production)
 
-**Live Production API**: [http://54.212.239.199:8080/api](http://54.212.239.199:8080/api)  
-**Swagger UI**: [http://54.212.239.199:8080/swagger-ui/index.html](http://54.212.239.199:8080/swagger-ui/index.html)
+**Live Production API**: [http://project.jcarl.net:8080/api](http://project.jcarl.net:8080/api)  
+**Swagger UI**: [http://project.jcarl.net:8080/swagger-ui/index.html](http://project.jcarl.net:8080/swagger-ui/index.html)  
+**Custom Domain**: `project.jcarl.net` (AWS Route 53 managed)
 
 The application is deployed on AWS using a containerized, serverless architecture with managed services.
 
@@ -945,6 +1195,9 @@ The application is deployed on AWS using a containerized, serverless architectur
 | **RDS MySQL** | Production database | `music-library-db.cv4kawuomqo5.us-west-2.rds.amazonaws.com` |
 | **ECR** | Docker image registry | `913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library` |
 | **ECS Fargate** | Container orchestration | Cluster: `music-library-cluster1` |
+| **Route 53** | DNS management | Domain: `project.jcarl.net` with automated updates |
+| **Lambda** | Infrastructure automation | Auto-updates DNS on ECS IP changes |
+| **EventBridge** | Event monitoring | Triggers Lambda on ECS task state changes |
 | **CodeBuild** | CI/CD pipeline | Automated builds with `buildspec.yml` |
 | **S3** | Build artifacts | Secure storage for deployment files |
 | **IAM** | Access management | Role-based security policies |
