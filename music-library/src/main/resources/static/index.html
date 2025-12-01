@@ -220,37 +220,38 @@
         .btn-primary {
             background: var(--primary-color);
             color: white;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
         }
 
         .btn-primary:hover {
             background: var(--secondary-color);
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.5);
         }
 
         .btn-success {
             background: #10b981;
             color: white;
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
         }
 
         .btn-success:hover {
             background: #059669;
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.5);
         }
 
         .btn-secondary {
-            background: var(--bg-white);
+            background: #f5f5f5;
             color: var(--primary-color);
             border: 2px solid var(--primary-color);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
         .btn-secondary:hover {
             background: var(--primary-color);
             color: white;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
         }
 
         .api-endpoint {
@@ -421,7 +422,6 @@
             </p>
             <p>
                 <strong>🌐 Live AWS Production API:</strong> <span class="highlight">http://project.jcarl.net/api</span><br>
-                <strong>Custom Domain:</strong> <span class="highlight">project.jcarl.net (Namesilo DNS API)</span><br>
                 <strong>Deployment Status:</strong> <span class="highlight">✅ Validated with 121 requests, 484 tests, 100% pass rate</span>
             </p>
         </section>
@@ -907,7 +907,7 @@
             <div class="architecture-layer">
                 <h4>☁️ AWS (Production)</h4>
                 <p>
-                    <strong>Live URL:</strong> <code>http://54.212.239.199/api</code><br>
+                    <strong>Live URL:</strong> <code>http://project.jcarl.net/api</code><br>
                     <strong>Status:</strong> Production-ready with 100% test pass rate (121 requests, 484 tests)<br>
                     <strong>Features:</strong> High availability, automatic scaling, managed database, container orchestration<br>
                     <strong>Use Case:</strong> Production deployment with enterprise-grade reliability and performance
@@ -915,19 +915,20 @@
             </div>
 
             <div class="architecture-layer">
-                <h4>🚂 Railway (Alternative Cloud Platform)</h4>
+                <h4>🚂 Railway (Alternative Cloud Platform - Not Currently Used)</h4>
                 <p>
                     <strong>Features:</strong> Simple deployment, automatic HTTPS, built-in database<br>
-                    <strong>Use Case:</strong> Quick prototyping and alternative cloud deployment option
+                    <strong>Use Case:</strong> Evaluated as an alternative cloud deployment option<br>
+                    <strong>Note:</strong> AWS ECS Fargate was selected for production deployment
                 </p>
             </div>
 
             <div class="architecture-layer">
-                <h4>🔌 ngrok (Local Development)</h4>
+                <h4>🔌 ngrok (Previous Local Development Configuration)</h4>
                 <p>
-                    <strong>URL:</strong> <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code><br>
                     <strong>Features:</strong> Secure tunneling, temporary public URLs, webhook testing<br>
-                    <strong>Use Case:</strong> Local development, testing, and demonstration purposes
+                    <strong>Use Case:</strong> Previously used for local development, testing, and demonstration purposes<br>
+                    <strong>Note:</strong> This was a temporary development configuration and is no longer active
                 </p>
             </div>
 
@@ -1038,7 +1039,7 @@
                 <code>mvn spring-boot:run</code>
             </div>
             <p>Access the API at <code>http://localhost:8080/api</code> and Swagger UI at <code>http://localhost:8080/swagger-ui.html</code></p>
-            <p><strong>For public access:</strong> Use the AWS production URL: <code>http://54.212.239.199/api</code> or ngrok for local tunneling (previous configuration): <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code></p>
+            <p><strong>For public access:</strong> Use the AWS production URL: <code>http://project.jcarl.net/api</code></p>
 
             <h3>Running Tests</h3>
             <div class="api-endpoint">
@@ -1051,9 +1052,9 @@
 
         <footer>
             <p>Built with ❤️ as a Backend Development Bootcamp Final Project</p>
-            <p>Contact: <a href="mailto:jeff@jcarl.net" style="color: #3b82f6; text-decoration: none;">jeff@jcarl.net</a></p>
+            <p>Connect: <a href="https://www.linkedin.com/in/jeffcarllinked/" target="_blank" style="color: #3b82f6; text-decoration: none;">LinkedIn Profile</a></p>
             <div class="cta-buttons" style="margin-top: 20px;">
-                <a href="http://54.212.239.199/swagger-ui.html" class="btn btn-primary" target="_blank">Try the AWS Production API</a>
+                <a href="http://project.jcarl.net/swagger-ui.html" class="btn btn-primary" target="_blank">Try the AWS Production API</a>
             </div>
         </footer>
     </div>

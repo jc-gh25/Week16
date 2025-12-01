@@ -1564,13 +1564,13 @@ This section documents the real-world challenges, solutions, and learning experi
 
 ### Overview
 
-The deployment journey involved multiple iterations, technology pivots, and creative problem-solving to achieve a fully automated, production-ready deployment. The final solution uses **ECS Fargate task revision 7** with **Namesilo DNS API** for automated domain management.
+The deployment journey involved multiple iterations, technology pivots, and creative problem-solving to achieve a fully automated, production-ready deployment. The final solution uses **ECS Fargate task revision 11** with **Namesilo DNS API** for automated domain management.
 
 **Current Deployment Status**:
 - **Domain**: `project.jcarl.net`
 - **IP Address**: `35.87.40.233`
 - **Port**: `8080`
-- **ECS Task**: `music-library-task:7`
+- **ECS Task**: `music-library-task:11`
 - **DNS Provider**: Namesilo (migrated from Route 53)
 - **Build Environment**: AWS CloudShell (due to Windows LTSB Docker incompatibility)
 
@@ -1747,7 +1747,7 @@ Rolled back to: Task revision 2
    - Simplified task role permissions
 
 **Results**:
-- **Task Revision 7**: Successfully deployed and stable
+- **Task Revision 11**: Successfully deployed and stable
 - **DNS Updates**: Working reliably on container startup
 - **Health Checks**: Passing consistently
 - **No Rollbacks**: Circuit breaker no longer triggering
@@ -1841,7 +1841,7 @@ The transition from a development environment to a production-grade ECS Fargate 
 ### Final Architecture Summary
 
 **What Works**:
-- ✅ ECS Fargate with task revision 7
+- ✅ ECS Fargate with task revision 11
 - ✅ Namesilo DNS with API-based updates
 - ✅ CloudShell for Docker image building
 - ✅ Simplified startup scripts (ash-compatible)
@@ -1977,7 +1977,6 @@ This project demonstrates proficiency in:
 
 - **Spring Boot Team** - Open-source Java framework
 - **Quickstart** - Backend development bootcamp | quickstart.com/bootcamp
-- **Amazon Web Services (AWS)** - Cloud infrastructure and managed services | aws.amazon.com
 - **ngrok** - Secure tunneling for local development | ngrok.com
 - **Postman** - The World's Leading API Platform | postman.com
 
