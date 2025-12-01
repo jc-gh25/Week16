@@ -163,44 +163,6 @@ The deployment leverages multiple AWS services in a scalable, secure architectur
   - Task execution role for ECS container management
   - Secure environment variable management
 
-#### Solving the Dynamic IP Challenge
-
-**Problem**: AWS ECS Fargate assigns dynamic public IP addresses that change whenever tasks restart, making it difficult to maintain a consistent API endpoint for users and documentation.
-
-**Solution**: Implemented a container-based automated DNS management system that updates Namesilo DNS at startup:
-
-1. **Container Scripts**: Created `/update-namesilo-dns.sh` and `/startup.sh` scripts embedded in the Docker image
-2. **IP Detection**: Uses ECS Task Metadata Endpoint V4 (`$ECS_CONTAINER_METADATA_URI_V4/task`) to retrieve the Fargate task's public IP
-3. **DNS Update**: Namesilo API call updates the A record for `project.jcarl.net`
-4. **Startup Integration**: Docker ENTRYPOINT runs `startup.sh` which calls the Namesilo DNS update script before starting the application
-5. **API Authentication**: Uses Namesilo API key stored as ECS environment variable
-6. **Required Tools**: Container includes `curl` and `jq` (installed in Alpine Linux base image)
-7. **Error Handling**: Graceful degradation - application starts even if DNS update fails
-
-**Technical Implementation**:
-```bash
-# Container detects its own IP
-PUBLIC_IP=$(curl -s https://api.ipify.org)
-
-# Dynamically find the Record ID for project.jcarl.net
-RECORDS=$(curl -s "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}")
-RECORD_ID=$(echo "$RECORDS" | grep -C 5 "<host>${FULL_HOST}</host>" | grep -o "<record_id>.*</record_id>" | cut -d'>' -f2 | cut -d'<' -f1)
-
-# Update Namesilo DNS record via API
-curl "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}&rrid=${RECORD_ID}&rrhost=${SUBDOMAIN}&rrvalue=${PUBLIC_IP}&rrttl=${TTL}"
-```
-
-**Benefits**:
-- ✅ Consistent API endpoint regardless of infrastructure changes
-- ✅ Self-contained solution - no external Lambda functions required
-- ✅ Updates DNS within seconds of container startup
-- ✅ Fully automated - no manual intervention required
-- ✅ Professional custom domain instead of raw IP addresses
-- ✅ No AWS IAM permissions required for DNS updates
-- ✅ Works with third-party DNS providers
-
-This solution showcases real-world DevOps problem-solving: identifying infrastructure limitations and implementing automated solutions using container-native approaches and third-party API integration.
-
 #### Docker Containerization
 
 The application uses a **multi-stage Docker build** for optimal image size and security. Two Dockerfile versions are maintained:
