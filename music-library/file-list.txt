@@ -1,598 +1,430 @@
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\.classpath
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\.factorypath
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\.gitignore
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\.project
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\API_WELCOME_ENDPOINT_SUMMARY.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\collection_current.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\docker-compose.yaml
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\Dockerfile
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\file-list.txt
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\Music_Library_With_Images.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\pom.xml
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\PostmanImport1123a.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\README-SAMPLE-DATA.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\README.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\config
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\controller
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\entity
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\exception
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\MusicLibraryApplication.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\repository
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\service
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\specification
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\config\CorsConfig.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\config\PageConfig.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\config\SwaggerConfig.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\controller\error
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\controller\model
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\controller\MusicLibraryController.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\controller\SwaggerRedirectController.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\ApiInfoResponse.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\CreateAlbumRequest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\CreateArtistRequest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\CreateGenreRequest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\DatabaseResetResponse.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\UpdateAlbumRequest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\UpdateArtistRequest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\dto\UpdateGenreRequest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\entity\Album.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\entity\Artist.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\entity\Genre.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\exception\ApiError.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\exception\GlobalExceptionHandler.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\exception\ResourceNotFoundException.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\repository\AlbumRepository.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\repository\ArtistRepository.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\repository\GenreRepository.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\service\AlbumService.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\service\ArtistService.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\service\DatabaseResetService.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\service\GenreService.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\java\music\library\specification\AlbumSpecs.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\application.properties
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\application.yaml
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db\migration
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db\migration\V1_1__add_catalog_number_unique.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db\migration\V1_2__add_cover_image_url.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db\migration\V1__Create_Schema.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db\migration\V1__Initial_Schema.sql.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\db\migration\V2__Seed_Data.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\favicon.ico
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\index.html
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\library.html
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\3-create-bayou-country.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\3-create-pendulum.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\above-beyond-group-therapy.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\above-beyond-tri-state.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\andrea-bocelli-amore.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\andrea-bocelli-con-te-partir-.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\andrea-bocelli-passione.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\andrea-bocelli-si.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\armin-van-buuren-balance.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\armin-van-buuren-imaginary-landscape.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\armin-van-buuren-mirage.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\b-b-king-king-of-the-blues.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\b-b-king-live-at-the-regal.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\bon-iver-for-emma-forever-ago.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\boston-boston.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\carl-cox-all-night-long.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\carl-cox-the-ultimate-house-party.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\chicane-behind-the-sun.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\chicane-far-from-the-maddening-crowds.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\clint-black-killin-time.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\clint-black-put-yourself-in-my-shoes.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\crosby-stills-nash-crosby-stills-nash.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\deep-purple-burn.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\deep-purple-in-rock.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\deep-purple-machine-head.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\delbert-mcclinton-room-to-breathe.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\delbert-mcclinton-the-jealous-kind.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\depeche-mode-music-for-the-masses.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\depeche-mode-songs-of-faith-and-devotion.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\depeche-mode-violator.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\epmd-back-to-da-lab.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\epmd-business-as-usual.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\epmd-strictly-business.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\epmd-we-re-in-the-house.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\eric-clapton-from-the-cradle.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\eric-clapton-slowhand.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\eric-clapton-unplugged.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\fleet-foxes-fleet-foxes.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\fleetwood-mac-fleetwood-mac.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\fleetwood-mac-rumours.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\foreigner-4.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\foreigner-agent-provocateur.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\foreigner-double-vision.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\foreigner-head-games.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\garth-brooks-no-fences.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\garth-brooks-ropin-the-wind.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\grandmaster-flash-the-furious-five-the-message.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\il-divo-ancora.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\il-divo-the-promise.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\jackie-evancho-awakened.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\jackie-evancho-two-worlds.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\james-taylor-greatest-hits.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\james-taylor-sweet-baby-james.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\jimi-hendrix-are-you-experienced-.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\jimi-hendrix-axis-bold-as-love.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\jimi-hendrix-band-of-gypsys.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\jimi-hendrix-electric-ladyland.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\josh-groban-awake.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\josh-groban-illuminations.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\journey-escape.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\journey-frontiers.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\journey-infinity.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\journey-raised-on-radio.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\katherine-jenkins-believe.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\katherine-jenkins-daydreamer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\katherine-jenkins-second-nature.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\led-zeppelin-led-zeppelin-iv.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\led-zeppelin-physical-graffiti.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\max-richter-infra.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\max-richter-memoryhouse.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\max-richter-sleep.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\max-richter-the-blue-notebooks.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\miles-davis-kind-of-blue.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\muddy-waters-after-the-rain.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\muddy-waters-folk-singer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\oceanlab-sirens-of-the-sea.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\peter-gabriel-so.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\peter-gabriel-us.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\philip-glass-einstein-on-the-beach.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\philip-glass-koyaanisqatsi.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\philip-glass-low-symphony.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\philip-glass-metamorphosis.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\pink-floyd-the-dark-side-of-the-moon.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\pink-floyd-the-wall.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\pink-floyd-wish-you-were-here.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\randy-travis-storms-of-life.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\run-dmc-run-dmc.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\run-dmc-tougher-than-leather.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\simon-garfunkel-bookends.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\simon-garfunkel-bridge-over-troubled-water.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\simon-garfunkel-parsley-sage-rosemary-and-thyme.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\simon-garfunkel-sounds-of-silence.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\steve-wariner-i-am-ready.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\steve-wariner-life-s-highway.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\sufjan-stevens-illinois.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\the-doors-l-a-woman.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\the-doors-the-doors.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\the-eagles-desperado.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\the-eagles-on-the-border.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\covers\tritonal-piercing-the-quiet.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\above-beyond-group-therapy.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\above-beyond-tri-state.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\above-beyond-we-are-all-we-need.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\acdc-back-in-black.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\andrea-bocelli-romanza.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\andrea-bocelli-sacred-arias.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\andrea-bocelli-sogno.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\b-b-king-completely-well.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\b-b-king-live-at-the-regal.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\b-b-king-lucille.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\bon-iver-bon-iver-bon-iver.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\bon-iver-for-emma-forever-ago.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\chicane-far-from-the-maddening-crowds.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\creedence-clearwater-revival-cosmos-factory.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\creedence-clearwater-revival-green-river.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\crosby-stills-nash-deja-vu.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\daft-punk-discovery.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\daft-punk-homework.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\daft-punk-random-access-memories.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\deep-purple-machine-head.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\depeche-mode-music-for-the-masses.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\depeche-mode-songs-of-faith-and-devotion.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\emma-hewitt-burn-the-sky-down.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\epmd-business-as-usual.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\epmd-strictly-business.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\epmd-unfinished-business.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\eric-clapton-461-ocean-boulevard.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\eric-clapton-slowhand.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\eric-clapton-unplugged.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\fleet-foxes-fleet-foxes.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\fleet-foxes-helplessness-blues.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\fleetwood-mac-fleetwood-mac.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\fleetwood-mac-rumours.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\fleetwood-mac-tusk.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\foreigner-4.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\foreigner-agent-provocateur.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\foreigner-foreigner.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\grandmaster-flash-the-furious-five-the-message.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\il-divo-ancora.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\il-divo-il-divo.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\il-divo-siempre.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\jackie-evancho-dream-with-me.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\jackie-evancho-heavenly-christmas.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\james-taylor-gorilla.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\james-taylor-sweet-baby-james.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\jimi-hendrix-are-you-experienced.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\jimi-hendrix-axis-bold-as-love.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\josh-groban-awake.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\josh-groban-closer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\josh-groban-josh-groban.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\journey-escape.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\journey-frontiers.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\katherine-jenkins-living-a-dream.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\katherine-jenkins-premiere.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\katherine-jenkins-second-nature.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\led-zeppelin-houses-of-the-holy.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\led-zeppelin-led-zeppelin-iv.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\led-zeppelin-physical-graffiti.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\max-richter-memoryhouse.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\max-richter-sleep.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\max-richter-the-blue-notebooks.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\miles-davis-kind-of-blue.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\miles-davis-sketches-of-spain.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\muddy-waters-electric-mud.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\muddy-waters-folk-singer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\muddy-waters-hard-again.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\nirvana-in-utero.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\nirvana-nevermind.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\oceanlab-sirens-of-the-sea.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\philip-glass-einstein-on-the-beach.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\philip-glass-glassworks.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\philip-glass-koyaanisqatsi.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\pink-floyd-animals.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\radiohead-in-rainbows.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\radiohead-kid-a.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\radiohead-ok-computer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\run-dmc-raising-hell.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\run-dmc-run-dmc.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\simon-garfunkel-bridge-over-troubled-water.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\steve-wariner-i-should-be-with-you.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\sufjan-stevens-carrie-and-lowell.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\sufjan-stevens-illinois.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\sufjan-stevens-michigan.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\the-doors-la-woman.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\the-doors-the-doors.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\the-eagles-hotel-california.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\the-eagles-the-long-run.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\the-eagles-their-greatest-hits-1971-1975.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\main\resources\static\new_covers\tritonal-piercing-the-quiet.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\integration
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\repository
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\service
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\integration\AlbumControllerIT.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\integration\AlbumControllerUpdateDeleteIT.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\integration\ArtistControllerIT.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\integration\GenreControllerIT.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\integration\RestResponsePage.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\repository\AlbumRepositoryTest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\service\AlbumServiceBidirectionalTest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\service\AlbumServiceTest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\java\music\library\service\ArtistServiceTest.java
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\application-test.yml
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\Music-Library-Sample-Data.postman_collection.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\populate-music-library-2.sh
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\populate-music-library.bat
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\populate-music-library.ps1
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\populate-music-library.sh
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\README-SAMPLE-DATA.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\seed.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_COVERAGE_MAP.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_ENHANCEMENT_GUIDE.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_FIXES_SUMMARY.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_QUICK_REFERENCE.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_README_TEST_REVIEW.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_REVIEW_SUMMARY.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\test_seed.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\src\test\resources\TEST_SUITE_ASSESSMENT.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\generated-sources
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\generated-test-sources
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-archiver
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\music-library-0.0.1-SNAPSHOT.jar
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\music-library-0.0.1-SNAPSHOT.jar.original
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\application.properties
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\application.yaml
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db\migration
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db\migration\V1_1__add_catalog_number_unique.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db\migration\V1_2__add_cover_image_url.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db\migration\V1__Create_Schema.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db\migration\V1__Initial_Schema.sql.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\db\migration\V2__Seed_Data.sql
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\config
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\controller
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\exception
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\MusicLibraryApplication.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\repository
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\service
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\specification
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\config\CorsConfig.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\config\PageConfig.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\config\SwaggerConfig.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\controller\MusicLibraryController.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\controller\SwaggerRedirectController.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\ApiInfoResponse$Endpoint.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\ApiInfoResponse$EndpointCategory.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\ApiInfoResponse.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\CreateAlbumRequest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\CreateArtistRequest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\CreateGenreRequest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\DatabaseResetResponse.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\UpdateAlbumRequest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\UpdateArtistRequest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\dto\UpdateGenreRequest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity\Album$AlbumBuilder.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity\Album.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity\Artist$ArtistBuilder.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity\Artist.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity\Genre$GenreBuilder.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\entity\Genre.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\exception\ApiError$ApiErrorBuilder.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\exception\ApiError.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\exception\GlobalExceptionHandler.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\exception\ResourceNotFoundException.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\repository\AlbumRepository.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\repository\ArtistRepository.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\repository\GenreRepository.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\service\AlbumService.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\service\ArtistService.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\service\DatabaseResetService.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\service\GenreService.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\music\library\specification\AlbumSpecs.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\favicon.ico
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\index.html
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\library.html
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\3-create-bayou-country.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\3-create-pendulum.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\above-beyond-group-therapy.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\above-beyond-tri-state.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\andrea-bocelli-amore.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\andrea-bocelli-con-te-partir-.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\andrea-bocelli-passione.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\andrea-bocelli-si.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\armin-van-buuren-balance.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\armin-van-buuren-imaginary-landscape.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\armin-van-buuren-mirage.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\b-b-king-king-of-the-blues.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\b-b-king-live-at-the-regal.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\bon-iver-for-emma-forever-ago.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\boston-boston.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\carl-cox-all-night-long.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\carl-cox-the-ultimate-house-party.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\chicane-behind-the-sun.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\chicane-far-from-the-maddening-crowds.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\clint-black-killin-time.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\clint-black-put-yourself-in-my-shoes.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\crosby-stills-nash-crosby-stills-nash.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\deep-purple-burn.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\deep-purple-in-rock.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\deep-purple-machine-head.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\delbert-mcclinton-room-to-breathe.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\delbert-mcclinton-the-jealous-kind.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\depeche-mode-music-for-the-masses.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\depeche-mode-songs-of-faith-and-devotion.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\depeche-mode-violator.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\epmd-back-to-da-lab.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\epmd-business-as-usual.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\epmd-strictly-business.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\epmd-we-re-in-the-house.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\eric-clapton-from-the-cradle.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\eric-clapton-slowhand.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\eric-clapton-unplugged.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\fleet-foxes-fleet-foxes.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\fleetwood-mac-fleetwood-mac.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\fleetwood-mac-rumours.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\foreigner-4.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\foreigner-agent-provocateur.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\foreigner-double-vision.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\foreigner-head-games.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\garth-brooks-no-fences.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\garth-brooks-ropin-the-wind.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\grandmaster-flash-the-furious-five-the-message.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\il-divo-ancora.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\il-divo-the-promise.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\jackie-evancho-awakened.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\jackie-evancho-two-worlds.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\james-taylor-greatest-hits.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\james-taylor-sweet-baby-james.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\jimi-hendrix-are-you-experienced-.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\jimi-hendrix-axis-bold-as-love.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\jimi-hendrix-band-of-gypsys.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\jimi-hendrix-electric-ladyland.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\josh-groban-awake.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\josh-groban-illuminations.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\journey-escape.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\journey-frontiers.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\journey-infinity.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\journey-raised-on-radio.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\katherine-jenkins-believe.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\katherine-jenkins-daydreamer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\katherine-jenkins-second-nature.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\led-zeppelin-led-zeppelin-iv.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\led-zeppelin-physical-graffiti.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\max-richter-infra.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\max-richter-memoryhouse.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\max-richter-sleep.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\max-richter-the-blue-notebooks.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\miles-davis-kind-of-blue.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\muddy-waters-after-the-rain.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\muddy-waters-folk-singer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\oceanlab-sirens-of-the-sea.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\peter-gabriel-so.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\peter-gabriel-us.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\philip-glass-einstein-on-the-beach.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\philip-glass-koyaanisqatsi.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\philip-glass-low-symphony.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\philip-glass-metamorphosis.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\pink-floyd-the-dark-side-of-the-moon.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\pink-floyd-the-wall.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\pink-floyd-wish-you-were-here.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\randy-travis-storms-of-life.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\run-dmc-run-dmc.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\run-dmc-tougher-than-leather.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\simon-garfunkel-bookends.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\simon-garfunkel-bridge-over-troubled-water.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\simon-garfunkel-parsley-sage-rosemary-and-thyme.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\simon-garfunkel-sounds-of-silence.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\steve-wariner-i-am-ready.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\steve-wariner-life-s-highway.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\sufjan-stevens-illinois.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\the-doors-l-a-woman.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\the-doors-the-doors.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\the-eagles-desperado.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\the-eagles-on-the-border.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\covers\tritonal-piercing-the-quiet.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\above-beyond-group-therapy.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\above-beyond-tri-state.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\above-beyond-we-are-all-we-need.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\acdc-back-in-black.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\andrea-bocelli-romanza.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\andrea-bocelli-sacred-arias.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\andrea-bocelli-sogno.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\b-b-king-completely-well.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\b-b-king-live-at-the-regal.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\b-b-king-lucille.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\bon-iver-bon-iver-bon-iver.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\bon-iver-for-emma-forever-ago.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\chicane-far-from-the-maddening-crowds.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\creedence-clearwater-revival-cosmos-factory.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\creedence-clearwater-revival-green-river.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\crosby-stills-nash-deja-vu.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\daft-punk-discovery.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\daft-punk-homework.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\daft-punk-random-access-memories.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\deep-purple-machine-head.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\depeche-mode-music-for-the-masses.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\depeche-mode-songs-of-faith-and-devotion.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\emma-hewitt-burn-the-sky-down.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\epmd-business-as-usual.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\epmd-strictly-business.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\epmd-unfinished-business.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\eric-clapton-461-ocean-boulevard.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\eric-clapton-slowhand.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\eric-clapton-unplugged.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\fleet-foxes-fleet-foxes.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\fleet-foxes-helplessness-blues.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\fleetwood-mac-fleetwood-mac.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\fleetwood-mac-rumours.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\fleetwood-mac-tusk.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\foreigner-4.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\foreigner-agent-provocateur.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\foreigner-foreigner.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\grandmaster-flash-the-furious-five-the-message.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\il-divo-ancora.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\il-divo-il-divo.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\il-divo-siempre.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\jackie-evancho-dream-with-me.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\jackie-evancho-heavenly-christmas.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\james-taylor-gorilla.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\james-taylor-sweet-baby-james.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\jimi-hendrix-are-you-experienced.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\jimi-hendrix-axis-bold-as-love.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\josh-groban-awake.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\josh-groban-closer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\josh-groban-josh-groban.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\journey-escape.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\journey-frontiers.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\katherine-jenkins-living-a-dream.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\katherine-jenkins-premiere.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\katherine-jenkins-second-nature.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\led-zeppelin-houses-of-the-holy.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\led-zeppelin-led-zeppelin-iv.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\led-zeppelin-physical-graffiti.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\max-richter-memoryhouse.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\max-richter-sleep.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\max-richter-the-blue-notebooks.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\miles-davis-kind-of-blue.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\miles-davis-sketches-of-spain.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\muddy-waters-electric-mud.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\muddy-waters-folk-singer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\muddy-waters-hard-again.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\nirvana-in-utero.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\nirvana-nevermind.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\oceanlab-sirens-of-the-sea.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\philip-glass-einstein-on-the-beach.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\philip-glass-glassworks.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\philip-glass-koyaanisqatsi.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\pink-floyd-animals.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\radiohead-in-rainbows.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\radiohead-kid-a.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\radiohead-ok-computer.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\run-dmc-raising-hell.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\run-dmc-run-dmc.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\simon-garfunkel-bridge-over-troubled-water.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\steve-wariner-i-should-be-with-you.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\sufjan-stevens-carrie-and-lowell.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\sufjan-stevens-illinois.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\sufjan-stevens-michigan.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\the-doors-la-woman.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\the-doors-the-doors.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\the-eagles-hotel-california.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\the-eagles-the-long-run.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\the-eagles-their-greatest-hits-1971-1975.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\classes\static\new_covers\tritonal-piercing-the-quiet.jpg
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\generated-sources\annotations
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\generated-test-sources\test-annotations
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-archiver\pom.properties
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\compile
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\testCompile
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\compile\default-compile
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\compile\default-compile\createdFiles.lst
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\compile\default-compile\inputFiles.lst
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\testCompile\default-testCompile
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\testCompile\default-testCompile\createdFiles.lst
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\maven-status\maven-compiler-plugin\testCompile\default-testCompile\inputFiles.lst
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\application-test.yml
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\Music Library - JC's Personal Catalog.postman_collection.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\Music-Library-Sample-Data.postman_collection.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\populate-music-library-2.sh
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\populate-music-library.bat
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\populate-music-library.ps1
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\populate-music-library.sh
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\README-SAMPLE-DATA.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\seed.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_COVERAGE_MAP.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_ENHANCEMENT_GUIDE.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_FIXES_SUMMARY.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_QUICK_REFERENCE.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_README_TEST_REVIEW.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_REVIEW_SUMMARY.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\test_seed.json
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\TEST_SUITE_ASSESSMENT.md
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\repository
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\service
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\AlbumControllerIT$1.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\AlbumControllerIT.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\AlbumControllerUpdateDeleteIT.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\ArtistControllerIT$1.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\ArtistControllerIT.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\GenreControllerIT$1.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\GenreControllerIT.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\integration\RestResponsePage.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\repository\AlbumRepositoryTest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\service\AlbumServiceBidirectionalTest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\service\AlbumServiceTest.class
-C:\Users\user1\Desktop\Back End Software Dev\PortableGit\projects\Week16\music-library\target\test-classes\music\library\service\ArtistServiceTest.class
+Week16/music-library Project Directory Structure
+=====================================================
+Generated: 2024
+
+Root Directory (music-library/)
+├── .gitignore
+├── buildspec.yml
+├── docker-compose.yaml
+├── Dockerfile
+├── Dockerfile.namesilo
+├── file-list.txt
+├── fixed_deploy.zip
+├── pom.xml
+├── README.md
+├── startup.sh
+├── update-namesilo-dns.sh
+
+Source Code (src/)
+├── main/
+│   ├── java/music/library/
+│   │   ├── MusicLibraryApplication.java
+│   │   │
+│   │   ├── config/
+│   │   │   ├── CorsConfig.java
+│   │   │   ├── PageConfig.java
+│   │   │   └── SwaggerConfig.java
+│   │   │
+│   │   ├── controller/
+│   │   │   ├── MusicLibraryController.java
+│   │   │   └── SwaggerRedirectController.java
+│   │   │
+│   │   ├── dto/
+│   │   │   ├── ApiInfoResponse.java
+│   │   │   ├── CreateAlbumRequest.java
+│   │   │   ├── CreateArtistRequest.java
+│   │   │   ├── CreateGenreRequest.java
+│   │   │   ├── DatabaseResetResponse.java
+│   │   │   ├── UpdateAlbumRequest.java
+│   │   │   ├── UpdateArtistRequest.java
+│   │   │   └── UpdateGenreRequest.java
+│   │   │
+│   │   ├── entity/
+│   │   │   ├── Album.java
+│   │   │   ├── Artist.java
+│   │   │   └── Genre.java
+│   │   │
+│   │   ├── exception/
+│   │   │   ├── ApiError.java
+│   │   │   ├── DuplicateResourceException.java
+│   │   │   ├── GlobalExceptionHandler.java
+│   │   │   └── ResourceNotFoundException.java
+│   │   │
+│   │   ├── repository/
+│   │   │   ├── AlbumRepository.java
+│   │   │   ├── ArtistRepository.java
+│   │   │   └── GenreRepository.java
+│   │   │
+│   │   ├── service/
+│   │   │   ├── AlbumService.java
+│   │   │   ├── ArtistService.java
+│   │   │   ├── DatabaseResetService.java
+│   │   │   └── GenreService.java
+│   │   │
+│   │   └── specification/
+│   │       └── AlbumSpecs.java
+│   │
+│   └── resources/
+│       ├── application-aws.properties
+│       ├── application.properties
+│       ├── application.yaml
+│       │
+│       ├── db/migration/
+│       │   ├── V1__Create_Schema.sql
+│       │   └── V2__Seed_Data.sql
+│       │
+│       └── static/
+│           ├── favicon.ico
+│           ├── index.html
+│           ├── library.html
+│           │
+│           └── covers/ (170+ album cover images)
+│               ├── above-beyond-group-therapy.jpg
+│               ├── above-beyond-tri-state.jpg
+│               ├── above-beyond-we-are-all-we-need.jpg
+│               ├── acdc-back-in-black.jpg
+│               ├── andrea-bocelli-amore.jpg
+│               ├── andrea-bocelli-con-te-partir-.jpg
+│               ├── andrea-bocelli-passione.jpg
+│               ├── andrea-bocelli-romanza.jpg
+│               ├── andrea-bocelli-sacred-arias.jpg
+│               ├── andrea-bocelli-si.jpg
+│               ├── andrea-bocelli-sogno.jpg
+│               ├── armin-van-buuren-76.jpg
+│               ├── armin-van-buuren-balance.jpg
+│               ├── armin-van-buuren-imaginary-landscape.jpg
+│               ├── armin-van-buuren-imagine.jpg
+│               ├── armin-van-buuren-intense.jpg
+│               ├── armin-van-buuren-mirage.jpg
+│               ├── b-b-king-completely-well.jpg
+│               ├── b-b-king-king-of-the-blues.jpg
+│               ├── b-b-king-live-at-the-regal.jpg
+│               ├── b-b-king-lucille.jpg
+│               ├── bon-iver-bon-iver-bon-iver.jpg
+│               ├── bon-iver-for-emma-forever-ago.jpg
+│               ├── boston-boston.jpg
+│               ├── boston-dont-look-back.jpg
+│               ├── carl-cox-all-night-long.jpg
+│               ├── carl-cox-all-roads-lead-to-the-dance-floor.jpg
+│               ├── carl-cox-the-ultimate-house-party.jpg
+│               ├── carl_cox_fact.jpg
+│               ├── chicane-behind-the-sun.jpg
+│               ├── chicane-far-from-the-maddening-crowds.jpg
+│               ├── clint-black-killin-time.jpg
+│               ├── clint-black-put-yourself-in-my-shoes.jpg
+│               ├── creedence-clearwater-revival-cosmos-factory.jpg
+│               ├── creedence-clearwater-revival-green-river.jpg
+│               ├── crosby-stills-and-nash-deja-vu.jpg
+│               ├── crosby-stills-nash-crosby-stills-nash.jpg
+│               ├── crosby-stills-nash-deja-vu.jpg
+│               ├── crosby_stills_nash_deja_vu.jpg
+│               ├── daft-punk-discovery.jpg
+│               ├── daft-punk-homework.jpg
+│               ├── daft-punk-random-access-memories.jpg
+│               ├── deep-purple-burn.jpg
+│               ├── deep-purple-in-rock.jpg
+│               ├── deep-purple-machine-head.jpg
+│               ├── delbert-mcclinton-im-with-you.jpg
+│               ├── delbert-mcclinton-live-from-austin.jpg
+│               ├── delbert-mcclinton-room-to-breathe.jpg
+│               ├── delbert-mcclinton-the-jealous-kind.jpg
+│               ├── depeche-mode-music-for-the-masses.jpg
+│               ├── depeche-mode-songs-of-faith-and-devotion.jpg
+│               ├── depeche-mode-violator.jpg
+│               ├── emma-hewitt-burn-the-sky-down.jpg
+│               ├── epmd-back-to-da-lab.jpg
+│               ├── epmd-business-as-usual.jpg
+│               ├── epmd-strictly-business.jpg
+│               ├── epmd-unfinished-business.jpg
+│               ├── epmd-we-re-in-the-house.jpg
+│               ├── eric-clapton-461-ocean-boulevard.jpg
+│               ├── eric-clapton-from-the-cradle.jpg
+│               ├── eric-clapton-slowhand.jpg
+│               ├── eric-clapton-unplugged.jpg
+│               ├── fleet-foxes-fleet-foxes.jpg
+│               ├── fleet-foxes-helplessness-blues.jpg
+│               ├── fleetwood-mac-fleetwood-mac.jpg
+│               ├── fleetwood-mac-rumours.jpg
+│               ├── fleetwood-mac-tusk.jpg
+│               ├── foreigner-4.jpg
+│               ├── foreigner-agent-provocateur.jpg
+│               ├── foreigner-double-vision.jpg
+│               ├── foreigner-foreigner.jpg
+│               ├── foreigner-head-games.jpg
+│               ├── garth-brooks-garth-brooks.jpg
+│               ├── garth-brooks-no-fences.jpg
+│               ├── garth-brooks-ropin-the-wind.jpg
+│               ├── garth_brooks_ropin_the_wind.jpg
+│               ├── grandmaster-flash-the-furious-five-the-message.jpg
+│               ├── grandmaster-flash-the-message.jpg
+│               ├── il-divo-ancora.jpg
+│               ├── il-divo-il-divo.jpg
+│               ├── il-divo-siempre.jpg
+│               ├── il-divo-the-promise.jpg
+│               ├── jackie-evancho-awakened.jpg
+│               ├── jackie-evancho-dream-with-me.jpg
+│               ├── jackie-evancho-heavenly-christmas.jpg
+│               ├── jackie-evancho-two-worlds.jpg
+│               ├── james-taylor-gorilla.jpg
+│               ├── james-taylor-greatest-hits.jpg
+│               ├── james-taylor-sweet-baby-james.jpg
+│               ├── jimi-hendrix-are-you-experienced-.jpg
+│               ├── jimi-hendrix-are-you-experienced.jpg
+│               ├── jimi-hendrix-axis-bold-as-love.jpg
+│               ├── jimi-hendrix-band-of-gypsys.jpg
+│               ├── jimi-hendrix-electric-ladyland.jpg
+│               ├── josh-groban-awake.jpg
+│               ├── josh-groban-closer.jpg
+│               ├── josh-groban-illuminations.jpg
+│               ├── josh-groban-josh-groban.jpg
+│               ├── journey-escape.jpg
+│               ├── journey-frontiers.jpg
+│               ├── journey-infinity.jpg
+│               ├── journey-raised-on-radio.jpg
+│               ├── katherine-jenkins-believe.jpg
+│               ├── katherine-jenkins-daydreamer.jpg
+│               ├── katherine-jenkins-living-a-dream.jpg
+│               ├── katherine-jenkins-premiere.jpg
+│               ├── katherine-jenkins-second-nature.jpg
+│               ├── katherine_jenkins_second_nature.jpg
+│               ├── led-zeppelin-houses-of-the-holy.jpg
+│               ├── led-zeppelin-led-zeppelin-iv.jpg
+│               ├── led-zeppelin-physical-graffiti.jpg
+│               ├── max-richter-infra.jpg
+│               ├── max-richter-memoryhouse.jpg
+│               ├── max-richter-sleep.jpg
+│               ├── max-richter-the-blue-notebooks.jpg
+│               ├── miles-davis-kind-of-blue.jpg
+│               ├── miles-davis-sketches-of-spain.jpg
+│               ├── muddy-waters-after-the-rain.jpg
+│               ├── muddy-waters-electric-mud.jpg
+│               ├── muddy-waters-folk-singer.jpg
+│               ├── muddy-waters-hard-again.jpg
+│               ├── nirvana-in-utero.jpg
+│               ├── nirvana-mtv-unplugged-in-new-york.jpg
+│               ├── nirvana-nevermind.jpg
+│               ├── oceanlab-sirens-of-the-sea.jpg
+│               ├── peter-gabriel-so.jpg
+│               ├── peter-gabriel-us.jpg
+│               ├── peter_gabriel_us.jpg
+│               ├── philip-glass-einstein-on-the-beach.jpg
+│               ├── philip-glass-glassworks.jpg
+│               ├── philip-glass-koyaanisqatsi.jpg
+│               ├── philip-glass-low-symphony.jpg
+│               ├── philip-glass-metamorphosis.jpg
+│               ├── pink-floyd-animals.jpg
+│               ├── pink-floyd-the-dark-side-of-the-moon.jpg
+│               ├── pink-floyd-the-wall.jpg
+│               ├── pink-floyd-wish-you-were-here.jpg
+│               ├── pink_floyd_animals.jpg
+│               ├── pink_floyd_the_dark_side_of_the_moon.jpg
+│               ├── radiohead-in-rainbows.jpg
+│               ├── radiohead-kid-a.jpg
+│               ├── radiohead-ok-computer.jpg
+│               ├── randy-travis-always-and-forever.jpg
+│               ├── randy-travis-old-8x10.jpg
+│               ├── randy-travis-storms-of-life.jpg
+│               ├── run-dmc-raising-hell.jpg
+│               ├── run-dmc-run-dmc.jpg
+│               ├── run-dmc-tougher-than-leather.jpg
+│               ├── simon-garfunkel-bookends.jpg
+│               ├── simon-garfunkel-bridge-over-troubled-water.jpg
+│               ├── simon-garfunkel-parsley-sage-rosemary-and-thyme.jpg
+│               ├── simon-garfunkel-sounds-of-silence.jpg
+│               ├── steve-wariner-i-am-ready.jpg
+│               ├── steve-wariner-i-should-be-with-you.jpg
+│               ├── steve-wariner-life-s-highway.jpg
+│               ├── sufjan-stevens-carrie-and-lowell.jpg
+│               ├── sufjan-stevens-illinois.jpg
+│               ├── sufjan-stevens-michigan.jpg
+│               ├── the-dillards-back-porch-bluegrass.jpg
+│               ├── the-dillards-wheatstraw-suite.jpg
+│               ├── the-doors-l-a-woman.jpg
+│               ├── the-doors-la-woman.jpg
+│               ├── the-doors-the-doors.jpg
+│               ├── the-eagles-desperado.jpg
+│               ├── the-eagles-hotel-california.jpg
+│               ├── the-eagles-on-the-border.jpg
+│               ├── the-eagles-the-long-run.jpg
+│               ├── the-eagles-their-greatest-hits-1971-1975.jpg
+│               ├── tritonal-metamorphic-i.jpg
+│               └── tritonal-piercing-the-quiet.jpg
+│
+└── test/
+    ├── java/music/library/
+    │   ├── integration/
+    │   │   ├── AlbumControllerIT.java
+    │   │   ├── AlbumControllerUpdateDeleteIT.java
+    │   │   ├── ArtistControllerIT.java
+    │   │   ├── GenreControllerIT.java
+    │   │   └── RestResponsePage.java
+    │   │
+    │   ├── repository/
+    │   │   └── AlbumRepositoryTest.java
+    │   │
+    │   └── service/
+    │       ├── AlbumServiceBidirectionalTest.java
+    │       ├── AlbumServiceTest.java
+    │       └── ArtistServiceTest.java
+    │
+    └── resources/
+        ├── application-repository-test.yml
+        ├── application-test.yml
+        ├── seed.json
+        ├── test_seed.json
+        │
+        ├── docs/
+        │   ├── README-SAMPLE-DATA.md
+        │   ├── TEST_QUICK_REFERENCE.md
+        │   └── TEST_SUITE_ASSESSMENT.md
+        │
+        ├── postman/
+        │   └── Music Library - AWS Deployment.postman_collection.json
+        │
+        └── scripts/
+            ├── populate-music-library-2.sh
+            ├── populate-music-library.bat
+            ├── populate-music-library.ps1
+            └── populate-music-library.sh
+
+Build Output (target/)
+├── music-library-0.0.1-SNAPSHOT.jar
+├── music-library-0.0.1-SNAPSHOT.jar.original
+│
+├── classes/
+│   ├── application-aws.properties
+│   ├── application.properties
+│   ├── application.yaml
+│   │
+│   ├── db/migration/
+│   │   ├── V1__Create_Schema.sql
+│   │   └── V2__Seed_Data.sql
+│   │
+│   ├── music/library/
+│   │   ├── MusicLibraryApplication.class
+│   │   │
+│   │   ├── config/
+│   │   │   ├── CorsConfig.class
+│   │   │   ├── PageConfig.class
+│   │   │   └── SwaggerConfig.class
+│   │   │
+│   │   ├── controller/
+│   │   │   ├── MusicLibraryController.class
+│   │   │   └── SwaggerRedirectController.class
+│   │   │
+│   │   ├── dto/
+│   │   │   ├── ApiInfoResponse$Endpoint.class
+│   │   │   ├── ApiInfoResponse$EndpointCategory.class
+│   │   │   ├── ApiInfoResponse.class
+│   │   │   ├── CreateAlbumRequest.class
+│   │   │   ├── CreateArtistRequest.class
+│   │   │   ├── CreateGenreRequest.class
+│   │   │   ├── DatabaseResetResponse.class
+│   │   │   ├── UpdateAlbumRequest.class
+│   │   │   ├── UpdateArtistRequest.class
+│   │   │   └── UpdateGenreRequest.class
+│   │   │
+│   │   ├── entity/
+│   │   │   ├── Album$AlbumBuilder.class
+│   │   │   ├── Album.class
+│   │   │   ├── Artist$ArtistBuilder.class
+│   │   │   ├── Artist.class
+│   │   │   ├── Genre$GenreBuilder.class
+│   │   │   └── Genre.class
+│   │   │
+│   │   ├── exception/
+│   │   │   ├── ApiError$ApiErrorBuilder.class
+│   │   │   ├── ApiError.class
+│   │   │   ├── DuplicateResourceException.class
+│   │   │   ├── GlobalExceptionHandler.class
+│   │   │   └── ResourceNotFoundException.class
+│   │   │
+│   │   ├── repository/
+│   │   │   ├── AlbumRepository.class
+│   │   │   ├── ArtistRepository.class
+│   │   │   └── GenreRepository.class
+│   │   │
+│   │   ├── service/
+│   │   │   ├── AlbumService.class
+│   │   │   ├── ArtistService.class
+│   │   │   ├── DatabaseResetService.class
+│   │   │   └── GenreService.class
+│   │   │
+│   │   └── specification/
+│   │       └── AlbumSpecs.class
+│   │
+│   └── static/
+│       ├── favicon.ico
+│       ├── index.html
+│       ├── library.html
+│       │
+│       └── covers/ (170+ compiled album cover images)
+│           └── [Same album covers as src/main/resources/static/covers/]
+│
+├── test-classes/
+│   ├── application-repository-test.yml
+│   ├── application-test.yml
+│   ├── seed.json
+│   ├── test_seed.json
+│   ├── populate-music-library-2.sh
+│   ├── populate-music-library.bat
+│   ├── populate-music-library.ps1
+│   ├── populate-music-library.sh
+│   ├── TEST_COVERAGE_MAP.md
+│   ├── TEST_ENHANCEMENT_GUIDE.md
+│   ├── TEST_QUICK_REFERENCE.md
+│   ├── TEST_README_TEST_REVIEW.md
+│   ├── TEST_REVIEW_SUMMARY.md
+│   └── TEST_SUITE_ASSESSMENT.md
+│   │
+│   └── music/library/
+│       ├── integration/
+│       │   ├── AlbumControllerIT$1.class
+│       │   ├── AlbumControllerIT.class
+│       │   ├── AlbumControllerUpdateDeleteIT.class
+│       │   ├── ArtistControllerIT$1.class
+│       │   ├── ArtistControllerIT.class
+│       │   ├── GenreControllerIT$1.class
+│       │   ├── GenreControllerIT.class
+│       │   └── RestResponsePage.class
+│       │
+│       ├── repository/
+│       │   └── AlbumRepositoryTest.class
+│       │
+│       └── service/
+│           ├── AlbumServiceBidirectionalTest.class
+│           ├── AlbumServiceTest.class
+│           └── ArtistServiceTest.class
+│
+├── generated-sources/
+│   └── annotations/
+│
+├── generated-test-sources/
+│   └── annotations/
+│
+├── maven-archiver/
+│   └── pom.properties
+│
+└── maven-status/
+    └── maven-compiler-plugin/
+        ├── compile/
+        │   └── default-compile/
+        │       ├── createdFiles.lst
+        │       └── inputFiles.lst
+        │
+        └── testCompile/
+            └── default-testCompile/
+                ├── createdFiles.lst
+                └── inputFiles.lst
+
+=====================================================
+Project Summary:
+- Spring Boot Music Library API application
+- RESTful API with Swagger documentation
+- PostgreSQL database with Flyway migrations
+- Docker containerization support
+- AWS deployment configuration
+- Comprehensive test suite (integration & unit tests)
+- 170+ album cover images
+- Total Files: 500+ (including all resources and compiled classes)
+=====================================================

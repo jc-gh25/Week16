@@ -882,7 +882,9 @@ music-library/
 │   │   │   ├── MusicLibraryApplication.java    # Main application class
 │   │   │   ├── controller/                     # REST controllers
 │   │   │   │   ├── MusicLibraryController.java # Main API controller (GET, POST, PUT, DELETE)
-│   │   │   │   └── SwaggerRedirectController.java # Swagger UI redirect
+│   │   │   │   ├── SwaggerRedirectController.java # Swagger UI redirect
+│   │   │   │   ├── error/                      # Error handling controllers
+│   │   │   │   └── model/                      # Controller models
 │   │   │   ├── entity/                         # JPA entities
 │   │   │   │   ├── Artist.java                 # Artist entity with albums relationship
 │   │   │   │   ├── Album.java                  # Album entity with artist and genres
@@ -917,11 +919,20 @@ music-library/
 │   │   │       └── AlbumSpecs.java             # Dynamic query specifications
 │   │   └── resources/
 │   │       ├── application.yaml                # Main configuration
-│   │       ├── application-test.yaml           # Test profile configuration
+│   │       ├── application.properties           # Additional properties
+│   │       ├── db/                             # Database migrations
+│   │       │   └── migration/                  # Flyway migration scripts
+│   │       │       ├── V1__Create_Schema.sql
+│   │       │       ├── V1__Initial_Schema.sql.sql
+│   │       │       ├── V1_1__add_catalog_number_unique.sql
+│   │       │       ├── V1_2__add_cover_image_url.sql
+│   │       │       └── V2__Seed_Data.sql
 │   │       └── static/                         # Static web resources
 │   │           ├── index.html                  # API welcome page
 │   │           ├── library.html                # Music library browser UI
-│   │           └── covers/                     # Album cover images directory
+│   │           ├── favicon.ico                 # Site favicon
+│   │           ├── covers/                     # Album cover images directory
+│   │           └── new_covers/                 # Additional album covers
 │   └── test/
 │       └── java/music/library/
 │           ├── integration/                    # Integration tests
@@ -936,13 +947,24 @@ music-library/
 │           │   └── AlbumServiceBidirectionalTest.java # Relationship tests
 │           └── repository/                     # Repository tests
 │               └── AlbumRepositoryTest.java    # Album repository tests
+├── target/                                     # Maven build output directory
 ├── pom.xml                                     # Maven configuration
 ├── README.md                                   # This file
-├── populate-music-library.bat                  # Windows data loader script
-├── populate-music-library.sh                   # Unix/Mac data loader script
+├── README-SAMPLE-DATA.md                       # Sample data documentation
+├── API_WELCOME_ENDPOINT_SUMMARY.md             # API endpoint summary
 ├── Dockerfile                                  # Docker containerization config
 ├── docker-compose.yaml                         # Docker Compose configuration
-└── Music-Library-Sample-Data.postman_collection.json # Postman API collection
+├── buildspec.yml                               # AWS CodeBuild configuration
+├── startup.sh                                  # Container startup script
+├── update-namesilo-dns.sh                      # DNS update automation script
+├── collection_current.json                     # Current Postman collection export
+├── Music_Library_With_Images.json              # Postman collection with image data
+├── PostmanImport1123a.json                     # Postman import file
+├── file-list.txt                               # Complete file listing
+├── .gitignore                                  # Git ignore rules
+├── .classpath                                  # Eclipse classpath configuration
+├── .project                                    # Eclipse project configuration
+└── .factorypath                                # Eclipse annotation processing
 ```
 
 ### Package Structure
