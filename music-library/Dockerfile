@@ -10,28 +10,29 @@ FROM eclipse-temurin:17-jre-alpine
 ARG JAR_FILE=/app/target/*.jar
 COPY --from=build ${JAR_FILE} app.jar
 
-# Install AWS CLI and jq for JSON parsing
-RUN apk add --no-cache aws-cli jq curl
+# Install curl and bash for DNS updates
+RUN apk add --no-cache curl bash bind-tools
 
-# Create the Route 53 update script
-RUN cat > /update-route53.sh <<'EOF'
+# Create the Namesilo DNS update script
+RUN cat > /update-namesilo-dns.sh <<'EOF'
 #!/bin/bash
 
 ################################################################################
-# Route 53 DNS Update Script
-# Purpose: Update Route 53 DNS record with container's public IP
-# This script retrieves the container's private IP from ECS metadata,
-# looks up the public IP from EC2 network interface, and updates Route 53
+# Namesilo DNS Update Script
+# Purpose: Update Namesilo DNS record with container's public IP
+# This script retrieves the container's public IP from ECS task metadata
+# and updates the Namesilo DNS record via their API
 ################################################################################
 
 set -euo pipefail
 
 # Configuration
-DOMAIN="project.jcarl.net"
-HOSTED_ZONE_ID="Z08164103KW73VKOVN6GY"
-REGION="us-west-2"
-TTL="300"
-LOG_FILE="/var/log/route53-update.log"
+API_KEY="15fc56289aa5698b5d7c41ce"
+DOMAIN="jcarl.net"
+SUBDOMAIN="project"
+RECORD_ID="8ad154e44ae9c94cd8f22be2bea457d2"
+TTL="7207"
+LOG_FILE="/var/log/namesilo-update.log"
 
 # Colors for output
 RED='\033[0;31m'
@@ -77,148 +78,106 @@ error_exit() {
 trap 'error_exit "Script interrupted or failed unexpectedly" 1' ERR
 
 ################################################################################
-# Step 1: Get Container Private IP from ECS Metadata
+# Step 1: Get Public IP from ECS Task Metadata
 ################################################################################
 
-get_container_private_ip() {
-    log_info "Step 1: Retrieving container private IP from ECS metadata..."
+get_public_ip() {
+    log_info "Step 1: Retrieving public IP from ECS task metadata..."
     
-    # Check if ECS metadata endpoint is available
-    if [[ -z "${ECS_CONTAINER_METADATA_URI:-}" ]]; then
-        error_exit "ECS_CONTAINER_METADATA_URI environment variable not set. This script must run in an ECS container."
+    # Try to get public IP from ECS task metadata endpoint
+    if [[ -n "${ECS_CONTAINER_METADATA_URI_V4:-}" ]]; then
+        local task_metadata_url="${ECS_CONTAINER_METADATA_URI_V4}/task"
+        local metadata_response
+        metadata_response=$(curl -s "$task_metadata_url" 2>/dev/null || echo "")
+        
+        if [[ -n "$metadata_response" ]]; then
+            # Try to extract public IP from task metadata
+            local public_ip
+            public_ip=$(echo "$metadata_response" | grep -o '"PublicIPv4":"[^"]*"' | cut -d'"' -f4 | head -1)
+            
+            if [[ -n "$public_ip" && "$public_ip" != "null" ]]; then
+                log_success "Public IP retrieved from task metadata: $public_ip"
+                echo "$public_ip"
+                return 0
+            fi
+        fi
     fi
     
-    # Retrieve container metadata
-    local metadata_response
-    metadata_response=$(curl -s "${ECS_CONTAINER_METADATA_URI}")
-    
-    if [[ -z "$metadata_response" ]]; then
-        error_exit "Failed to retrieve ECS container metadata from ${ECS_CONTAINER_METADATA_URI}"
-    fi
-    
-    # Extract private IP from metadata
-    local private_ip
-    private_ip=$(echo "$metadata_response" | grep -o '"IPv4Addresses":\s*\[\s*"[^"]*"' | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
-    
-    if [[ -z "$private_ip" ]]; then
-        error_exit "Failed to extract private IP from ECS metadata"
-    fi
-    
-    log_success "Container private IP retrieved: $private_ip"
-    echo "$private_ip"
-}
-
-################################################################################
-# Step 2: Get Public IP from EC2 Network Interface
-################################################################################
-
-get_public_ip_from_eni() {
-    local private_ip="$1"
-    log_info "Step 2: Looking up public IP for private IP $private_ip using EC2 API..."
-    
-    # Get the network interface ID associated with the private IP
-    local eni_id
-    eni_id=$(aws ec2 describe-network-interfaces \
-        --region "$REGION" \
-        --filters "Name=private-ip-address,Values=$private_ip" \
-        --query 'NetworkInterfaces[0].NetworkInterfaceId' \
-        --output text 2>/dev/null)
-    
-    if [[ -z "$eni_id" || "$eni_id" == "None" ]]; then
-        error_exit "Failed to find network interface for private IP $private_ip"
-    fi
-    
-    log_info "Found network interface: $eni_id"
-    
-    # Get the public IP associated with the network interface
+    # Fallback: Use external service to get public IP
+    log_info "Task metadata not available, using external IP service..."
     local public_ip
-    public_ip=$(aws ec2 describe-network-interfaces \
-        --region "$REGION" \
-        --network-interface-ids "$eni_id" \
-        --query 'NetworkInterfaces[0].Association.PublicIp' \
-        --output text 2>/dev/null)
+    public_ip=$(curl -s https://api.ipify.org 2>/dev/null || curl -s https://ifconfig.me 2>/dev/null || echo "")
     
-    if [[ -z "$public_ip" || "$public_ip" == "None" ]]; then
-        log_warning "No public IP associated with network interface $eni_id. Using private IP instead."
-        public_ip="$private_ip"
+    if [[ -z "$public_ip" ]]; then
+        error_exit "Failed to retrieve public IP address"
     fi
     
-    log_success "Public IP retrieved: $public_ip"
+    log_success "Public IP retrieved from external service: $public_ip"
     echo "$public_ip"
 }
 
 ################################################################################
-# Step 3: Update Route 53 DNS Record
+# Step 2: Update Namesilo DNS Record
 ################################################################################
 
-update_route53_record() {
+update_namesilo_record() {
     local ip_address="$1"
-    log_info "Step 3: Updating Route 53 record for $DOMAIN with IP $ip_address..."
+    log_info "Step 2: Updating Namesilo DNS record for ${SUBDOMAIN}.${DOMAIN} with IP $ip_address..."
     
-    # Create the change batch JSON for Route 53 update
-    local change_batch
-    change_batch=$(cat <<BATCH
-{
-    "Changes": [
-        {
-            "Action": "UPSERT",
-            "ResourceRecordSet": {
-                "Name": "$DOMAIN",
-                "Type": "A",
-                "TTL": $TTL,
-                "ResourceRecords": [
-                    {
-                        "Value": "$ip_address"
-                    }
-                ]
-            }
-        }
-    ]
-}
-BATCH
-)
+    # Build the API URL
+    local api_url="https://www.namesilo.com/api/dnsUpdateRecord"
+    api_url="${api_url}?version=1&type=xml&key=${API_KEY}"
+    api_url="${api_url}&domain=${DOMAIN}&rrid=${RECORD_ID}"
+    api_url="${api_url}&rrhost=${SUBDOMAIN}&rrvalue=${ip_address}&rrttl=${TTL}"
     
-    # Update the Route 53 record
-    local change_info
-    change_info=$(aws route53 change-resource-record-sets \
-        --hosted-zone-id "$HOSTED_ZONE_ID" \
-        --change-batch "$change_batch" \
-        --region "$REGION" \
-        --output json 2>/dev/null)
+    # Make the API request
+    local response
+    response=$(curl -s "$api_url")
     
-    if [[ -z "$change_info" ]]; then
-        error_exit "Failed to update Route 53 record"
+    if [[ -z "$response" ]]; then
+        error_exit "Failed to get response from Namesilo API"
     fi
     
-    # Extract the change ID
-    local change_id
-    change_id=$(echo "$change_info" | grep -o '"Id":\s*"[^"]*"' | head -1 | grep -o '[^"]*$' | head -1)
+    # Parse the response code
+    local reply_code
+    reply_code=$(echo "$response" | grep -o '<code>[^<]*</code>' | sed 's/<[^>]*>//g' | head -1)
     
-    log_success "Route 53 record updated successfully. Change ID: $change_id"
-    log_info "DNS record $DOMAIN now points to $ip_address (TTL: ${TTL}s)"
+    local reply_detail
+    reply_detail=$(echo "$response" | grep -o '<detail>[^<]*</detail>' | sed 's/<[^>]*>//g' | head -1)
+    
+    log_info "API Response Code: $reply_code"
+    log_info "API Response Detail: $reply_detail"
+    
+    # Check if update was successful (code 300 = success)
+    if [[ "$reply_code" == "300" ]]; then
+        log_success "Namesilo DNS record updated successfully!"
+        log_info "DNS record ${SUBDOMAIN}.${DOMAIN} now points to $ip_address (TTL: ${TTL}s)"
+    else
+        error_exit "Namesilo API returned error code $reply_code: $reply_detail"
+    fi
 }
 
 ################################################################################
-# Step 4: Verify DNS Update
+# Step 3: Verify DNS Update
 ################################################################################
 
 verify_dns_update() {
     local expected_ip="$1"
-    log_info "Step 4: Verifying DNS update..."
+    log_info "Step 3: Verifying DNS update..."
     
     # Wait a moment for DNS propagation
     sleep 2
     
-    # Query the DNS record
+    # Query the DNS record (using nslookup since dig might not be available)
     local resolved_ip
-    resolved_ip=$(dig +short "$DOMAIN" @8.8.8.8 | tail -1)
+    resolved_ip=$(nslookup "${SUBDOMAIN}.${DOMAIN}" 8.8.8.8 2>/dev/null | grep -A1 "Name:" | grep "Address:" | tail -1 | awk '{print $2}' || echo "")
     
     if [[ "$resolved_ip" == "$expected_ip" ]]; then
-        log_success "DNS verification successful! $DOMAIN resolves to $resolved_ip"
+        log_success "DNS verification successful! ${SUBDOMAIN}.${DOMAIN} resolves to $resolved_ip"
         return 0
     else
         log_warning "DNS verification pending. Expected: $expected_ip, Got: $resolved_ip"
-        log_info "DNS propagation may take a few moments. Route 53 update was successful."
+        log_info "DNS propagation may take a few moments (TTL: ${TTL}s). Namesilo update was successful."
         return 0
     fi
 }
@@ -229,30 +188,25 @@ verify_dns_update() {
 
 main() {
     log_info "=========================================="
-    log_info "Route 53 DNS Update Script Started"
+    log_info "Namesilo DNS Update Script Started"
     log_info "=========================================="
-    log_info "Domain: $DOMAIN"
-    log_info "Hosted Zone ID: $HOSTED_ZONE_ID"
-    log_info "Region: $REGION"
+    log_info "Domain: ${SUBDOMAIN}.${DOMAIN}"
+    log_info "Record ID: $RECORD_ID"
     log_info "TTL: ${TTL}s"
     log_info "=========================================="
     
-    # Step 1: Get container private IP
-    local private_ip
-    private_ip=$(get_container_private_ip)
-    
-    # Step 2: Get public IP from EC2 network interface
+    # Step 1: Get public IP
     local public_ip
-    public_ip=$(get_public_ip_from_eni "$private_ip")
+    public_ip=$(get_public_ip)
     
-    # Step 3: Update Route 53
-    update_route53_record "$public_ip"
+    # Step 2: Update Namesilo DNS
+    update_namesilo_record "$public_ip"
     
-    # Step 4: Verify the update
+    # Step 3: Verify the update
     verify_dns_update "$public_ip"
     
     log_info "=========================================="
-    log_success "Route 53 DNS Update Script Completed Successfully"
+    log_success "Namesilo DNS Update Script Completed Successfully"
     log_info "=========================================="
 }
 
@@ -260,12 +214,12 @@ main() {
 main "$@"
 EOF
 
-RUN chmod +x /update-route53.sh
+RUN chmod +x /update-namesilo-dns.sh
 
-# Create startup script that runs Route 53 update then starts the app
+# Create startup script that runs Namesilo DNS update then starts the app
 RUN cat > /startup.sh <<EOF
-#!/bin/sh
-/update-route53.sh || echo "WARNING: Route 53 update failed, continuing anyway..."
+#!/bin/bash
+/update-namesilo-dns.sh || echo "WARNING: Namesilo DNS update failed, continuing anyway..."
 exec java \
   -Xmx512m \
   -Xms256m \

@@ -421,7 +421,7 @@
             </p>
             <p>
                 <strong>🌐 Live AWS Production API:</strong> <span class="highlight">http://project.jcarl.net:8080/api</span><br>
-                <strong>Custom Domain:</strong> <span class="highlight">project.jcarl.net (AWS Route 53)</span><br>
+                <strong>Custom Domain:</strong> <span class="highlight">project.jcarl.net (Namesilo DNS API)</span><br>
                 <strong>Deployment Status:</strong> <span class="highlight">✅ Validated with 121 requests, 484 tests, 100% pass rate</span>
             </p>
         </section>
@@ -522,7 +522,8 @@
                         <li>AWS RDS MySQL (Production Database)</li>
                         <li>AWS ECR (Container Registry)</li>
                         <li>AWS ECS Fargate (Serverless Containers)</li>
-                        <li>AWS Route 53 (DNS Management with Container-Based Updates)</li>
+                        <li>Namesilo DNS API (Automated DNS Management)</li>
+                        <li>AWS CloudShell (Docker Build Environment)</li>
                         <li>AWS CodeBuild (CI/CD Pipeline)</li>
                         <li>Docker Containerization</li>
                     </ul>
@@ -945,6 +946,48 @@
         </section>
 
         <section class="section">
+            <h2>🛤️ Deployment Journey</h2>
+            <p>
+                This project evolved through several deployment iterations, overcoming real-world cloud infrastructure challenges 
+                and implementing production-grade solutions. Each challenge provided valuable learning experiences in DevOps and cloud architecture.
+            </p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>🌐 DNS Migration: Route 53 → Namesilo</h4>
+                    <p>
+                        Migrated from AWS Route 53 to Namesilo DNS API for automated domain management. Implemented custom DNS update 
+                        automation to dynamically update A records when ECS tasks receive new public IPs, ensuring continuous availability 
+                        at project.jcarl.net without manual intervention.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <h4>🐳 AWS CloudShell Integration</h4>
+                    <p>
+                        Leveraged AWS CloudShell as a cloud-based Docker build environment, eliminating local dependency issues and 
+                        providing consistent, reproducible builds. CloudShell's pre-configured AWS CLI and Docker support streamlined 
+                        the container image creation and ECR push workflow.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <h4>🚀 ECS Fargate Deployment Automation</h4>
+                    <p>
+                        Configured AWS ECS Fargate for serverless container orchestration with automatic task deployment. Implemented 
+                        task definitions with proper resource allocation, environment variable management, and health checks for 
+                        production-grade reliability and zero-downtime deployments.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔐 IAM & Security Configuration</h4>
+                    <p>
+                        Navigated complex AWS IAM role and policy configurations to establish secure, least-privilege access patterns. 
+                        Configured ECS task execution roles, ECR permissions, RDS security groups, and VPC networking to ensure secure 
+                        communication between services while maintaining production security standards.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
             <h2>🎯 Learning Outcomes</h2>
             <p>This project demonstrates proficiency in:</p>
             <div class="features-grid">
@@ -966,7 +1009,7 @@
                 </div>
                 <div class="feature-card">
                     <h4>DevOps &amp; Cloud Deployment</h4>
-                    <p>AWS cloud services (RDS, ECR, ECS, CodeBuild), Docker containerization, CI/CD pipelines, infrastructure as code</p>
+                    <p>AWS cloud services (RDS, ECR, ECS, CloudShell, CodeBuild), Docker containerization, CI/CD pipelines, DNS automation (Namesilo API), IAM security, infrastructure as code</p>
                 </div>
                 <div class="feature-card">
                     <h4>Best Practices</h4>
