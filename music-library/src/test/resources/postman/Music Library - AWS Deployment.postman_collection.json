@@ -3190,60 +3190,6 @@
 							"response": []
 						},
 						{
-							"name": "Create Hard Again",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 201\", function () {",
-											"  pm.response.to.have.status(201);",
-											"});",
-											"pm.test(\"Album created successfully\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.albumId).to.exist;",
-											"  pm.expect(jsonData.title).to.exist;",
-											"});",
-											"pm.test(\"Album has artist relationship\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.artist).to.exist;",
-											"  pm.expect(jsonData.artist.artistId).to.exist;",
-											"});",
-											"pm.test(\"Album has genre relationships\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.genres).to.be.an('array');",
-											"  pm.expect(jsonData.genres.length).to.be.at.least(1);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"title\": \"Hard Again\",\n  \"artistId\": {{muddyWatersId}},\n  \"genreIds\": [{{bluesId}}],\n  \"releaseDate\": \"1977-01-01\",\n  \"coverImageUrl\": \"covers/muddy-waters-hard-again.jpg\",\n  \"trackCount\": 9,\n  \"catalogNumber\": \"BSK3248\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/albums",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"albums"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Create Folk Singer",
 							"event": [
 								{
@@ -4124,60 +4070,6 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"title\": \"The Message\",\n  \"artistId\": {{grandmasterFlashTheFuriousFiveId}},\n  \"genreIds\": [{{hipHopId}}],\n  \"releaseDate\": \"1982-10-03\",\n  \"coverImageUrl\": \"covers/grandmaster-flash-the-furious-five-the-message.jpg\",\n  \"trackCount\": 8,\n  \"catalogNumber\": \"SL3802\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/albums",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"albums"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create They Said It Couldn't Be Done",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 201\", function () {",
-											"  pm.response.to.have.status(201);",
-											"});",
-											"pm.test(\"Album created successfully\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.albumId).to.exist;",
-											"  pm.expect(jsonData.title).to.exist;",
-											"});",
-											"pm.test(\"Album has artist relationship\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.artist).to.exist;",
-											"  pm.expect(jsonData.artist.artistId).to.exist;",
-											"});",
-											"pm.test(\"Album has genre relationships\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.genres).to.be.an('array');",
-											"  pm.expect(jsonData.genres.length).to.be.at.least(1);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"title\": \"They Said It Couldn't Be Done\",\n  \"artistId\": {{grandmasterFlashTheFuriousFiveId}},\n  \"genreIds\": [{{hipHopId}}],\n  \"releaseDate\": \"1985-01-01\",\n  \"coverImageUrl\": \"covers/grandmaster-flash-the-furious-five-they-said-it-couldnt-be-done.jpg\",\n  \"trackCount\": 8,\n  \"catalogNumber\": \"8248571\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/albums",
@@ -7670,7 +7562,7 @@
 					"name": "Nirvana Albums",
 					"item": [
 						{
-							"name": "Create Nevermind",
+							"name": "Create MTV Unplugged in New York",
 							"event": [
 								{
 									"listen": "test",
@@ -7695,7 +7587,9 @@
 											"  pm.expect(jsonData.genres.length).to.be.at.least(1);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -9435,6 +9329,156 @@
 					],
 					"path": [
 						"albums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Album",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/albums/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"albums",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Artist",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/artists/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"artists",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Genre",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/genres/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"genres",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\": \"Updated Album Title\", \"releaseYear\": 2024, \"artistId\": 1, \"genreId\": 1}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/albums/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"albums",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Artist",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\": \"Updated Artist Name\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/artists/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"artists",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Genre",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\": \"Updated Genre Name\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/genres/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"genres",
+						"1"
 					]
 				}
 			},

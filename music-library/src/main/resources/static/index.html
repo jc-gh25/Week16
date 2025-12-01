@@ -73,6 +73,27 @@
             font-weight: 500;
         }
 
+        /* Technology-specific brand colors */
+        .badge-spring {
+            background: #6DB33F; /* Spring Boot official green */
+        }
+
+        .badge-java {
+            background: #E76F00; /* Java official orange */
+        }
+
+        .badge-mysql {
+            background: #00758F; /* MySQL official blue */
+        }
+
+        .badge-jpa {
+            background: #59666C; /* Hibernate gray */
+        }
+
+        .badge-rest {
+            background: #8B5CF6; /* Purple for RESTful - distinct from buttons */
+        }
+
         .section {
             background: var(--bg-white);
             border-radius: 12px;
@@ -396,11 +417,11 @@
             <h1>Music Library API </h1>
             <p class="subtitle">RESTful API for Music Album Management - Java Bootcamp Project</p>
             <div>
-                <span class="badge">Spring Boot 3.5.7</span>
-                <span class="badge">Java 17</span>
-                <span class="badge">MySQL</span>
-                <span class="badge">JPA/Hibernate</span>
-                <span class="badge">RESTful</span>
+                <span class="badge badge-spring">Spring Boot 3.5.7</span>
+                <span class="badge badge-java">Java 17</span>
+                <span class="badge badge-mysql">MySQL</span>
+                <span class="badge badge-jpa">JPA/Hibernate</span>
+                <span class="badge badge-rest">RESTful</span>
             </div>
             <div class="cta-buttons">
 				<a href="/library.html" class="btn btn-primary">🎵 Browse Music Library</a>

@@ -1560,6 +1560,8 @@ The ngrok URL changes each time you restart ngrok (unless using a paid plan with
 
 ## 🚀 Deployment Journey & Learning Experiences
 
+*For a condensed quick-reference guide, see [DevOps Challenges & Troubleshooting](#-devops-challenges--troubleshooting-quick-reference) at the end of this section.*
+
 This section documents the real-world challenges, solutions, and learning experiences encountered during the AWS deployment process. It demonstrates problem-solving skills, adaptability, and persistence in overcoming infrastructure obstacles.
 
 ### Overview
@@ -1773,32 +1775,45 @@ Rolled back to: Task revision 2
 
 ---
 
-### 🔧 DevOps Challenges & Troubleshooting
+### 🔧 DevOps Challenges & Troubleshooting (Quick Reference)
 
-The transition from a development environment to a production-grade ECS Fargate deployment presented several challenges. The following solutions were implemented to resolve them:
+*For detailed problem-solving narratives with full context and attempted solutions, see the [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences) section above.*
 
-**1. Cross-Platform Script Compatibility (Windows vs. Linux)**
-*   **Problem:** Scripts created on Windows contained `CRLF` line endings, causing `exec /startup.sh: no such file or directory` errors in the Alpine Linux container.
-*   **Solution:** Implemented `dos2unix` conversion in the build pipeline and strictly managed file editing within Linux environments (AWS CloudShell) or using Linux-compatible editors.
+This condensed reference guide summarizes the key challenges and their solutions:
+
+**1. Cross-Platform Script Compatibility**
+*   **Problem:** `CRLF` line endings from Windows caused `exec /startup.sh: no such file or directory` errors.
+*   **Solution:** Use `dos2unix` conversion or edit files in Linux environments (AWS CloudShell).
+*   **See:** [Challenge 1: Route 53 DNS Automation](#challenge-1-route-53-dns-automation-attempts)
 
 **2. AWS IAM Role Distinctions**
-*   **Problem:** Deployments failed with `Unable to assume role` errors.
-*   **Solution:** Clarified the distinction between `TaskRole` (permissions for the App) and `TaskExecutionRole` (permissions for the ECS Agent). Since the DNS logic was moved to a container-native script (curl) rather than AWS CLI, the `TaskRole` was removed to adhere to the Principle of Least Privilege.
+*   **Problem:** `Unable to assume role` errors during deployment.
+*   **Solution:** Distinguish `TaskRole` (app permissions) from `TaskExecutionRole` (ECS agent permissions). Removed TaskRole to follow least privilege.
+*   **See:** [Challenge 2: IAM Permission Issues](#challenge-2-iam-permission-issues)
 
 **3. Database Connectivity & Security Groups**
-*   **Problem:** Application crashed with `Communications link failure`.
-*   **Solution:**
-    *   Identified that the AWS RDS Endpoint URL had changed after a database recreation.
-    *   Updated ECS Task Definition Environment Variables to match the new endpoint.
-    *   Configured RDS Security Groups to allow traffic from the ECS Security Group ID, rather than relying on static IP allowlisting.
+*   **Problem:** `Communications link failure` after RDS endpoint changed.
+*   **Solution:** Update environment variables with new RDS endpoint; configure security groups to allow ECS → RDS traffic.
+*   **See:** [Challenge 3: ECS Circuit Breaker](#challenge-3-ecs-circuit-breaker-and-task-rollbacks)
 
 **4. Container Resource Allocation**
-*   **Problem:** Container exited immediately due to memory pressure.
-*   **Solution:** Adjusted ECS Task definition to 1GB RAM to accommodate both the Java Heap (512MB) and the Operating System overhead.
+*   **Problem:** Container exited due to memory pressure.
+*   **Solution:** Increase ECS task memory to 1GB (512MB Java heap + OS overhead).
 
 **5. SSL/TLS in Alpine Linux**
-*   **Problem:** The DNS update script failed because `curl` could not verify the Namesilo HTTPS certificate.
-*   **Solution:** Added `ca-certificates` to the Dockerfile `apk add` command to ensure the container has the necessary root certificates for secure API calls.
+*   **Problem:** `curl` couldn't verify HTTPS certificates.
+*   **Solution:** Add `ca-certificates` package to Dockerfile.
+
+**6. Duplicate DNS A Records**
+*   **Problem:** The `update-namesilo-dns.sh` script was creating duplicate A records for `project.jcarl.net` on each dynamic IP change instead of updating the existing record. This resulted in multiple A records pointing to different (outdated) IP addresses.
+*   **Root Cause:** The script was using a hardcoded Record ID which became invalid or was not properly matched during DNS updates.
+*   **Solution:** Modified the script to dynamically query and retrieve the correct Record ID before each update:
+    ```bash
+    # Dynamically find the Record ID for project.jcarl.net
+    RECORDS=$(curl -s "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}")
+    RECORD_ID=$(echo "$RECORDS" | grep -C 5 "<host>${FULL_HOST}</host>" | grep -o "<record_id>.*</record_id>" | cut -d'>' -f2 | cut -d'<' -f1)
+    ```
+*   **Impact:** Ensures the script always updates the correct existing record rather than creating duplicates, maintaining a single authoritative A record for the domain.
 
 ---
 
