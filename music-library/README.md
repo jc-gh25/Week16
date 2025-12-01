@@ -123,7 +123,7 @@ The result is a **production-quality application** that demonstrates both techni
 
 The application has been successfully deployed to **Amazon Web Services (AWS)** using a modern containerized architecture with managed services. This production deployment demonstrates enterprise-grade cloud infrastructure skills and DevOps practices.
 
-**Live Production API**: [http://project.jcarl.net:8080/api](http://project.jcarl.net:8080/api)  
+**Live Production API**: [http://project.jcarl.net/api](http://project.jcarl.net/api)  
 **Custom Domain**: `project.jcarl.net` (via Namesilo DNS with API-based auto-update)
 
 #### AWS Architecture
@@ -179,12 +179,15 @@ The deployment leverages multiple AWS services in a scalable, secure architectur
 
 **Technical Implementation**:
 ```bash
-# Container detects its own IP and updates Namesilo DNS
-TASK_METADATA=$(curl -s $ECS_CONTAINER_METADATA_URI_V4/task)
-PUBLIC_IP=$(echo $TASK_METADATA | jq -r '.Containers[0].Networks[0].IPv4Addresses[0]')
+# Container detects its own IP
+PUBLIC_IP=$(curl -s https://api.ipify.org)
+
+# Dynamically find the Record ID for project.jcarl.net
+RECORDS=$(curl -s "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}")
+RECORD_ID=$(echo "$RECORDS" | grep -C 5 "<host>${FULL_HOST}</host>" | grep -o "<record_id>.*</record_id>" | cut -d'>' -f2 | cut -d'<' -f1)
 
 # Update Namesilo DNS record via API
-curl "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=jcarl.net&rrid=8ad154e44ae9c94cd8f22be2bea457d2&rrhost=project&rrvalue=${PUBLIC_IP}&rrttl=7207"
+curl "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}&rrid=${RECORD_ID}&rrhost=${SUBDOMAIN}&rrvalue=${PUBLIC_IP}&rrttl=${TTL}"
 ```
 
 **Benefits**:
@@ -214,17 +217,17 @@ RUN mvn clean package -DskipTests
 # Stage 2: Runtime with OpenJDK + Namesilo DNS automation
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-
-# Install curl and jq for DNS updates
-RUN apk add --no-cache curl jq
+# Install curl, bash, and ca-certificates (required for HTTPS calls to Namesilo)
+RUN apk add --no-cache curl bash ca-certificates grep
 
 # Copy DNS update scripts
 COPY update-namesilo-dns.sh /update-namesilo-dns.sh
 COPY startup.sh /startup.sh
 RUN chmod +x /update-namesilo-dns.sh /startup.sh
 
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
+COPY --from=build /app/target/*.jar /app/app.jar
+# Expose standard HTTP port
+EXPOSE 80
 ENTRYPOINT ["/startup.sh"]
 ```
 
@@ -1197,9 +1200,9 @@ The Music Library API supports multiple deployment strategies, from local develo
 
 ### 1. AWS Cloud Deployment (Production)
 
-**Live Production API**: [http://project.jcarl.net:8080/api](http://project.jcarl.net:8080/api)  
-**Swagger UI**: [http://project.jcarl.net:8080/swagger-ui/index.html](http://project.jcarl.net:8080/swagger-ui/index.html)  
-**Custom Domain**: `project.jcarl.net` (AWS Route 53 managed)
+**Live Production API**: [http://project.jcarl.net/api](http://project.jcarl.net/api)  
+**Swagger UI**: [http://project.jcarl.net/swagger-ui/index.html](http://project.jcarl.net/swagger-ui/index.html)  
+**Custom Domain**: `project.jcarl.net` (Namesilo DNS with API-based auto-update)
 
 The application is deployed on AWS using a containerized, serverless architecture with managed services.
 
@@ -1770,6 +1773,35 @@ Rolled back to: Task revision 2
 
 ---
 
+### 🔧 DevOps Challenges & Troubleshooting
+
+The transition from a development environment to a production-grade ECS Fargate deployment presented several challenges. The following solutions were implemented to resolve them:
+
+**1. Cross-Platform Script Compatibility (Windows vs. Linux)**
+*   **Problem:** Scripts created on Windows contained `CRLF` line endings, causing `exec /startup.sh: no such file or directory` errors in the Alpine Linux container.
+*   **Solution:** Implemented `dos2unix` conversion in the build pipeline and strictly managed file editing within Linux environments (AWS CloudShell) or using Linux-compatible editors.
+
+**2. AWS IAM Role Distinctions**
+*   **Problem:** Deployments failed with `Unable to assume role` errors.
+*   **Solution:** Clarified the distinction between `TaskRole` (permissions for the App) and `TaskExecutionRole` (permissions for the ECS Agent). Since the DNS logic was moved to a container-native script (curl) rather than AWS CLI, the `TaskRole` was removed to adhere to the Principle of Least Privilege.
+
+**3. Database Connectivity & Security Groups**
+*   **Problem:** Application crashed with `Communications link failure`.
+*   **Solution:**
+    *   Identified that the AWS RDS Endpoint URL had changed after a database recreation.
+    *   Updated ECS Task Definition Environment Variables to match the new endpoint.
+    *   Configured RDS Security Groups to allow traffic from the ECS Security Group ID, rather than relying on static IP allowlisting.
+
+**4. Container Resource Allocation**
+*   **Problem:** Container exited immediately due to memory pressure.
+*   **Solution:** Adjusted ECS Task definition to 1GB RAM to accommodate both the Java Heap (512MB) and the Operating System overhead.
+
+**5. SSL/TLS in Alpine Linux**
+*   **Problem:** The DNS update script failed because `curl` could not verify the Namesilo HTTPS certificate.
+*   **Solution:** Added `ca-certificates` to the Dockerfile `apk add` command to ensure the container has the necessary root certificates for secure API calls.
+
+---
+
 ### Key Takeaways and Skills Demonstrated
 
 **Problem-Solving**:
@@ -1834,6 +1866,18 @@ Rolled back to: Task revision 2
 8. **Shell Compatibility**: Alpine Linux (ash) ≠ Ubuntu/Debian (bash)
 
 This deployment journey demonstrates real-world DevOps problem-solving: encountering obstacles, researching solutions, testing hypotheses, and iterating until achieving a stable, production-ready deployment.
+
+---
+
+### 📈 Project Metrics & Retrospective
+
+This project represents a significant deep-dive into AWS cloud infrastructure and containerization. The final production release is the result of an intensive iterative development process involving:
+
+*   **23+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
+*   **14+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
+*   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
+*   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
+*   **Tools Used:** AWS CloudShell, S3, CodeBuild, ECR, ECS Fargate, RDS MySQL, Git, and Docker.
 
 ---
 

@@ -403,7 +403,7 @@
             </div>
             <div class="cta-buttons">
 				<a href="/library.html" class="btn btn-primary">🎵 Browse Music Library</a>
-                <a href="http://project.jcarl.net:8080/swagger-ui.html" class="btn btn-success" target="_blank">🔧 Test the Live API (AWS)</a>
+                <a href="http://project.jcarl.net/swagger-ui.html" class="btn btn-success" target="_blank">🔧 Test the Live API (AWS)</a>
                 <a href="https://github.com/jc-gh25/MusicLibrary" class="btn btn-secondary" target="_blank">💻 View on GitHub</a>
             </div>
         </header>
@@ -420,7 +420,7 @@
                 database design, API development, testing strategies, and cloud deployment practices. The application features a comprehensive music library with 50 artists and over 100 albums, now deployed on AWS cloud infrastructure with production-grade reliability.
             </p>
             <p>
-                <strong>🌐 Live AWS Production API:</strong> <span class="highlight">http://project.jcarl.net:8080/api</span><br>
+                <strong>🌐 Live AWS Production API:</strong> <span class="highlight">http://project.jcarl.net/api</span><br>
                 <strong>Custom Domain:</strong> <span class="highlight">project.jcarl.net (Namesilo DNS API)</span><br>
                 <strong>Deployment Status:</strong> <span class="highlight">✅ Validated with 121 requests, 484 tests, 100% pass rate</span>
             </p>
@@ -907,7 +907,7 @@
             <div class="architecture-layer">
                 <h4>☁️ AWS (Production)</h4>
                 <p>
-                    <strong>Live URL:</strong> <code>http://54.212.239.199:8080/api</code><br>
+                    <strong>Live URL:</strong> <code>http://54.212.239.199/api</code><br>
                     <strong>Status:</strong> Production-ready with 100% test pass rate (121 requests, 484 tests)<br>
                     <strong>Features:</strong> High availability, automatic scaling, managed database, container orchestration<br>
                     <strong>Use Case:</strong> Production deployment with enterprise-grade reliability and performance
@@ -1038,7 +1038,7 @@
                 <code>mvn spring-boot:run</code>
             </div>
             <p>Access the API at <code>http://localhost:8080/api</code> and Swagger UI at <code>http://localhost:8080/swagger-ui.html</code></p>
-            <p><strong>For public access:</strong> Use the AWS production URL: <code>http://54.212.239.199:8080/api</code> or ngrok for local tunneling: <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code></p>
+            <p><strong>For public access:</strong> Use the AWS production URL: <code>http://54.212.239.199/api</code> or ngrok for local tunneling (previous configuration): <code>https://suanne-speedless-chrissy.ngrok-free.dev/api</code></p>
 
             <h3>Running Tests</h3>
             <div class="api-endpoint">
@@ -1053,7 +1053,7 @@
             <p>Built with ❤️ as a Backend Development Bootcamp Final Project</p>
             <p>Contact: <a href="mailto:jeff@jcarl.net" style="color: #3b82f6; text-decoration: none;">jeff@jcarl.net</a></p>
             <div class="cta-buttons" style="margin-top: 20px;">
-                <a href="http://54.212.239.199:8080/swagger-ui.html" class="btn btn-primary" target="_blank">Try the AWS Production API</a>
+                <a href="http://54.212.239.199/swagger-ui.html" class="btn btn-primary" target="_blank">Try the AWS Production API</a>
             </div>
         </footer>
     </div>
@@ -1061,4 +1061,9 @@
     <!-- Prism.js JavaScript for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+
+    <footer style="text-align: center; margin-top: 50px; font-size: 0.8em; color: #666;">
+        <p>Deployed on AWS ECS Fargate | v1.14 (Namesilo DNS Integration)</p>
+        <p>Architecture: Serverless Container • Database: AWS RDS MySQL</p>
+    </footer>
 </body></html>
