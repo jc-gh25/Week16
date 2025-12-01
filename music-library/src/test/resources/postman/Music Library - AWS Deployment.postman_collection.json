@@ -7663,60 +7663,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "Create Houses of the Holy",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 201\", function () {",
-											"  pm.response.to.have.status(201);",
-											"});",
-											"pm.test(\"Album created successfully\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.albumId).to.exist;",
-											"  pm.expect(jsonData.title).to.exist;",
-											"});",
-											"pm.test(\"Album has artist relationship\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.artist).to.exist;",
-											"  pm.expect(jsonData.artist.artistId).to.exist;",
-											"});",
-											"pm.test(\"Album has genre relationships\", function () {",
-											"  var jsonData = pm.response.json();",
-											"  pm.expect(jsonData.genres).to.be.an('array');",
-											"  pm.expect(jsonData.genres.length).to.be.at.least(1);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"title\": \"Houses of the Holy\",\n  \"artistId\": {{ledZeppelinId}},\n  \"genreIds\": [{{rockId}}],\n  \"releaseDate\": \"1973-03-28\",\n  \"coverImageUrl\": \"covers/led-zeppelin-houses-of-the-holy.jpg\",\n  \"trackCount\": 8,\n  \"catalogNumber\": \"SD7255\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/albums",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"albums"
-									]
-								}
-							},
-							"response": []
 						}
 					]
 				},
