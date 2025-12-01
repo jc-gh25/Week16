@@ -11,4 +11,4 @@ exec java \
   -XX:+UseContainerSupport \
   -Djava.security.egd=file:/dev/./urandom \
   -Dserver.port=80 \
-  -jar /app.jar
+  -jar /app/app.jar
