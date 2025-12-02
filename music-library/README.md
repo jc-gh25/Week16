@@ -1185,7 +1185,7 @@ The Maven Surefire plugin automatically activates the test profile:
 
 ---
 
-## 🚀 Deployment Options
+## ⚙️ Deployment Options
 
 The Music Library API supports multiple deployment strategies, from local development to production cloud infrastructure.
 
@@ -1551,7 +1551,7 @@ The ngrok URL changes each time you restart ngrok (unless using a paid plan with
 
 ---
 
-## 🚀 Deployment Journey & Learning Experiences
+## 🗃️ Deployment Journey & Learning Experiences
 
 *For a condensed quick-reference guide, see [DevOps Challenges & Troubleshooting](#-devops-challenges--troubleshooting-quick-reference) at the end of this section.*
 
