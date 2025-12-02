@@ -416,16 +416,22 @@
         <header>
             <h1>Music Library API </h1>
             <p class="subtitle">RESTful API for Music Album Management - Java Bootcamp Project</p>
-            <div>
+            
+           
+            <div style="margin-bottom: 30px;">
                 <span class="badge badge-spring">Spring Boot 3.5.7</span>
                 <span class="badge badge-java">Java 17</span>
                 <span class="badge badge-mysql">MySQL</span>
                 <span class="badge badge-jpa">JPA/Hibernate</span>
                 <span class="badge badge-rest">RESTful</span>
             </div>
+            
+           
+			<hr style="border: 0; border-top: 2px solid #999; margin: 30px 0;">
+
             <div class="cta-buttons">
-				<a href="/library.html" class="btn btn-primary">🎵 Browse Music Library</a>
-                <a href="http://project.jcarl.net/swagger-ui.html" class="btn btn-success" target="_blank">🔧 Test the Live API (AWS)</a>
+                <a href="/library.html" class="btn btn-primary">🎵 Browse Music Library</a>
+                <a href="http://project.jcarl.net/swagger-ui.html" class="btn btn-success" target="_blank">📄 Live API Documentation (Swagger)</a>
                 <a href="https://github.com/jc-gh25/MusicLibrary" class="btn btn-secondary" target="_blank">💻 View on GitHub</a>
             </div>
         </header>
@@ -442,7 +448,7 @@
                 database design, API development, testing strategies, and cloud deployment practices. The application features a comprehensive music library with 50 artists and over 100 albums, now deployed on AWS cloud infrastructure with production-grade reliability.
             </p>
             <p>
-                <strong>🌐 Live AWS Production API:</strong> <span class="highlight">http://project.jcarl.net/api</span><br>
+                <strong>Live AWS Production API:</strong> <span class="highlight">http://project.jcarl.net/api</span><br>
                 <strong>Deployment Status:</strong> <span class="highlight">✅ Validated with 121 requests, 484 tests, 100% pass rate</span>
             </p>
         </section>
@@ -561,7 +567,7 @@
             </p>
 
             <div class="architecture-layer">
-                <h4>🌐 Controller Layer (Presentation)</h4>
+                <h4>🚦 Controller Layer (Presentation)</h4>
                 <p>
                     Handles HTTP requests and responses, maps URLs to service methods, validates input, and formats output. 
                     Uses Spring MVC annotations for RESTful endpoint definition.
@@ -610,7 +616,7 @@
             </div>
 
             <div class="architecture-layer">
-                <h4>💾 Repository Layer (Data Access)</h4>
+                <h4>🗃️ Repository Layer (Data Access)</h4>
                 <p>
                     Interfaces extending Spring Data JPA repositories for database operations. Provides automatic CRUD implementation 
                     and custom query methods using Spring Data naming conventions.
@@ -636,7 +642,7 @@
             </div>
 
             <div class="architecture-layer">
-                <h4>📦 Entity Layer (Domain Model)</h4>
+                <h4>📄 Entity Layer (Domain Model)</h4>
                 <p>
                     JPA entities representing database tables with proper relationships, validation constraints, and lifecycle callbacks. 
                     Uses Lombok for boilerplate reduction and Jackson annotations for JSON serialization control.
@@ -718,10 +724,10 @@
         </section>
 
         <section class="section">
-            <h2>🔌 API Endpoints</h2>
+            <h2>📡 API Endpoints</h2>
             <p>All endpoints are prefixed with <code>/api</code> and return JSON responses.</p>
 
-            <h3>👨‍🎤 Artist Endpoints</h3>
+            <h3>🎤 Artist Endpoints</h3>
             <div class="api-endpoint">
                 <span class="endpoint-method method-post">POST</span>
                 <code>/api/artists</code> - Create a new artist
@@ -905,54 +911,63 @@
                     </ul>
                 </div>
                 <div class="tech-card">
-                    <h4>🚀 AWS ECS Fargate</h4>
-                    <ul>
-                        <li>Serverless container orchestration</li>
-                        <li>No server management required</li>
-                        <li>Automatic scaling and load balancing</li>
-                        <li>Pay-per-use pricing model</li>
-                    </ul>
-                </div>
+				<h4>🚀 AWS ECS Fargate</h4>
+				<ul>
+					<li>Serverless container orchestration</li>
+					<li>No server management required</li>
+					<li>Ephemeral infrastructure design</li> <!-- Changed this line -->
+					<li>Pay-per-use pricing model</li>
+				</ul>
+			</div>
                 <div class="tech-card">
-                    <h4>🔧 AWS CodeBuild</h4>
-                    <ul>
-                        <li>Automated CI/CD pipeline</li>
-                        <li>Build and test automation</li>
-                        <li>Docker image creation and push to ECR</li>
-                        <li>Integration with GitHub repository</li>
-                    </ul>
-                </div>
-            </div>
-
-            <h3>🌐 Deployment Options</h3>
+					<h4>🔧 AWS CodeBuild</h4>
+					<ul>
+						<li><strong>S3-Triggered Pipeline:</strong> Automated deployments upon source artifact upload</li>
+						<li><strong>Multi-Stage Builds:</strong> Optimized Docker images for minimal runtime footprint</li>
+						<li><strong>Dependency Management:</strong> Integrated with AWS Public ECR mirrors</li>
+						<li><strong>Artifact Handling:</strong> Automated pushing to Private ECR repository</li>
+					</ul>
+				</div>
+				<div class="tech-card">
+					<h4>🛡️ Security & Access Control</h4>
+					<ul>
+						<li><strong>AWS IAM:</strong> Role-based access control (RBAC) with Principle of Least Privilege</li>
+						<li><strong>VPC Security Groups:</strong> Granular network firewalling for port isolation</li>
+						<li><strong>Container Security:</strong> Hardened Alpine Linux runtime (minimal attack surface)</li>
+						<li><strong>Secret Management:</strong> Secure environment variable injection</li>
+					</ul>
+				</div>
+				<div class="tech-card">
+					<h4>🛠️ DevOps & Management</h4>
+					<ul>
+						<li><strong>AWS CloudShell:</strong> Browser-based Linux environment for script dev & debugging</li>
+						<li><strong>AWS CLI:</strong> Command-line interaction with ECR and ECS</li>
+						<li><strong>AWS S3:</strong> Artifact storage and CodeBuild pipeline trigger</li>
+						<li><strong>Bash Scripting:</strong> Custom automation for environment configuration</li>
+					</ul>
+				</div>
+				<div class="tech-card">
+					<h4>⌨ Operations & Observability</h4>
+					<ul>
+						<li><strong>AWS CloudWatch:</strong> Real-time log aggregation and deployment troubleshooting</li>
+						<li><strong>AWS CloudShell:</strong> Cloud-native Linux environment for script development</li>
+						<li><strong>AWS S3:</strong> Secure artifact storage and build pipeline integration</li>
+						<li><strong>Bash Scripting:</strong> Custom automation for environment configuration</li>
+					</ul>
+				</div>
+			</div>
+            <h3>📊 Current Deployment Status</h3>
             <div class="architecture-layer">
-                <h4>☁️ AWS (Production)</h4>
+                <h4>☁️ Production Environment</h4>
                 <p>
-                    <strong>Live URL:</strong> <code>http://project.jcarl.net/api</code><br>
-                    <strong>Status:</strong> Production-ready with 100% test pass rate (121 requests, 484 tests)<br>
-                    <strong>Features:</strong> High availability, automatic scaling, managed database, container orchestration<br>
-                    <strong>Use Case:</strong> Production deployment with enterprise-grade reliability and performance
+                    <strong>Domain:</strong> <code>project.jcarl.net</code><br>
+                    <strong>Port:</strong> <code>80 (HTTP)</code><br>
+                    <strong>DNS Provider:</strong> Namesilo with automated API-based updates<br>
+                    <strong>Container Platform:</strong> AWS ECS Fargate (Serverless)<br>
+                    <strong>Task Revision:</strong> Latest (auto-deployed via ECS)<br>
+                    <strong>Build Environment:</strong> AWS CloudShell + CodeBuild<br>
                 </p>
             </div>
-
-            <div class="architecture-layer">
-                <h4>🚂 Railway (Alternative Cloud Platform - Not Currently Used)</h4>
-                <p>
-                    <strong>Features:</strong> Simple deployment, automatic HTTPS, built-in database<br>
-                    <strong>Use Case:</strong> Evaluated as an alternative cloud deployment option<br>
-                    <strong>Note:</strong> AWS ECS Fargate was selected for production deployment
-                </p>
-            </div>
-
-            <div class="architecture-layer">
-                <h4>🔌 ngrok (Previous Local Development Configuration)</h4>
-                <p>
-                    <strong>Features:</strong> Secure tunneling, temporary public URLs, webhook testing<br>
-                    <strong>Use Case:</strong> Previously used for local development, testing, and demonstration purposes<br>
-                    <strong>Note:</strong> This was a temporary development configuration and is no longer active
-                </p>
-            </div>
-
             <h3>✅ Deployment Validation</h3>
             <p>
                 The AWS deployment has been thoroughly validated using Postman collection runner with comprehensive test coverage:
@@ -965,6 +980,39 @@
                 <li>✔️ Error handling and validation confirmed</li>
                 <li>✔️ Database connectivity and persistence validated</li>
             </ul>
+			<h3>📈 Project Metrics</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>🔨 Build Iterations</h4>
+                    <p><strong>33+ Docker builds</strong> executed through AWS CloudShell and CodeBuild, demonstrating iterative development and continuous improvement of the containerized application.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🏗️ Infrastructure Revisions</h4>
+                    <p><strong>11+ ECS task definition updates</strong> deployed, reflecting ongoing optimization of container configurations, resource allocation, and environment variables.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌐 DNS Automation</h4>
+                    <p><strong>Custom DNS update script</strong> integrated with Namesilo API to automatically update A records when ECS assigns new public IPs, ensuring zero-downtime availability.</p>
+                </div>
+            </div>
+			<h3>🌐 Other Deployment Options</h3>
+            <div class="architecture-layer">
+                <h4>🚂 Railway (Alternative Cloud Platform - Not Currently Used)</h4>
+                <p>
+                    <strong>Features:</strong> Simple deployment, automatic HTTPS, built-in database<br>
+                    <strong>Use Case:</strong> Evaluated as an alternative cloud deployment option<br>
+                    <strong>Note:</strong> AWS ECS Fargate was selected for production deployment
+                </p>
+            </div>
+
+            <div class="architecture-layer">
+                <h4>🖥️ ngrok (Previous Local Development Configuration)</h4>
+                <p>
+                    <strong>Features:</strong> Secure tunneling, temporary public URLs, webhook testing<br>
+                    <strong>Use Case:</strong> Previously used for local development, testing, and demonstration purposes<br>
+                    <strong>Note:</strong> This was a temporary development configuration and is no longer active
+                </p>
+            </div>
         </section>
 
         <section class="section">
@@ -973,6 +1021,44 @@
                 This project evolved through several deployment iterations, overcoming real-world cloud infrastructure challenges 
                 and implementing production-grade solutions. Each challenge provided valuable learning experiences in DevOps and cloud architecture.
             </p>
+
+            <h3>🔥 Challenges Overcome</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>🐛 Duplicate DNS A Records Bug</h4>
+                    <p>
+                        Diagnosed and resolved DNS resolution failures caused by duplicate A records pointing to old and new IPs. 
+                        Implemented proper DNS record cleanup logic in the automation script, ensuring single authoritative A record 
+                        per deployment and preventing DNS propagation conflicts.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔄 ECS Circuit Breaker Rollbacks</h4>
+                    <p>
+                        Resolved automatic task rollbacks triggered by ECS Circuit Breaker due to health check failures. 
+                        Debugged container startup issues, corrected environment variable configurations, and validated health 
+                        check endpoints to achieve stable deployments without rollbacks.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <h4>💻 Windows LTSB Docker Incompatibility</h4>
+                    <p>
+                        Overcame local Docker Desktop limitations on Windows LTSB by pivoting to AWS CloudShell as the primary 
+                        build environment. Leveraged CloudShell's pre-configured Docker and AWS CLI to establish a reliable, 
+                        cloud-based build pipeline independent of local system constraints.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔐 IAM Permission Complexity</h4>
+                    <p>
+                        Navigated AWS IAM role and policy configurations to establish secure, least-privilege access patterns. 
+                        Configured ECS task execution roles, ECR permissions, RDS security groups, and VPC networking to ensure 
+                        secure communication between services while maintaining production security standards.
+                    </p>
+                </div>
+            </div>
+
+            <h3>🏁 Deployment Milestones</h3>
             <div class="features-grid">
                 <div class="feature-card">
                     <h4>🌐 DNS Migration: Route 53 → Namesilo</h4>
@@ -991,27 +1077,30 @@
                     </p>
                 </div>
                 <div class="feature-card">
-                    <h4>🚀 ECS Fargate Deployment Automation</h4>
+                    <h4>📦 ECS Fargate Deployment Automation</h4>
                     <p>
                         Configured AWS ECS Fargate for serverless container orchestration with automatic task deployment. Implemented 
                         task definitions with proper resource allocation, environment variable management, and health checks for 
                         production-grade reliability and zero-downtime deployments.
                     </p>
                 </div>
-                <div class="feature-card">
-                    <h4>🔐 IAM & Security Configuration</h4>
-                    <p>
-                        Navigated complex AWS IAM role and policy configurations to establish secure, least-privilege access patterns. 
-                        Configured ECS task execution roles, ECR permissions, RDS security groups, and VPC networking to ensure secure 
-                        communication between services while maintaining production security standards.
-                    </p>
-                </div>
+            </div>
+
+            <h3>💡 Key Learnings</h3>
+            <div class="architecture-layer">
+                <h4>Technical Insights Gained</h4>
+                <ul style="margin-left: 20px; color: var(--text-dark);">
+                    <li>📝 <strong>DNS Management:</strong> Automated DNS updates require careful handling of record cleanup to prevent duplicate entries and resolution conflicts</li>
+                    <li>📝 <strong>Container Health Checks:</strong> ECS Circuit Breaker provides automatic rollback protection but requires properly configured health endpoints and startup grace periods</li>
+                    <li>📝 <strong>Cloud-Based Development:</strong> AWS CloudShell eliminates local environment dependencies and provides consistent build environments across team members</li>
+                    <li>📝 <strong>Iterative Deployment:</strong> Production deployments benefit from incremental changes, comprehensive logging, and systematic troubleshooting of infrastructure issues</li>
+                </ul>
             </div>
         </section>
 
         <section class="section">
-            <h2>🎯 Learning Outcomes</h2>
-            <p>This project demonstrates proficiency in:</p>
+            <h2>🎓 Learning Outcomes</h2>
+            <p>This project demonstrates experience with:</p>
             <div class="features-grid">
                 <div class="feature-card">
                     <h4>Backend Development</h4>
