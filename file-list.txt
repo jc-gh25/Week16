@@ -1,0 +1,295 @@
+# ============================================================================
+# MUSIC LIBRARY API - PROJECT FILE STRUCTURE
+# ============================================================================
+# Java Spring Boot Music Library API deployed on AWS ECS Fargate
+# with Route 53 DNS configuration and MySQL database backend
+# Last Updated: 2025-11-30
+# ============================================================================
+
+# ROOT DIRECTORY - Configuration & Documentation Files
+# ============================================================================
+.classpath
+.factorypath
+.gitignore
+.project
+pom.xml
+README.md
+README-SAMPLE-DATA.md
+file-list.txt
+
+# DOCKER & DEPLOYMENT FILES
+# ============================================================================
+# Container configuration and orchestration
+Dockerfile
+  - Multi-stage build: Maven build stage + Alpine runtime stage
+  - Includes AWS CLI and jq for Route 53 DNS updates
+  - Route 53 update script: /update-route53.sh
+  - Startup script: /startup.sh
+  - Hosted Zone ID: Z08164103KW73VKOVN6GY
+  - Domain: project.jcarl.net
+  - TTL: 300 seconds
+  - Automatic DNS update on container startup
+
+docker-compose.yaml
+  - MySQL 8.0 service configuration
+  - Spring Boot application service
+  - Health checks and volume management
+  - Environment variables for database connection
+
+# POSTMAN COLLECTION FILES
+# ============================================================================
+# API testing and documentation collections
+collection_current.json
+Music_Library_With_Images.json
+PostmanImport1123a.json
+
+# SOURCE CODE - MAIN APPLICATION
+# ============================================================================
+
+# Application Entry Point
+src/main/java/music/library/MusicLibraryApplication.java
+
+# Configuration Classes
+src/main/java/music/library/config/
+  CorsConfig.java - CORS configuration for cross-origin requests
+  PageConfig.java - Pagination configuration
+  SwaggerConfig.java - Swagger/OpenAPI documentation configuration
+
+# Controllers
+src/main/java/music/library/controller/
+  MusicLibraryController.java - Main REST API endpoints
+  SwaggerRedirectController.java - Swagger UI redirect handler
+  error/ - Error handling controllers
+  model/ - Controller model classes
+
+# Data Transfer Objects (DTOs)
+src/main/java/music/library/dto/
+  ApiInfoResponse.java - API information response
+  CreateAlbumRequest.java - Album creation request
+  CreateArtistRequest.java - Artist creation request
+  CreateGenreRequest.java - Genre creation request
+  DatabaseResetResponse.java - Database reset response
+  UpdateAlbumRequest.java - Album update request
+  UpdateArtistRequest.java - Artist update request
+  UpdateGenreRequest.java - Genre update request
+
+# Entity Classes (JPA/Hibernate)
+src/main/java/music/library/entity/
+  Album.java - Album entity with relationships
+  Artist.java - Artist entity with relationships
+  Genre.java - Genre entity with relationships
+
+# Exception Handling
+src/main/java/music/library/exception/
+  ApiError.java - API error response model
+  GlobalExceptionHandler.java - Global exception handler
+  ResourceNotFoundException.java - Resource not found exception
+
+# Repository Layer (Data Access)
+src/main/java/music/library/repository/
+  AlbumRepository.java - Album data access
+  ArtistRepository.java - Artist data access
+  GenreRepository.java - Genre data access
+
+# Service Layer (Business Logic)
+src/main/java/music/library/service/
+  AlbumService.java - Album business logic
+  ArtistService.java - Artist business logic
+  DatabaseResetService.java - Database reset functionality
+  GenreService.java - Genre business logic
+
+# Specifications (JPA Criteria API)
+src/main/java/music/library/specification/
+  AlbumSpecs.java - Album search specifications
+
+# RESOURCES - CONFIGURATION & STATIC FILES
+# ============================================================================
+
+# Application Configuration
+src/main/resources/application.properties
+src/main/resources/application.yaml
+  - Server port configuration (default: 8080)
+  - MySQL database connection settings
+  - JPA/Hibernate configuration
+  - Swagger/Springdoc configuration
+  - SQL initialization mode
+
+# Database Migration Scripts (Flyway)
+src/main/resources/db/migration/
+  V1__Create_Schema.sql - Initial schema creation
+  V1__Initial_Schema.sql.sql - Alternative schema file
+  V1_1__add_catalog_number_unique.sql - Add unique catalog number constraint
+  V1_2__add_cover_image_url.sql - Add cover image URL column
+  V2__Seed_Data.sql - Initial data seeding
+
+# Static Web Files
+src/main/resources/static/
+  index.html - Landing page with API documentation
+  library.html - Music library web interface
+  favicon.ico - Website favicon
+
+# Album Cover Images
+src/main/resources/static/covers/
+  [Multiple album cover images in JPG format]
+  - 3-create-bayou-country.jpg
+  - 3-create-pendulum.jpg
+  - above-beyond-group-therapy.jpg
+  - above-beyond-tri-state.jpg
+  - andrea-bocelli-amore.jpg
+  - andrea-bocelli-con-te-partir-.jpg
+  - andrea-bocelli-passione.jpg
+  - andrea-bocelli-si.jpg
+  - armin-van-buuren-balance.jpg
+  - armin-van-buuren-imaginary-landscape.jpg
+  - armin-van-buuren-mirage.jpg
+  - b-b-king-king-of-the-blues.jpg
+  - b-b-king-live-at-the-regal.jpg
+  - bon-iver-for-emma-forever-ago.jpg
+  - boston-boston.jpg
+  - carl-cox-all-night-long.jpg
+  - carl-cox-the-ultimate-house-party.jpg
+  - chicane-behind-the-sun.jpg
+  - chicane-far-from-the-maddening-crowds.jpg
+  - clint-black-killin-time.jpg
+  - clint-black-put-yourself-in-my-shoes.jpg
+  - crosby-stills-nash-crosby-stills-nash.jpg
+  - deep-purple-burn.jpg
+  - deep-purple-in-rock.jpg
+  - deep-purple-machine-head.jpg
+  - delbert-mcclinton-room-to-breathe.jpg
+  - delbert-mcclinton-the-jealous-kind.jpg
+  - depeche-mode-music-for-the-masses.jpg
+  - depeche-mode-songs-of-faith-and-devotion.jpg
+  - depeche-mode-violator.jpg
+  - epmd-back-to-da-lab.jpg
+  - epmd-business-as-usual.jpg
+  - epmd-strictly-business.jpg
+  - epmd-we-re-in-the-house.jpg
+  - eric-clapton-from-the-cradle.jpg
+  - eric-clapton-slowhand.jpg
+  - eric-clapton-unplugged.jpg
+  - fleet-foxes-fleet-foxes.jpg
+  - fleetwood-mac-fleetwood-mac.jpg
+  - fleetwood-mac-rumours.jpg
+  - foreigner-4.jpg
+  - foreigner-agent-provocateur.jpg
+  - foreigner-double-vision.jpg
+  - foreigner-head-games.jpg
+  - garth-brooks-no-fences.jpg
+  - garth-brooks-ropin-the-wind.jpg
+  - grandmaster-flash-the-furious-five-the-message.jpg
+  - il-divo-ancora.jpg
+  - il-divo-the-promise.jpg
+  - jackie-evancho-awakened.jpg
+  - jackie-evancho-two-worlds.jpg
+  - james-taylor-greatest-hits.jpg
+  - james-taylor-gorilla.jpg
+  - jimi-hendrix-are-you-experienced.jpg
+  - jimi-hendrix-axis-bold-as-love.jpg
+  - jimi-hendrix-electric-ladyland.jpg
+  - journey-escape.jpg
+  - journey-frontiers.jpg
+  - katherine-jenkins-heavenly-christmas.jpg
+  - katherine-jenkins-living-a-dream.jpg
+  - katherine-jenkins-premiere.jpg
+  - led-zeppelin-houses-of-the-holy.jpg
+  - led-zeppelin-iv.jpg
+  - led-zeppelin-physical-graffiti.jpg
+  - max-richter-koyaanisqatsi.jpg
+  - max-richter-memoryhouse.jpg
+  - max-richter-sleep.jpg
+  - miles-davis-kind-of-blue.jpg
+  - miles-davis-sketches-of-spain.jpg
+  - muddy-waters-completely-well.jpg
+  - muddy-waters-electric-mud.jpg
+  - muddy-waters-folk-singer.jpg
+  - nirvana-in-utero.jpg
+  - nirvana-nevermind.jpg
+  - oceanlab-sirens-of-the-sea.jpg
+  - peter-gabriel-so.jpg
+  - peter-gabriel-us.jpg
+  - philip-glass-einstein-on-the-beach.jpg
+  - philip-glass-glassworks.jpg
+  - pink-floyd-animals.jpg
+  - pink-floyd-the-dark-side-of-the-moon.jpg
+  - pink-floyd-the-wall.jpg
+  - pink-floyd-wish-you-were-here.jpg
+  - radiohead-in-rainbows.jpg
+  - radiohead-kid-a.jpg
+  - radiohead-ok-computer.jpg
+  - randy-travis-killin-time.jpg
+  - randy-travis-storms-of-life.jpg
+  - run-dmc-raising-hell.jpg
+  - run-dmc-run-dmc.jpg
+  - simon-garfunkel-bookends.jpg
+  - simon-garfunkel-bridge-over-troubled-water.jpg
+  - simon-garfunkel-parsley-sage-rosemary-and-thyme.jpg
+  - steve-wariner-i-should-be-with-you.jpg
+  - steve-wariner-second-nature.jpg
+  - sufjan-stevens-carrie-lowell.jpg
+  - sufjan-stevens-illinois.jpg
+  - sufjan-stevens-michigan.jpg
+  - the-dillards-back-porch-bluegrass.jpg
+  - the-dillards-wheatstraw-suite.jpg
+  - the-doors-l-a-woman.jpg
+  - the-doors-the-doors.jpg
+  - the-eagles-hotel-california.jpg
+  - the-eagles-their-greatest-hits-1971-1975.jpg
+  - the-eagles-the-long-run.jpg
+  - tritonal-piercing-the-quiet.jpg
+  - tritonal-tri-state.jpg
+
+# New Covers Directory (for future cover images)
+src/main/resources/static/new_covers/
+
+# TEST FILES
+# ============================================================================
+# Unit and integration tests
+src/test/java/music/library/
+  [Test classes for service, controller, and repository layers]
+
+src/test/resources/
+  [Test configuration and data files]
+
+# BUILD & DEPLOYMENT ARTIFACTS
+# ============================================================================
+target/
+  [Maven build output directory]
+  - Compiled classes
+  - JAR files
+  - Build reports
+
+# ============================================================================
+# PROJECT SUMMARY
+# ============================================================================
+#
+# Technology Stack:
+#   - Java 17
+#   - Spring Boot 3.5.7
+#   - Spring Data JPA / Hibernate
+#   - MySQL 8.0
+#   - Flyway (Database migrations)
+#   - Swagger/OpenAPI (API documentation)
+#   - Docker & Docker Compose
+#   - AWS ECS Fargate (Container orchestration)
+#   - AWS Route 53 (DNS management)
+#
+# Key Features:
+#   - RESTful API for music library management
+#   - Album, Artist, and Genre management
+#   - Database reset functionality
+#   - CORS support for cross-origin requests
+#   - Swagger UI for API documentation
+#   - Automatic Route 53 DNS updates on container startup
+#   - Pagination support for large datasets
+#   - Comprehensive error handling
+#   - Web UI for browsing music library
+#
+# Deployment:
+#   - Containerized with Docker
+#   - Multi-stage build for optimized image size
+#   - AWS ECS Fargate deployment
+#   - Route 53 DNS configuration (project.jcarl.net)
+#   - MySQL database on AWS RDS
+#
+# ============================================================================
