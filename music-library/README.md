@@ -1,14 +1,20 @@
 # 🎵 Music Library API
 
-A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This Java application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, search functionality, album cover images, comprehensive testing, and a Postman sample data import with 50 artists and over 100 albums.
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)](https://www.mysql.com/)
+[![Deployment](https://img.shields.io/badge/AWS-ECS%20Fargate-orange)](http://project.jcarl.net)
+[![License](https://img.shields.io/badge/License-Educational-yellow.svg)](LICENSE)
 
-**Project landing page:** http://project.jcarl.net/index.html
-**Project web view with album covers:** http://project.jcarl.net/library.html
+> **Live Production Deployment:**
+> *   **Main Dashboard:** [http://project.jcarl.net](http://project.jcarl.net)
+> *   **Music Browser:** [http://project.jcarl.net/library.html](http://project.jcarl.net/library.html)
+> *   **API Swagger Docs:** [http://project.jcarl.net/swagger-ui.html](http://project.jcarl.net/swagger-ui.html)
 
-## 📋 Table of Contents
+
+## 📋 Readme Table of Contents
 
 - [Project Overview](#-project-overview)
-  - [Key Capabilities](#key-capabilities)
 - [Development Approach](#-development-approach)
 - [Technology Stack](#️-technology-stack)
 - [Features](#-features)
@@ -20,22 +26,15 @@ A comprehensive RESTful API for managing a music library built with **Spring Boo
 - [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
 - [Project Structure](#️-project-structure)
 - [Configuration](#-configuration)
-  - [Test Configuration](#test-configuration-application-testyaml)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
 - [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences)
 - [Error Handling](#-error-handling)
-- [Support](#-support)
-- [License](#-license)
+- [Learning Outcomes](#-learning-outcomes)
 
 ---
 
 ## 🎵 Project Overview
-
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.7-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)](https://www.mysql.com/)
-[![License](https://img.shields.io/badge/License-Educational-yellow.svg)](LICENSE)
 
 The Music Library API is a portfolio-quality Spring Boot application that demonstrates modern backend development practices. It provides a complete solution for managing a music catalog with:
 
@@ -57,13 +56,15 @@ The Music Library API is a portfolio-quality Spring Boot application that demons
 ✅ Album cover image support  
 ✅ Environment-based configuration  
 
-### Tools & Technologies
+### Helper Tools
 
-**Postman**  
+**Postman**
 Comprehensive collection with 150+ API requests for testing all endpoints and populating the database with realistic music data. Includes organized folders for Artists, Albums, Genres, and relationship queries.
 
-**Node.js Scripts**  
-Custom data processing scripts for downloading album cover images from the iTunes API and preparing JSON data for database population.
+**Bash Automation Scripts**
+Custom shell scripts developed to streamline development and operations:
+*   **Album Art Downloader:** Automated querying of the iTunes API to fetch, resize, and slugify high-resolution album covers.
+*   **Self-Healing DNS:** The `update-namesilo-dns.sh` script that enables the "Serverless DNS" architecture by managing Namesilo records from within the container.
 
 ---
 
@@ -98,6 +99,9 @@ The developer was responsible for all critical aspects of the application, inclu
 - Created and validated comprehensive Postman collection with 150+ API requests
 - Performed collection runs to ensure data integrity
 - Validated all CRUD operations and relationship queries
+- 30+ hours spent testing and continously improving Java Application, API, Readme, Landing Page, Library Page, AWS Configuration
+- 88+ Github commits in dev repo, and 42+ commits in prod repo
+- MySQL Workbench integration and database testing
 
 ### AI Tool Usage
 
@@ -107,9 +111,11 @@ AI tools including Claude Sonnet 4.5, GPT-5, DeepSeek R1, Gemini 3 Pro, and Llam
 - Providing syntax assistance and code completion
 - Generating initial test structures
 - HTML/CSS/JS creation
-- Creating debugging scripts
+- Creating scripts
 - Code review, method improvements, code comments
 - Data validation and error handling
+- AWS configuration assistance
+- Troubleshooting assistance
 
 ### Why This Approach Works
 
@@ -1019,7 +1025,7 @@ spring:
 
 ---
 
-## 🧪 Testing
+## 👮 Testing
 
 The application includes a comprehensive test suite covering multiple layers.
 
@@ -1875,8 +1881,8 @@ This deployment journey demonstrates real-world DevOps problem-solving: encounte
 
 This project represents a significant deep-dive into AWS cloud infrastructure and containerization. The final production release is the result of an intensive iterative development process involving:
 
-*   **23+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
-*   **14+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
+*   **35+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
+*   **11+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
 *   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
 *   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
 *   **Tools Used:** AWS CloudShell, S3, CodeBuild, ECR, ECS Fargate, RDS MySQL, Git, and Docker.
@@ -1940,22 +1946,6 @@ Input validation errors return detailed field-level errors:
 
 ---
 
-## 📝 License
-
-This project is part of a Java/MySQL backend development bootcamp (Week 16) and is for **educational purposes**.
-
----
-
-## ❓ Support
-
-For questions, issues, or feedback:
-
-1. **Check the API documentation**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-2. **Review test examples**: See `src/test/java/music/library/`
-3. **Check Postman collection**: `Music-Library-Sample-Data.postman_collection.json`
-
----
-
 ## 🎓 Learning Outcomes
 
 This project demonstrates proficiency in:
@@ -1975,11 +1965,29 @@ This project demonstrates proficiency in:
 
 ---
 
+## 📝 License
+
+This project is part of a Java/MySQL backend development bootcamp (Week 16) and is for educational purposes.
+
+---
+
+## ❓ Support
+
+For questions, issues, or feedback:
+
+1. **Check the API documentation**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+2. **Review test examples**: See `src/test/java/music/library/`
+3. **Check Postman collection**: `Music Library - AWS Deployment.postman_collection.json`
+
+---
+
 ## 🙏 Acknowledgments
 
-- **Spring Boot Team** - Open-source Java framework
+- **Prashant Hardikar** - Bootcamp Instructor
+- **Michael Goeres** - Bootcamp Mentor
+- **Tammy Ethridge** - Career Services Manager
+- **Tiffany Hudson** - Career Advisor
 - **Quickstart** - Backend development bootcamp | quickstart.com/bootcamp
-- **ngrok** - Secure tunneling for local development | ngrok.com
 - **Postman** - The World's Leading API Platform | postman.com
 
 ---
