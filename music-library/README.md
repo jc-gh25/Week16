@@ -2,6 +2,9 @@
 
 A comprehensive RESTful API for managing a music library built with **Spring Boot 3.5.7** and **MySQL**. This Java application provides full CRUD operations for artists, albums, and genres, with advanced features including pagination, search functionality, album cover images, comprehensive testing, and a Postman sample data import with 50 artists and over 100 albums.
 
+**Project landing page:** http://project.jcarl.net/index.html
+**Project web view with album covers:** http://project.jcarl.net/library.html
+
 ## 📋 Table of Contents
 
 - [Project Overview](#-project-overview)
