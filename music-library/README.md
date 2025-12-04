@@ -17,20 +17,23 @@
 - [Project Overview](#-project-overview)
 - [Technology Stack](#️-technology-stack)
 - [Features](#-features)
-- [Error Handling](#-error-handling)
 - [Development Approach](#-development-approach)
+- [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences)
+- [DevOps Challenges & Troubleshooting (Quick Reference)](#-devops-challenges--troubleshooting-quick-reference)
+- [Project Metrics & Retrospective](#-project-metrics--retrospective)
+- [Learning Outcomes](#-learning-outcomes)
 - [Prerequisites](#-prerequisites)
 - [Getting Started](#-getting-started)
 - [API Documentation](#-api-documentation)
 - [API Endpoints](#-api-endpoints)
+- [Error Handling](#-error-handling)
 - [Data Models](#-data-models)
 - [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
 - [Project Structure](#️-project-structure)
 - [Configuration](#-configuration)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
-- [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences)
-- [Learning Outcomes](#-learning-outcomes)
+
 
 ---
 
@@ -130,63 +133,6 @@ Custom shell scripts developed to streamline development and operations:
 - **Environment Configuration**: YAML-based config with environment variables
 - **Comprehensive Testing**: Unit, integration, and repository tests
 - **Code Coverage**: JaCoCo reports for test coverage metrics
-
----
-
-## 🚨 Error Handling
-
-The API uses a global exception handler (`@ControllerAdvice`) for consistent error responses.
-
-### Standard Error Response
-
-All errors return an `ApiError` object:
-
-```json
-{
-  "timestamp": "2025-01-19T10:30:45",
-  "status": 404,
-  "error": "Not Found",
-  "message": "Artist not found with id: 999",
-  "path": "/api/artists/999"
-}
-```
-
-### HTTP Status Codes
-
-| Status Code | Description | Example |
-|-------------|-------------|---------|
-| **200 OK** | Successful GET/PUT request | Artist retrieved successfully |
-| **201 Created** | Successful POST request | Artist created successfully |
-| **204 No Content** | Successful DELETE request | Artist deleted successfully |
-| **400 Bad Request** | Invalid input data | Missing required field |
-| **404 Not Found** | Resource not found | Artist with ID 999 not found |
-| **500 Internal Server Error** | Server error | Database connection failed |
-
-### Validation Errors
-
-Input validation errors return detailed field-level errors:
-
-```json
-{
-  "timestamp": "2025-01-19T10:30:45",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Validation failed",
-  "errors": {
-    "name": "Artist name must not be blank",
-    "description": "Description must be ≤ 1000 characters"
-  },
-  "path": "/api/artists"
-}
-```
-
-### Exception Types
-
-- **`ResourceNotFoundException`** - Entity not found (404)
-- **`MethodArgumentNotValidException`** - Validation failure (400)
-- **`HttpMessageNotReadableException`** - Malformed JSON (400)
-- **`DataIntegrityViolationException`** - Database constraint violation (400)
-- **`Exception`** - Generic server error (500)
 
 ---
 
@@ -547,6 +493,361 @@ aws rds describe-db-instances \
 
 ---
 
+## 🗃️ Deployment Journey & Learning Experiences
+
+*For a condensed quick-reference guide, see [DevOps Challenges & Troubleshooting](#-devops-challenges--troubleshooting-quick-reference) at the end of this section.*
+
+This section documents the real-world challenges, solutions, and learning experiences encountered during the AWS deployment process. It demonstrates problem-solving skills, adaptability, and persistence in overcoming infrastructure obstacles.
+
+### Overview
+
+The deployment journey involved multiple iterations, technology pivots, and creative problem-solving to achieve a fully automated, production-ready deployment. The final solution uses **ECS Fargate task revision 11** with **Namesilo DNS API** for automated domain management.
+
+**Current Deployment Status**:
+- **Domain**: `project.jcarl.net`
+- **Port**: `8080`
+- **ECS Task**: `music-library-task:11`
+- **DNS Provider**: Namesilo (migrated from Route 53)
+- **Build Environment**: AWS CloudShell (due to Windows LTSB Docker incompatibility)
+
+---
+
+### Challenge 1: Route 53 DNS Automation Attempts
+
+**Initial Approach**: Automate DNS updates using AWS Route 53 with container startup scripts.
+
+**Problems Encountered**:
+
+1. **Bash Heredoc Syntax Errors in Alpine Linux**
+   - **Issue**: Alpine Linux uses `ash` shell, not `bash`
+   - **Symptom**: Heredoc syntax in Route 53 update scripts failed with parsing errors
+   - **Root Cause**: Bash-specific features not available in ash shell
+   - **Attempted Solutions**:
+     - Tried installing bash in Alpine container
+     - Attempted to rewrite scripts for ash compatibility
+     - Explored alternative JSON formatting approaches
+   - **Outcome**: Syntax complexity made Route 53 automation unreliable in Alpine
+
+2. **JSON Formatting Challenges**
+   - **Issue**: Route 53 API requires complex nested JSON structures
+   - **Symptom**: JSON escaping errors in shell scripts
+   - **Attempted Solutions**:
+     - Used jq for JSON construction
+     - Tried heredoc with proper escaping
+     - Attempted external JSON template files
+   - **Outcome**: Overly complex for container startup automation
+
+**Learning**: Shell compatibility matters when choosing base images. Alpine's ash shell has limitations compared to bash.
+
+---
+
+### Challenge 2: IAM Permission Issues
+
+**Problem**: ECS tasks failed to register new task definitions due to insufficient IAM permissions.
+
+**Error Message**:
+```
+AccessDeniedException: User: arn:aws:sts::913212790762:assumed-role/ecsTaskExecutionRole/...
+is not authorized to perform: ecs:RegisterTaskDefinition
+```
+
+**Investigation**:
+- Task execution role had permissions for ECR, CloudWatch, but not ECS task registration
+- Needed to distinguish between task execution role and task role
+- Route 53 permissions were added to task role, but ECS permissions were missing
+
+**Attempted Solutions**:
+1. Added `ecs:RegisterTaskDefinition` to task execution role
+2. Created separate task role with Route 53 permissions
+3. Verified IAM policy attachments in AWS Console
+
+**Outcome**: Permissions resolved, but led to next challenge with ECS circuit breaker.
+
+**Learning**: AWS IAM has distinct roles for task execution (infrastructure) vs. task role (application). Understanding this distinction is critical for ECS deployments.
+
+---
+
+### Challenge 3: ECS Circuit Breaker and Task Rollbacks
+
+**Problem**: ECS service repeatedly rolled back from new task revisions (4, 5, 6) to revision 2.
+
+**Symptoms**:
+- Tasks would start (PROVISIONING → PENDING → RUNNING)
+- Health checks would fail
+- Circuit breaker triggered automatic rollback
+- Service reverted to last known good revision (revision 2)
+
+**Error Pattern**:
+```
+Task revision 4: RUNNING → STOPPED (Circuit breaker threshold exceeded)
+Task revision 5: RUNNING → STOPPED (Circuit breaker threshold exceeded)
+Task revision 6: RUNNING → STOPPED (Circuit breaker threshold exceeded)
+Rolled back to: Task revision 2
+```
+
+**Root Causes Identified**:
+1. **DNS Update Script Failures**: Route 53 scripts failing silently, causing container startup delays
+2. **Health Check Timeouts**: Application took too long to start due to DNS script execution
+3. **Shell Compatibility**: Ash vs. bash issues causing script failures
+4. **Missing Dependencies**: AWS CLI installation issues in Alpine Linux
+
+**Attempted Solutions**:
+1. Increased health check grace period
+2. Modified startup scripts to continue even if DNS update fails
+3. Simplified Route 53 update logic
+4. Added verbose logging to diagnose failures
+5. Tested scripts locally in Alpine container
+
+**Outcome**: Circuit breaker continued to trigger. Decision made to pivot away from Route 53.
+
+**Learning**: ECS circuit breaker is aggressive but protective. When tasks repeatedly fail health checks, it's better to pivot to a simpler solution than fight the system.
+
+---
+
+### Challenge 4: Windows LTSB Docker Incompatibility
+
+**Problem**: Local Windows LTSB (Long-Term Servicing Branch) system incompatible with Docker Desktop.
+
+**Symptoms**:
+- Docker Desktop installation failed
+- Hyper-V requirements not met on LTSB
+- Unable to build Docker images locally for testing
+
+**Impact**:
+- Couldn't test Dockerfile changes locally
+- Had to rely on ECS deployments for testing (slow feedback loop)
+- Difficult to debug container startup issues
+
+**Solution**: **AWS CloudShell**
+- Cloud-based Linux environment with Docker pre-installed
+- Direct access to AWS services (ECR, ECS)
+- No local Docker installation required
+- Commands used:
+  ```bash
+  # Build in CloudShell
+  docker build -t music-library .
+  
+  # Tag for ECR
+  docker tag music-library:latest 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
+  
+  # Push to ECR
+  docker push 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
+  ```
+
+**Outcome**: CloudShell became the primary build environment, enabling rapid iteration.
+
+**Learning**: Cloud-based development environments can overcome local system limitations. AWS CloudShell is a powerful tool for AWS-centric workflows.
+
+---
+
+### Challenge 5: Migration to Namesilo DNS
+
+**Decision Point**: After multiple failed attempts with Route 53 automation, decided to migrate to Namesilo DNS API.
+
+**Reasons for Migration**:
+1. **Simpler API**: Namesilo uses simple HTTP GET requests vs. Route 53's complex JSON
+2. **No IAM Required**: API key-based authentication, no AWS IAM complexity
+3. **Shell-Friendly**: Single curl command vs. multi-line bash scripts
+4. **Proven Reliability**: Namesilo API known for stability
+
+**Migration Process**:
+
+1. **DNS Provider Switch**:
+   - Transferred domain management from Route 53 to Namesilo
+   - Updated nameservers at domain registrar
+   - Waited for DNS propagation (24-48 hours)
+
+2. **API Integration**:
+   - Obtained Namesilo API key
+   - Identified DNS record ID: `8ad154e44ae9c94cd8f22be2bea457d2`
+   - Created simplified update script:
+     ```bash
+     #!/bin/sh
+     # Get container IP
+     TASK_METADATA=$(curl -s $ECS_CONTAINER_METADATA_URI_V4/task)
+     PUBLIC_IP=$(echo $TASK_METADATA | jq -r '.Containers[0].Networks[0].IPv4Addresses[0]')
+     
+     # Update Namesilo DNS
+     curl "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=jcarl.net&rrid=8ad154e44ae9c94cd8f22be2bea457d2&rrhost=project&rrvalue=${PUBLIC_IP}&rrttl=7207"
+     ```
+
+3. **Dockerfile Updates**:
+   - Removed AWS CLI installation (no longer needed)
+   - Kept curl and jq (lightweight dependencies)
+   - Simplified startup script
+   - Reduced container image size
+
+4. **ECS Task Definition Updates**:
+   - Added `NAMESILO_API_KEY` environment variable
+   - Removed Route 53 IAM role references
+   - Simplified task role permissions
+
+**Results**:
+- **Task Revision 11**: Successfully deployed and stable
+- **DNS Updates**: Working reliably on container startup
+- **Health Checks**: Passing consistently
+- **No Rollbacks**: Circuit breaker no longer triggering
+
+**Learning**: Sometimes the best solution is the simplest one. Third-party APIs can be more reliable than complex AWS service integrations.
+
+---
+
+### Challenge 6: DNS TTL and Propagation Delays
+
+**Problem**: DNS changes taking too long to propagate globally.
+
+**Initial TTL**: 300 seconds (5 minutes) - inherited from Route 53
+
+**Issue**: When ECS tasks restarted with new IPs, users experienced downtime during DNS propagation.
+
+**Solution**: Increased TTL to 3600 seconds
+- **Rationale**: ECS tasks restart infrequently in production
+- **Benefit**: Reduced DNS query load on Namesilo
+- **Trade-off**: Longer propagation time when IP changes (acceptable for this use case)
+
+**Learning**: TTL values should match deployment patterns. Frequent changes need low TTL; stable deployments can use higher TTL for better caching.
+
+---
+
+### 🔧 DevOps Challenges & Troubleshooting (Quick Reference)
+
+*For detailed problem-solving narratives with full context and attempted solutions, see the [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences) section above.*
+
+This condensed reference guide summarizes the key challenges and their solutions:
+
+**1. Cross-Platform Script Compatibility**
+*   **Problem:** `CRLF` line endings from Windows caused `exec /startup.sh: no such file or directory` errors.
+*   **Solution:** Use `dos2unix` conversion or edit files in Linux environments (AWS CloudShell).
+*   **See:** [Challenge 1: Route 53 DNS Automation](#challenge-1-route-53-dns-automation-attempts)
+
+**2. AWS IAM Role Distinctions**
+*   **Problem:** `Unable to assume role` errors during deployment.
+*   **Solution:** Distinguish `TaskRole` (app permissions) from `TaskExecutionRole` (ECS agent permissions). Removed TaskRole to follow least privilege.
+*   **See:** [Challenge 2: IAM Permission Issues](#challenge-2-iam-permission-issues)
+
+**3. Database Connectivity & Security Groups**
+*   **Problem:** `Communications link failure` after RDS endpoint changed.
+*   **Solution:** Update environment variables with new RDS endpoint; configure security groups to allow ECS → RDS traffic.
+*   **See:** [Challenge 3: ECS Circuit Breaker](#challenge-3-ecs-circuit-breaker-and-task-rollbacks)
+
+**4. Container Resource Allocation**
+*   **Problem:** Container exited due to memory pressure.
+*   **Solution:** Increase ECS task memory to 1GB (512MB Java heap + OS overhead).
+
+**5. SSL/TLS in Alpine Linux**
+*   **Problem:** `curl` couldn't verify HTTPS certificates.
+*   **Solution:** Add `ca-certificates` package to Dockerfile.
+
+**6. Duplicate DNS A Records**
+*   **Problem:** The `update-namesilo-dns.sh` script was creating duplicate A records for `project.jcarl.net` on each dynamic IP change instead of updating the existing record. This resulted in multiple A records pointing to different (outdated) IP addresses.
+*   **Root Cause:** The script was using a hardcoded Record ID which became invalid or was not properly matched during DNS updates.
+*   **Solution:** Modified the script to dynamically query and retrieve the correct Record ID before each update:
+    ```bash
+    # Dynamically find the Record ID for project.jcarl.net
+    RECORDS=$(curl -s "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}")
+    RECORD_ID=$(echo "$RECORDS" | grep -C 5 "<host>${FULL_HOST}</host>" | grep -o "<record_id>.*</record_id>" | cut -d'>' -f2 | cut -d'<' -f1)
+    ```
+*   **Impact:** Ensures the script always updates the correct existing record rather than creating duplicates, maintaining a single authoritative A record for the domain.
+
+---
+
+### Key Takeaways and Skills Demonstrated
+
+**Problem-Solving**:
+- Diagnosed complex multi-layer issues with the help of AI (shell compatibility, IAM permissions, health checks)
+- Pivoted strategies when initial approaches failed
+- Researched alternative solutions (Namesilo vs. Route 53)
+- Made data-driven decisions based on error logs and AWS metrics
+
+**Technical Skills**:
+- Docker containerization and multi-stage builds
+- AWS ECS Fargate task management
+- IAM role and policy configuration
+- DNS management and API integration
+- CloudShell for cloud-based development
+
+**DevOps Practices**:
+- Infrastructure as Code (Dockerfile, task definitions)
+- Automated DNS management
+- Health check configuration
+- Circuit breaker understanding and mitigation
+- Iterative deployment and testing
+
+**Adaptability**:
+- Overcame local development environment limitations (Windows LTSB)
+- Migrated between cloud hosts and DNS providers mid-project
+- Simplified architecture when complexity became a liability
+- Learned from failures and adjusted approach
+
+**Documentation**:
+- Comprehensive error tracking and analysis
+- Clear documentation of attempted solutions
+- Knowledge sharing for future reference
+
+---
+
+### Final Architecture Summary
+
+**What Works**:
+- ✅ ECS Fargate with task revision 11
+- ✅ Namesilo DNS with API-based updates
+- ✅ CloudShell for Docker image building
+- ✅ Simplified startup scripts (ash-compatible)
+- ✅ Minimal IAM permissions (task execution role only)
+- ✅ Reliable health checks and no circuit breaker triggers
+
+**What Was Abandoned**:
+- ❌ Route 53 DNS automation (too complex for Alpine/ash)
+- ❌ Bash-specific scripting (Alpine uses ash)
+- ❌ Local Docker builds (Windows LTSB incompatibility)
+- ❌ Complex IAM task roles (simplified to execution role)
+- ❌ Low TTL values (increased for stability)
+
+**Lessons for Future Projects**:
+1. **Start Simple**: Begin with the simplest solution that works, add complexity only when needed
+2. **Test Locally**: Ensure local testing environment matches production (shell, OS, dependencies)
+3. **Understand IAM**: Know the difference between task execution roles and task roles
+4. **Monitor Health Checks**: ECS circuit breaker is your friend, not your enemy
+5. **Choose Tools Wisely**: Third-party APIs can be simpler than native AWS services
+6. **Document Everything**: Future you will thank present you for detailed notes
+7. **Cloud Development**: Cloud-based IDEs/shells can overcome local limitations
+8. **Shell Compatibility**: Alpine Linux (ash) ≠ Ubuntu/Debian (bash)
+
+This deployment journey demonstrates real-world DevOps problem-solving: encountering obstacles, researching solutions, testing hypotheses, and iterating until achieving a stable, production-ready deployment.
+
+---
+
+### 📈 Project Metrics & Retrospective
+
+This project represents a significant deep-dive into AWS cloud infrastructure and containerization. The final production release is the result of an intensive iterative development process involving:
+
+*   **38+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
+*   **11+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
+*   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
+*   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
+*   **Tools Used:** AWS CloudShell, S3, CodeBuild, ECR, ECS Fargate, RDS MySQL, Git, and Docker.
+
+---
+
+## 🎓 Learning Outcomes
+
+This project demonstrates proficiency in:
+
+✅ **Spring Boot 3.x** - Modern Spring framework features  
+✅ **RESTful API Design** - Standard HTTP methods and status codes  
+✅ **JPA/Hibernate** - Entity relationships and lazy loading  
+✅ **Testing** - Unit, integration, and repository tests  
+✅ **API Documentation** - OpenAPI/Swagger specification  
+✅ **Cloud Deployment** - AWS ECS Fargate with RDS, ECR, and CodeBuild  
+✅ **Containerization** - Docker multi-stage builds  
+✅ **Error Handling** - Global exception handling  
+✅ **Rich Content** - 50 artists and 100+ albums with cover images  
+✅ **Input Validation** - Bean Validation (JSR-380)  
+✅ **DTO Pattern** - Separation of concerns  
+✅ **Environment Configuration** - YAML with environment variables  
+
+---
+
 ## 📋 Prerequisites
 
 - **Java 17** or higher installed ([Download](https://www.oracle.com/java/technologies/downloads/#java17))
@@ -744,6 +1045,63 @@ GET /api/albums?page=1&size=20&sort=releaseDate,desc
 # Get all genres, sorted by name
 GET /api/genres?sort=name,asc
 ```
+
+---
+
+## 🚨 Error Handling
+
+The API uses a global exception handler (`@ControllerAdvice`) for consistent error responses.
+
+### Standard Error Response
+
+All errors return an `ApiError` object:
+
+```json
+{
+  "timestamp": "2025-01-19T10:30:45",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Artist not found with id: 999",
+  "path": "/api/artists/999"
+}
+```
+
+### HTTP Status Codes
+
+| Status Code | Description | Example |
+|-------------|-------------|---------|
+| **200 OK** | Successful GET/PUT request | Artist retrieved successfully |
+| **201 Created** | Successful POST request | Artist created successfully |
+| **204 No Content** | Successful DELETE request | Artist deleted successfully |
+| **400 Bad Request** | Invalid input data | Missing required field |
+| **404 Not Found** | Resource not found | Artist with ID 999 not found |
+| **500 Internal Server Error** | Server error | Database connection failed |
+
+### Validation Errors
+
+Input validation errors return detailed field-level errors:
+
+```json
+{
+  "timestamp": "2025-01-19T10:30:45",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": {
+    "name": "Artist name must not be blank",
+    "description": "Description must be ≤ 1000 characters"
+  },
+  "path": "/api/artists"
+}
+```
+
+### Exception Types
+
+- **`ResourceNotFoundException`** - Entity not found (404)
+- **`MethodArgumentNotValidException`** - Validation failure (400)
+- **`HttpMessageNotReadableException`** - Malformed JSON (400)
+- **`DataIntegrityViolationException`** - Database constraint violation (400)
+- **`Exception`** - Generic server error (500)
 
 ---
 
@@ -1605,361 +1963,6 @@ The ngrok URL changes each time you restart ngrok (unless using a paid plan with
 | **CI/CD** | CodeBuild | Built-in GitHub integration | Manual |
 | **Custom Domain** | Yes (Route 53) | Yes | Paid plans only |
 | **Best For** | Production apps | Small-medium projects | Development/testing |
-
----
-
-## 🗃️ Deployment Journey & Learning Experiences
-
-*For a condensed quick-reference guide, see [DevOps Challenges & Troubleshooting](#-devops-challenges--troubleshooting-quick-reference) at the end of this section.*
-
-This section documents the real-world challenges, solutions, and learning experiences encountered during the AWS deployment process. It demonstrates problem-solving skills, adaptability, and persistence in overcoming infrastructure obstacles.
-
-### Overview
-
-The deployment journey involved multiple iterations, technology pivots, and creative problem-solving to achieve a fully automated, production-ready deployment. The final solution uses **ECS Fargate task revision 11** with **Namesilo DNS API** for automated domain management.
-
-**Current Deployment Status**:
-- **Domain**: `project.jcarl.net`
-- **Port**: `8080`
-- **ECS Task**: `music-library-task:11`
-- **DNS Provider**: Namesilo (migrated from Route 53)
-- **Build Environment**: AWS CloudShell (due to Windows LTSB Docker incompatibility)
-
----
-
-### Challenge 1: Route 53 DNS Automation Attempts
-
-**Initial Approach**: Automate DNS updates using AWS Route 53 with container startup scripts.
-
-**Problems Encountered**:
-
-1. **Bash Heredoc Syntax Errors in Alpine Linux**
-   - **Issue**: Alpine Linux uses `ash` shell, not `bash`
-   - **Symptom**: Heredoc syntax in Route 53 update scripts failed with parsing errors
-   - **Root Cause**: Bash-specific features not available in ash shell
-   - **Attempted Solutions**:
-     - Tried installing bash in Alpine container
-     - Attempted to rewrite scripts for ash compatibility
-     - Explored alternative JSON formatting approaches
-   - **Outcome**: Syntax complexity made Route 53 automation unreliable in Alpine
-
-2. **JSON Formatting Challenges**
-   - **Issue**: Route 53 API requires complex nested JSON structures
-   - **Symptom**: JSON escaping errors in shell scripts
-   - **Attempted Solutions**:
-     - Used jq for JSON construction
-     - Tried heredoc with proper escaping
-     - Attempted external JSON template files
-   - **Outcome**: Overly complex for container startup automation
-
-**Learning**: Shell compatibility matters when choosing base images. Alpine's ash shell has limitations compared to bash.
-
----
-
-### Challenge 2: IAM Permission Issues
-
-**Problem**: ECS tasks failed to register new task definitions due to insufficient IAM permissions.
-
-**Error Message**:
-```
-AccessDeniedException: User: arn:aws:sts::913212790762:assumed-role/ecsTaskExecutionRole/...
-is not authorized to perform: ecs:RegisterTaskDefinition
-```
-
-**Investigation**:
-- Task execution role had permissions for ECR, CloudWatch, but not ECS task registration
-- Needed to distinguish between task execution role and task role
-- Route 53 permissions were added to task role, but ECS permissions were missing
-
-**Attempted Solutions**:
-1. Added `ecs:RegisterTaskDefinition` to task execution role
-2. Created separate task role with Route 53 permissions
-3. Verified IAM policy attachments in AWS Console
-
-**Outcome**: Permissions resolved, but led to next challenge with ECS circuit breaker.
-
-**Learning**: AWS IAM has distinct roles for task execution (infrastructure) vs. task role (application). Understanding this distinction is critical for ECS deployments.
-
----
-
-### Challenge 3: ECS Circuit Breaker and Task Rollbacks
-
-**Problem**: ECS service repeatedly rolled back from new task revisions (4, 5, 6) to revision 2.
-
-**Symptoms**:
-- Tasks would start (PROVISIONING → PENDING → RUNNING)
-- Health checks would fail
-- Circuit breaker triggered automatic rollback
-- Service reverted to last known good revision (revision 2)
-
-**Error Pattern**:
-```
-Task revision 4: RUNNING → STOPPED (Circuit breaker threshold exceeded)
-Task revision 5: RUNNING → STOPPED (Circuit breaker threshold exceeded)
-Task revision 6: RUNNING → STOPPED (Circuit breaker threshold exceeded)
-Rolled back to: Task revision 2
-```
-
-**Root Causes Identified**:
-1. **DNS Update Script Failures**: Route 53 scripts failing silently, causing container startup delays
-2. **Health Check Timeouts**: Application took too long to start due to DNS script execution
-3. **Shell Compatibility**: Ash vs. bash issues causing script failures
-4. **Missing Dependencies**: AWS CLI installation issues in Alpine Linux
-
-**Attempted Solutions**:
-1. Increased health check grace period
-2. Modified startup scripts to continue even if DNS update fails
-3. Simplified Route 53 update logic
-4. Added verbose logging to diagnose failures
-5. Tested scripts locally in Alpine container
-
-**Outcome**: Circuit breaker continued to trigger. Decision made to pivot away from Route 53.
-
-**Learning**: ECS circuit breaker is aggressive but protective. When tasks repeatedly fail health checks, it's better to pivot to a simpler solution than fight the system.
-
----
-
-### Challenge 4: Windows LTSB Docker Incompatibility
-
-**Problem**: Local Windows LTSB (Long-Term Servicing Branch) system incompatible with Docker Desktop.
-
-**Symptoms**:
-- Docker Desktop installation failed
-- Hyper-V requirements not met on LTSB
-- Unable to build Docker images locally for testing
-
-**Impact**:
-- Couldn't test Dockerfile changes locally
-- Had to rely on ECS deployments for testing (slow feedback loop)
-- Difficult to debug container startup issues
-
-**Solution**: **AWS CloudShell**
-- Cloud-based Linux environment with Docker pre-installed
-- Direct access to AWS services (ECR, ECS)
-- No local Docker installation required
-- Commands used:
-  ```bash
-  # Build in CloudShell
-  docker build -t music-library .
-  
-  # Tag for ECR
-  docker tag music-library:latest 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
-  
-  # Push to ECR
-  docker push 913212790762.dkr.ecr.us-west-2.amazonaws.com/music-library:latest
-  ```
-
-**Outcome**: CloudShell became the primary build environment, enabling rapid iteration.
-
-**Learning**: Cloud-based development environments can overcome local system limitations. AWS CloudShell is a powerful tool for AWS-centric workflows.
-
----
-
-### Challenge 5: Migration to Namesilo DNS
-
-**Decision Point**: After multiple failed attempts with Route 53 automation, decided to migrate to Namesilo DNS API.
-
-**Reasons for Migration**:
-1. **Simpler API**: Namesilo uses simple HTTP GET requests vs. Route 53's complex JSON
-2. **No IAM Required**: API key-based authentication, no AWS IAM complexity
-3. **Shell-Friendly**: Single curl command vs. multi-line bash scripts
-4. **Proven Reliability**: Namesilo API known for stability
-
-**Migration Process**:
-
-1. **DNS Provider Switch**:
-   - Transferred domain management from Route 53 to Namesilo
-   - Updated nameservers at domain registrar
-   - Waited for DNS propagation (24-48 hours)
-
-2. **API Integration**:
-   - Obtained Namesilo API key
-   - Identified DNS record ID: `8ad154e44ae9c94cd8f22be2bea457d2`
-   - Created simplified update script:
-     ```bash
-     #!/bin/sh
-     # Get container IP
-     TASK_METADATA=$(curl -s $ECS_CONTAINER_METADATA_URI_V4/task)
-     PUBLIC_IP=$(echo $TASK_METADATA | jq -r '.Containers[0].Networks[0].IPv4Addresses[0]')
-     
-     # Update Namesilo DNS
-     curl "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=jcarl.net&rrid=8ad154e44ae9c94cd8f22be2bea457d2&rrhost=project&rrvalue=${PUBLIC_IP}&rrttl=7207"
-     ```
-
-3. **Dockerfile Updates**:
-   - Removed AWS CLI installation (no longer needed)
-   - Kept curl and jq (lightweight dependencies)
-   - Simplified startup script
-   - Reduced container image size
-
-4. **ECS Task Definition Updates**:
-   - Added `NAMESILO_API_KEY` environment variable
-   - Removed Route 53 IAM role references
-   - Simplified task role permissions
-
-**Results**:
-- **Task Revision 11**: Successfully deployed and stable
-- **DNS Updates**: Working reliably on container startup
-- **Health Checks**: Passing consistently
-- **No Rollbacks**: Circuit breaker no longer triggering
-
-**Learning**: Sometimes the best solution is the simplest one. Third-party APIs can be more reliable than complex AWS service integrations.
-
----
-
-### Challenge 6: DNS TTL and Propagation Delays
-
-**Problem**: DNS changes taking too long to propagate globally.
-
-**Initial TTL**: 300 seconds (5 minutes) - inherited from Route 53
-
-**Issue**: When ECS tasks restarted with new IPs, users experienced downtime during DNS propagation.
-
-**Solution**: Increased TTL to 3600 seconds
-- **Rationale**: ECS tasks restart infrequently in production
-- **Benefit**: Reduced DNS query load on Namesilo
-- **Trade-off**: Longer propagation time when IP changes (acceptable for this use case)
-
-**Learning**: TTL values should match deployment patterns. Frequent changes need low TTL; stable deployments can use higher TTL for better caching.
-
----
-
-### 🔧 DevOps Challenges & Troubleshooting (Quick Reference)
-
-*For detailed problem-solving narratives with full context and attempted solutions, see the [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences) section above.*
-
-This condensed reference guide summarizes the key challenges and their solutions:
-
-**1. Cross-Platform Script Compatibility**
-*   **Problem:** `CRLF` line endings from Windows caused `exec /startup.sh: no such file or directory` errors.
-*   **Solution:** Use `dos2unix` conversion or edit files in Linux environments (AWS CloudShell).
-*   **See:** [Challenge 1: Route 53 DNS Automation](#challenge-1-route-53-dns-automation-attempts)
-
-**2. AWS IAM Role Distinctions**
-*   **Problem:** `Unable to assume role` errors during deployment.
-*   **Solution:** Distinguish `TaskRole` (app permissions) from `TaskExecutionRole` (ECS agent permissions). Removed TaskRole to follow least privilege.
-*   **See:** [Challenge 2: IAM Permission Issues](#challenge-2-iam-permission-issues)
-
-**3. Database Connectivity & Security Groups**
-*   **Problem:** `Communications link failure` after RDS endpoint changed.
-*   **Solution:** Update environment variables with new RDS endpoint; configure security groups to allow ECS → RDS traffic.
-*   **See:** [Challenge 3: ECS Circuit Breaker](#challenge-3-ecs-circuit-breaker-and-task-rollbacks)
-
-**4. Container Resource Allocation**
-*   **Problem:** Container exited due to memory pressure.
-*   **Solution:** Increase ECS task memory to 1GB (512MB Java heap + OS overhead).
-
-**5. SSL/TLS in Alpine Linux**
-*   **Problem:** `curl` couldn't verify HTTPS certificates.
-*   **Solution:** Add `ca-certificates` package to Dockerfile.
-
-**6. Duplicate DNS A Records**
-*   **Problem:** The `update-namesilo-dns.sh` script was creating duplicate A records for `project.jcarl.net` on each dynamic IP change instead of updating the existing record. This resulted in multiple A records pointing to different (outdated) IP addresses.
-*   **Root Cause:** The script was using a hardcoded Record ID which became invalid or was not properly matched during DNS updates.
-*   **Solution:** Modified the script to dynamically query and retrieve the correct Record ID before each update:
-    ```bash
-    # Dynamically find the Record ID for project.jcarl.net
-    RECORDS=$(curl -s "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=${NAMESILO_API_KEY}&domain=${DOMAIN}")
-    RECORD_ID=$(echo "$RECORDS" | grep -C 5 "<host>${FULL_HOST}</host>" | grep -o "<record_id>.*</record_id>" | cut -d'>' -f2 | cut -d'<' -f1)
-    ```
-*   **Impact:** Ensures the script always updates the correct existing record rather than creating duplicates, maintaining a single authoritative A record for the domain.
-
----
-
-### Key Takeaways and Skills Demonstrated
-
-**Problem-Solving**:
-- Diagnosed complex multi-layer issues with the help of AI (shell compatibility, IAM permissions, health checks)
-- Pivoted strategies when initial approaches failed
-- Researched alternative solutions (Namesilo vs. Route 53)
-- Made data-driven decisions based on error logs and AWS metrics
-
-**Technical Skills**:
-- Docker containerization and multi-stage builds
-- AWS ECS Fargate task management
-- IAM role and policy configuration
-- DNS management and API integration
-- CloudShell for cloud-based development
-
-**DevOps Practices**:
-- Infrastructure as Code (Dockerfile, task definitions)
-- Automated DNS management
-- Health check configuration
-- Circuit breaker understanding and mitigation
-- Iterative deployment and testing
-
-**Adaptability**:
-- Overcame local development environment limitations (Windows LTSB)
-- Migrated between cloud hosts and DNS providers mid-project
-- Simplified architecture when complexity became a liability
-- Learned from failures and adjusted approach
-
-**Documentation**:
-- Comprehensive error tracking and analysis
-- Clear documentation of attempted solutions
-- Knowledge sharing for future reference
-
----
-
-### Final Architecture Summary
-
-**What Works**:
-- ✅ ECS Fargate with task revision 11
-- ✅ Namesilo DNS with API-based updates
-- ✅ CloudShell for Docker image building
-- ✅ Simplified startup scripts (ash-compatible)
-- ✅ Minimal IAM permissions (task execution role only)
-- ✅ Reliable health checks and no circuit breaker triggers
-
-**What Was Abandoned**:
-- ❌ Route 53 DNS automation (too complex for Alpine/ash)
-- ❌ Bash-specific scripting (Alpine uses ash)
-- ❌ Local Docker builds (Windows LTSB incompatibility)
-- ❌ Complex IAM task roles (simplified to execution role)
-- ❌ Low TTL values (increased for stability)
-
-**Lessons for Future Projects**:
-1. **Start Simple**: Begin with the simplest solution that works, add complexity only when needed
-2. **Test Locally**: Ensure local testing environment matches production (shell, OS, dependencies)
-3. **Understand IAM**: Know the difference between task execution roles and task roles
-4. **Monitor Health Checks**: ECS circuit breaker is your friend, not your enemy
-5. **Choose Tools Wisely**: Third-party APIs can be simpler than native AWS services
-6. **Document Everything**: Future you will thank present you for detailed notes
-7. **Cloud Development**: Cloud-based IDEs/shells can overcome local limitations
-8. **Shell Compatibility**: Alpine Linux (ash) ≠ Ubuntu/Debian (bash)
-
-This deployment journey demonstrates real-world DevOps problem-solving: encountering obstacles, researching solutions, testing hypotheses, and iterating until achieving a stable, production-ready deployment.
-
----
-
-### 📈 Project Metrics & Retrospective
-
-This project represents a significant deep-dive into AWS cloud infrastructure and containerization. The final production release is the result of an intensive iterative development process involving:
-
-*   **38+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
-*   **11+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
-*   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
-*   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
-*   **Tools Used:** AWS CloudShell, S3, CodeBuild, ECR, ECS Fargate, RDS MySQL, Git, and Docker.
-
----
-
-## 🎓 Learning Outcomes
-
-This project demonstrates proficiency in:
-
-✅ **Spring Boot 3.x** - Modern Spring framework features  
-✅ **RESTful API Design** - Standard HTTP methods and status codes  
-✅ **JPA/Hibernate** - Entity relationships and lazy loading  
-✅ **Testing** - Unit, integration, and repository tests  
-✅ **API Documentation** - OpenAPI/Swagger specification  
-✅ **Cloud Deployment** - AWS ECS Fargate with RDS, ECR, and CodeBuild  
-✅ **Containerization** - Docker multi-stage builds  
-✅ **Error Handling** - Global exception handling  
-✅ **Rich Content** - 50 artists and 100+ albums with cover images  
-✅ **Input Validation** - Bean Validation (JSR-380)  
-✅ **DTO Pattern** - Separation of concerns  
-✅ **Environment Configuration** - YAML with environment variables  
 
 ---
 
