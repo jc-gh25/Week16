@@ -1,6 +1,6 @@
 Week16/music-library Project Directory Structure
 =====================================================
-Generated: 2024
+Generated: 2025
 
 Root Directory (music-library/)
 ├── .gitignore
@@ -425,6 +425,6 @@ Project Summary:
 - Docker containerization support
 - AWS deployment configuration
 - Comprehensive test suite (integration & unit tests)
-- 170+ album cover images
+- 100+ album cover images
 - Total Files: 500+ (including all resources and compiled classes)
 =====================================================

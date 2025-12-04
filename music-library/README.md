@@ -15,9 +15,9 @@
 ## 📋 Readme Table of Contents
 
 - [Project Overview](#-project-overview)
-- [Development Approach](#-development-approach)
 - [Technology Stack](#️-technology-stack)
 - [Features](#-features)
+- [Development Approach](#-development-approach)
 - [Prerequisites](#-prerequisites)
 - [Getting Started](#-getting-started)
 - [API Documentation](#-api-documentation)
@@ -68,6 +68,71 @@ Custom shell scripts developed to streamline development and operations:
 
 ---
 
+## 🛠️ Technology Stack
+
+### Core Framework
+- **Spring Boot**: 3.5.7
+- **Java**: 17
+- **Maven**: Build automation and dependency management
+
+### Database & Persistence
+- **MySQL**: 8.0+ (production)
+- **H2**: In-memory database (testing)
+- **Spring Data JPA**: Data access abstraction
+- **Hibernate**: ORM implementation
+
+### API & Documentation
+- **Spring Web**: RESTful API framework
+- **SpringDoc OpenAPI**: 2.8.14 (Swagger UI)
+- **Bean Validation (JSR-380)**: Input validation
+
+### Testing
+- **JUnit 5**: Testing framework
+- **Spring Boot Test**: Integration testing support
+- **Mockito**: 5.2.0 (mocking framework with inline support)
+- **Testcontainers**: Real MySQL containers for integration tests
+- **JaCoCo**: 0.8.12 (code coverage reporting)
+
+### Containerization & Deployment
+- **Docker**: Multi-stage containerization with Maven and OpenJDK
+- **AWS RDS**: Managed MySQL database service
+- **AWS ECR**: Elastic Container Registry for Docker images
+- **AWS ECS Fargate**: Serverless container orchestration
+- **AWS CloudShell**: Cloud-based shell environment for Docker image building
+- **Namesilo DNS**: Third-party DNS provider with API-based automation
+- **AWS CodeBuild**: CI/CD pipeline for automated builds
+- **AWS S3**: Storage for build artifacts
+- **AWS IAM**: Identity and access management
+
+### Utilities
+- **Lombok**: Boilerplate code reduction
+- **Jackson**: JSON serialization/deserialization
+
+---
+
+## ✨ Features
+
+### API Features
+- **RESTful Design**: Standard HTTP methods (GET, POST, PUT, DELETE)
+- **Pagination**: All list endpoints support `page`, `size`, and `sort` parameters
+- **Relationship Queries**: Get albums by artist or genre
+- **Input Validation**: Comprehensive validation with detailed error messages
+- **Standardized Errors**: Consistent `ApiError` responses with timestamps and details
+- **Automatic Timestamps**: `createdAt` and `updatedAt` tracked automatically
+- **Database Reset**: Development endpoint to reset database state
+
+### Technical Features
+- **DTO Pattern**: Separate request/response objects for clean API contracts
+- **Global Exception Handling**: Centralized error handling with `@ControllerAdvice`
+- **Bidirectional Relationships**: Properly managed JPA relationships
+- **Lazy Loading**: Optimized database queries with lazy fetching
+- **Cascade Operations**: Automatic relationship management
+- **Environment Configuration**: YAML-based config with environment variables
+- **Comprehensive Testing**: Unit, integration, and repository tests
+- **Code Coverage**: JaCoCo reports for test coverage metrics
+
+---
+
 ## 🤖 Development Approach
 
 This project was developed using **AI-assisted development practices**, a modern approach that combines human expertise with AI tools to accelerate development while maintaining high code quality and architectural integrity.
@@ -100,7 +165,7 @@ The developer was responsible for all critical aspects of the application, inclu
 - Performed collection runs to ensure data integrity
 - Validated all CRUD operations and relationship queries
 - 30+ hours spent testing and continously improving Java Application, API, Readme, Landing Page, Library Page, AWS Configuration
-- 88+ Github commits in dev repo, and 42+ commits in prod repo
+- 90+ Github commits in dev repo, and 45+ commits in prod repo
 - MySQL Workbench integration and database testing
 
 ### AI Tool Usage
@@ -157,10 +222,10 @@ The deployment leverages multiple AWS services in a scalable, secure architectur
 
 - **Namesilo DNS**: Third-party DNS management with API-based automation
   - Domain: `jcarl.net` managed through Namesilo
-  - A Record: `project.jcarl.net` → ECS Fargate public IP (35.87.40.233)
+  - A Record: `project.jcarl.net` → ECS Fargate public IP (dynamic)
   - Automated DNS updates via Namesilo API at container startup
   - Record ID: `8ad154e44ae9c94cd8f22be2bea457d2`
-  - TTL: 7207 seconds
+  - TTL: 3600 seconds
 
 - **AWS CodeBuild**: Automated CI/CD pipeline
   - Builds Docker images from source
@@ -422,71 +487,6 @@ aws rds describe-db-instances \
 - Install [AWS CLI](https://aws.amazon.com/cli/)
 - Configure credentials: `aws configure`
 - Set default region to `us-west-2`
-
----
-
-## 🛠️ Technology Stack
-
-### Core Framework
-- **Spring Boot**: 3.5.7
-- **Java**: 17
-- **Maven**: Build automation and dependency management
-
-### Database & Persistence
-- **MySQL**: 8.0+ (production)
-- **H2**: In-memory database (testing)
-- **Spring Data JPA**: Data access abstraction
-- **Hibernate**: ORM implementation
-
-### API & Documentation
-- **Spring Web**: RESTful API framework
-- **SpringDoc OpenAPI**: 2.8.14 (Swagger UI)
-- **Bean Validation (JSR-380)**: Input validation
-
-### Testing
-- **JUnit 5**: Testing framework
-- **Spring Boot Test**: Integration testing support
-- **Mockito**: 5.2.0 (mocking framework with inline support)
-- **Testcontainers**: Real MySQL containers for integration tests
-- **JaCoCo**: 0.8.12 (code coverage reporting)
-
-### Containerization & Deployment
-- **Docker**: Multi-stage containerization with Maven and OpenJDK
-- **AWS RDS**: Managed MySQL database service
-- **AWS ECR**: Elastic Container Registry for Docker images
-- **AWS ECS Fargate**: Serverless container orchestration
-- **AWS CloudShell**: Cloud-based shell environment for Docker image building
-- **Namesilo DNS**: Third-party DNS provider with API-based automation
-- **AWS CodeBuild**: CI/CD pipeline for automated builds
-- **AWS S3**: Storage for build artifacts
-- **AWS IAM**: Identity and access management
-
-### Utilities
-- **Lombok**: Boilerplate code reduction
-- **Jackson**: JSON serialization/deserialization
-
----
-
-## ✨ Features
-
-### API Features
-- **RESTful Design**: Standard HTTP methods (GET, POST, PUT, DELETE)
-- **Pagination**: All list endpoints support `page`, `size`, and `sort` parameters
-- **Relationship Queries**: Get albums by artist or genre
-- **Input Validation**: Comprehensive validation with detailed error messages
-- **Standardized Errors**: Consistent `ApiError` responses with timestamps and details
-- **Automatic Timestamps**: `createdAt` and `updatedAt` tracked automatically
-- **Database Reset**: Development endpoint to reset database state
-
-### Technical Features
-- **DTO Pattern**: Separate request/response objects for clean API contracts
-- **Global Exception Handling**: Centralized error handling with `@ControllerAdvice`
-- **Bidirectional Relationships**: Properly managed JPA relationships
-- **Lazy Loading**: Optimized database queries with lazy fetching
-- **Cascade Operations**: Automatic relationship management
-- **Environment Configuration**: YAML-based config with environment variables
-- **Comprehensive Testing**: Unit, integration, and repository tests
-- **Code Coverage**: JaCoCo reports for test coverage metrics
 
 ---
 
@@ -1563,7 +1563,6 @@ The deployment journey involved multiple iterations, technology pivots, and crea
 
 **Current Deployment Status**:
 - **Domain**: `project.jcarl.net`
-- **IP Address**: `35.87.40.233`
 - **Port**: `8080`
 - **ECS Task**: `music-library-task:11`
 - **DNS Provider**: Namesilo (migrated from Route 53)
@@ -1759,7 +1758,7 @@ Rolled back to: Task revision 2
 
 **Issue**: When ECS tasks restarted with new IPs, users experienced downtime during DNS propagation.
 
-**Solution**: Increased TTL to 7207 seconds (~2 hours)
+**Solution**: Increased TTL to 3600 seconds
 - **Rationale**: ECS tasks restart infrequently in production
 - **Benefit**: Reduced DNS query load on Namesilo
 - **Trade-off**: Longer propagation time when IP changes (acceptable for this use case)
@@ -1813,36 +1812,35 @@ This condensed reference guide summarizes the key challenges and their solutions
 ### Key Takeaways and Skills Demonstrated
 
 **Problem-Solving**:
-- ✅ Diagnosed complex multi-layer issues (shell compatibility, IAM permissions, health checks)
-- ✅ Pivoted strategies when initial approaches failed
-- ✅ Researched alternative solutions (Namesilo vs. Route 53)
-- ✅ Made data-driven decisions based on error logs and AWS metrics
+- Diagnosed complex multi-layer issues with the help of AI (shell compatibility, IAM permissions, health checks)
+- Pivoted strategies when initial approaches failed
+- Researched alternative solutions (Namesilo vs. Route 53)
+- Made data-driven decisions based on error logs and AWS metrics
 
 **Technical Skills**:
-- ✅ Shell scripting (bash vs. ash compatibility)
-- ✅ Docker containerization and multi-stage builds
-- ✅ AWS ECS Fargate task management
-- ✅ IAM role and policy configuration
-- ✅ DNS management and API integration
-- ✅ CloudShell for cloud-based development
+- Docker containerization and multi-stage builds
+- AWS ECS Fargate task management
+- IAM role and policy configuration
+- DNS management and API integration
+- CloudShell for cloud-based development
 
 **DevOps Practices**:
-- ✅ Infrastructure as Code (Dockerfile, task definitions)
-- ✅ Automated DNS management
-- ✅ Health check configuration
-- ✅ Circuit breaker understanding and mitigation
-- ✅ Iterative deployment and testing
+- Infrastructure as Code (Dockerfile, task definitions)
+- Automated DNS management
+- Health check configuration
+- Circuit breaker understanding and mitigation
+- Iterative deployment and testing
 
 **Adaptability**:
-- ✅ Overcame local development environment limitations (Windows LTSB)
-- ✅ Migrated between DNS providers mid-project
-- ✅ Simplified architecture when complexity became a liability
-- ✅ Learned from failures and adjusted approach
+- Overcame local development environment limitations (Windows LTSB)
+- Migrated between cloud hosts and DNS providers mid-project
+- Simplified architecture when complexity became a liability
+- Learned from failures and adjusted approach
 
 **Documentation**:
-- ✅ Comprehensive error tracking and analysis
-- ✅ Clear documentation of attempted solutions
-- ✅ Knowledge sharing for future reference
+- Comprehensive error tracking and analysis
+- Clear documentation of attempted solutions
+- Knowledge sharing for future reference
 
 ---
 
@@ -1881,7 +1879,7 @@ This deployment journey demonstrates real-world DevOps problem-solving: encounte
 
 This project represents a significant deep-dive into AWS cloud infrastructure and containerization. The final production release is the result of an intensive iterative development process involving:
 
-*   **35+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
+*   **38+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
 *   **11+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
 *   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
 *   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
@@ -1973,8 +1971,6 @@ This project is part of a Java/MySQL backend development bootcamp (Week 16) and 
 
 ## ❓ Support
 
-For questions, issues, or feedback:
-
 1. **Check the API documentation**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 2. **Review test examples**: See `src/test/java/music/library/`
 3. **Check Postman collection**: `Music Library - AWS Deployment.postman_collection.json`
@@ -1987,11 +1983,6 @@ For questions, issues, or feedback:
 - **Michael Goeres** - Bootcamp Mentor
 - **Tammy Ethridge** - Career Services Manager
 - **Tiffany Hudson** - Career Advisor
-- **Quickstart** - Backend development bootcamp | quickstart.com/bootcamp
 - **Postman** - The World's Leading API Platform | postman.com
 
 ---
-
-**Built with ❤️ by JC - Backend Developer**
-
-**Happy coding! 🎵**
