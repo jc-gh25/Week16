@@ -862,8 +862,7 @@ This project demonstrates proficiency in:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd Week16/music-library
+git clone https://github.com/jc-gh25/MusicLibrary.git
 ```
 
 ### 2. Database Setup
@@ -1968,7 +1967,7 @@ The ngrok URL changes each time you restart ngrok (unless using a paid plan with
 
 ## 📝 License
 
-This project is part of a Java/MySQL backend development bootcamp (Week 16) and is for educational purposes.
+This project is part of a Java/MySQL backend development bootcamp and is for educational purposes.
 
 ---
 
