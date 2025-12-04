@@ -17,6 +17,7 @@
 - [Project Overview](#-project-overview)
 - [Technology Stack](#️-technology-stack)
 - [Features](#-features)
+- [Error Handling](#-error-handling)
 - [Development Approach](#-development-approach)
 - [Prerequisites](#-prerequisites)
 - [Getting Started](#-getting-started)
@@ -29,7 +30,6 @@
 - [Testing](#-testing)
 - [Deployment](#-deployment)
 - [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences)
-- [Error Handling](#-error-handling)
 - [Learning Outcomes](#-learning-outcomes)
 
 ---
@@ -130,6 +130,63 @@ Custom shell scripts developed to streamline development and operations:
 - **Environment Configuration**: YAML-based config with environment variables
 - **Comprehensive Testing**: Unit, integration, and repository tests
 - **Code Coverage**: JaCoCo reports for test coverage metrics
+
+---
+
+## 🚨 Error Handling
+
+The API uses a global exception handler (`@ControllerAdvice`) for consistent error responses.
+
+### Standard Error Response
+
+All errors return an `ApiError` object:
+
+```json
+{
+  "timestamp": "2025-01-19T10:30:45",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Artist not found with id: 999",
+  "path": "/api/artists/999"
+}
+```
+
+### HTTP Status Codes
+
+| Status Code | Description | Example |
+|-------------|-------------|---------|
+| **200 OK** | Successful GET/PUT request | Artist retrieved successfully |
+| **201 Created** | Successful POST request | Artist created successfully |
+| **204 No Content** | Successful DELETE request | Artist deleted successfully |
+| **400 Bad Request** | Invalid input data | Missing required field |
+| **404 Not Found** | Resource not found | Artist with ID 999 not found |
+| **500 Internal Server Error** | Server error | Database connection failed |
+
+### Validation Errors
+
+Input validation errors return detailed field-level errors:
+
+```json
+{
+  "timestamp": "2025-01-19T10:30:45",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": {
+    "name": "Artist name must not be blank",
+    "description": "Description must be ≤ 1000 characters"
+  },
+  "path": "/api/artists"
+}
+```
+
+### Exception Types
+
+- **`ResourceNotFoundException`** - Entity not found (404)
+- **`MethodArgumentNotValidException`** - Validation failure (400)
+- **`HttpMessageNotReadableException`** - Malformed JSON (400)
+- **`DataIntegrityViolationException`** - Database constraint violation (400)
+- **`Exception`** - Generic server error (500)
 
 ---
 
@@ -1884,63 +1941,6 @@ This project represents a significant deep-dive into AWS cloud infrastructure an
 *   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
 *   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
 *   **Tools Used:** AWS CloudShell, S3, CodeBuild, ECR, ECS Fargate, RDS MySQL, Git, and Docker.
-
----
-
-## 🚨 Error Handling
-
-The API uses a global exception handler (`@ControllerAdvice`) for consistent error responses.
-
-### Standard Error Response
-
-All errors return an `ApiError` object:
-
-```json
-{
-  "timestamp": "2025-01-19T10:30:45",
-  "status": 404,
-  "error": "Not Found",
-  "message": "Artist not found with id: 999",
-  "path": "/api/artists/999"
-}
-```
-
-### HTTP Status Codes
-
-| Status Code | Description | Example |
-|-------------|-------------|---------|
-| **200 OK** | Successful GET/PUT request | Artist retrieved successfully |
-| **201 Created** | Successful POST request | Artist created successfully |
-| **204 No Content** | Successful DELETE request | Artist deleted successfully |
-| **400 Bad Request** | Invalid input data | Missing required field |
-| **404 Not Found** | Resource not found | Artist with ID 999 not found |
-| **500 Internal Server Error** | Server error | Database connection failed |
-
-### Validation Errors
-
-Input validation errors return detailed field-level errors:
-
-```json
-{
-  "timestamp": "2025-01-19T10:30:45",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Validation failed",
-  "errors": {
-    "name": "Artist name must not be blank",
-    "description": "Description must be ≤ 1000 characters"
-  },
-  "path": "/api/artists"
-}
-```
-
-### Exception Types
-
-- **`ResourceNotFoundException`** - Entity not found (404)
-- **`MethodArgumentNotValidException`** - Validation failure (400)
-- **`HttpMessageNotReadableException`** - Malformed JSON (400)
-- **`DataIntegrityViolationException`** - Database constraint violation (400)
-- **`Exception`** - Generic server error (500)
 
 ---
 
