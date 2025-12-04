@@ -17,6 +17,10 @@
 - [Project Overview](#-project-overview)
 - [Technology Stack](#️-technology-stack)
 - [Features](#-features)
+- [Data Models](#-data-models)
+- [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
+- [Project Structure](#️-project-structure)
+- [Configuration](#-configuration)
 - [Development Approach](#-development-approach)
 - [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences)
 - [DevOps Challenges & Troubleshooting (Quick Reference)](#-devops-challenges--troubleshooting-quick-reference)
@@ -27,12 +31,8 @@
 - [API Documentation](#-api-documentation)
 - [API Endpoints](#-api-endpoints)
 - [Error Handling](#-error-handling)
-- [Data Models](#-data-models)
-- [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
-- [Project Structure](#️-project-structure)
-- [Configuration](#-configuration)
 - [Testing](#-testing)
-- [Deployment](#-deployment)
+- [Deployment](#-deployment-options)
 
 
 ---
@@ -133,6 +133,501 @@ Custom shell scripts developed to streamline development and operations:
 - **Environment Configuration**: YAML-based config with environment variables
 - **Comprehensive Testing**: Unit, integration, and repository tests
 - **Code Coverage**: JaCoCo reports for test coverage metrics
+
+---
+
+## 📊 Data Models
+
+### Artist Entity
+
+Represents a musician or band.
+
+```json
+{
+  "artistId": 1,
+  "name": "The Rolling Stones",
+  "description": "Legendary British rock band formed in 1962",
+  "createdAt": "2025-01-19T04:40:37",
+  "updatedAt": "2025-01-19T04:40:37"
+}
+```
+
+**Fields:**
+- `artistId` (Long) - Auto-generated primary key
+- `name` (String, required) - Artist name (max 255 characters)
+- `description` (String, optional) - Biographical information (TEXT)
+- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
+- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
+
+**Relationships:**
+- One-to-Many with Album (cascade all, orphan removal)
+
+---
+
+### Album Entity
+
+Represents a music album with detailed metadata.
+
+```json
+{
+  "albumId": 1,
+490│  "title": "Abbey Road",
+491│  "releaseDate": "1969-09-26",
+492│  "releaseYear": 1969,
+493│  "coverImageUrl": "https://example.com/covers/abbey-road.jpg",
+  "trackCount": 10,
+  "catalogNumber": "COC-59100",
+  "artist": {
+    "artistId": 1,
+498│    "name": "The Beatles"
+  },
+  "genres": [
+    {
+      "genreId": 1,
+      "name": "Rock"
+    }
+  ],
+  "createdAt": "2025-01-19T04:40:37",
+  "updatedAt": "2025-01-19T04:40:37"
+}
+```
+
+**Fields:**
+- `albumId` (Long) - Auto-generated primary key
+- `title` (String, required) - Album title (max 255 characters)
+- `releaseDate` (LocalDate, optional) - Full release date
+- `releaseYear` (Integer, computed) - Derived from releaseDate (transient field)
+- `coverImageUrl` (String, optional) - URL to album cover image (max 255 characters)
+- `trackCount` (Integer, optional) - Number of tracks on the album
+- `catalogNumber` (String, optional) - Unique catalog identifier (max 50 characters)
+- `artist` (Artist, required) - Many-to-One relationship with Artist
+- `genres` (Set<Genre>, optional) - Many-to-Many relationship with Genre
+- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
+- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
+
+**Relationships:**
+- Many-to-One with Artist (required)
+- Many-to-Many with Genre (via `album_genre` join table)
+
+---
+
+### Genre Entity
+
+Represents a musical genre or category.
+
+```json
+{
+  "genreId": 1,
+  "name": "Rock",
+  "description": "Rock music genre characterized by electric guitars and strong rhythms",
+  "createdAt": "2025-01-19T04:40:37",
+  "updatedAt": "2025-01-19T04:40:37"
+}
+```
+
+**Fields:**
+- `genreId` (Long) - Auto-generated primary key
+- `name` (String, required) - Genre name (max 100 characters)
+- `description` (String, optional) - Genre description (TEXT)
+- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
+- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
+
+**Relationships:**
+- Many-to-Many with Album (inverse side, mapped by `genres`)
+
+---
+
+## 📦 DTOs (Data Transfer Objects)
+
+The API uses DTOs to separate internal entity representations from external API contracts.
+
+### CreateArtistRequest
+
+Used for creating new artists.
+
+```json
+{
+  "name": "The Beatles",
+  "description": "Iconic British rock band from Liverpool"
+}
+```
+
+### CreateAlbumRequest
+
+Used for creating new albums.
+
+```json
+{
+  "title": "Abbey Road",
+  "artistId": 1,
+  "genreIds": [1, 2],
+  "releaseDate": "1969-09-26",
+  "coverImageUrl": "https://example.com/covers/abbey-road.jpg",
+  "trackCount": 17,
+  "catalogNumber": "PCS-7088"
+}
+```
+
+### CreateGenreRequest
+
+Used for creating new genres.
+
+```json
+{
+  "name": "Progressive Rock",
+  "description": "Complex rock music with experimental elements"
+}
+```
+
+### ApiInfoResponse
+
+Returned by `GET /api` endpoint with comprehensive API information.
+
+### DatabaseResetResponse
+
+Returned by `DELETE /api/reset` endpoint with reset statistics.
+
+---
+
+## 🏗️ Project Structure
+
+```
+music-library/
+├── src/
+│   ├── main/
+│   │   ├── java/music/library/
+│   │   │   ├── MusicLibraryApplication.java    # Main application class
+│   │   │   ├── controller/                     # REST controllers
+│   │   │   │   ├── MusicLibraryController.java # Main API controller (GET, POST, PUT, DELETE)
+│   │   │   │   ├── SwaggerRedirectController.java # Swagger UI redirect
+│   │   │   │   ├── error/                      # Error handling controllers
+│   │   │   │   └── model/                      # Controller models
+│   │   │   ├── entity/                         # JPA entities
+│   │   │   │   ├── Artist.java                 # Artist entity with albums relationship
+│   │   │   │   ├── Album.java                  # Album entity with artist and genres
+│   │   │   │   └── Genre.java                  # Genre entity with albums relationship
+│   │   │   ├── repository/                     # Spring Data repositories
+│   │   │   │   ├── ArtistRepository.java       # Artist data access
+│   │   │   │   ├── AlbumRepository.java        # Album data access
+│   │   │   │   └── GenreRepository.java        # Genre data access
+│   │   │   ├── service/                        # Business logic layer
+│   │   │   │   ├── ArtistService.java          # Artist CRUD operations
+│   │   │   │   ├── AlbumService.java           # Album CRUD operations
+│   │   │   │   ├── GenreService.java           # Genre CRUD operations
+│   │   │   │   └── DatabaseResetService.java   # Database reset functionality
+│   │   │   ├── dto/                            # Data Transfer Objects
+│   │   │   │   ├── CreateArtistRequest.java    # DTO for creating artists
+│   │   │   │   ├── CreateAlbumRequest.java     # DTO for creating albums
+│   │   │   │   ├── CreateGenreRequest.java     # DTO for creating genres
+│   │   │   │   ├── UpdateArtistRequest.java    # DTO for updating artists (PUT)
+│   │   │   │   ├── UpdateAlbumRequest.java     # DTO for updating albums (PUT)
+│   │   │   │   ├── UpdateGenreRequest.java     # DTO for updating genres (PUT)
+│   │   │   │   ├── ApiInfoResponse.java        # API welcome endpoint response
+│   │   │   │   └── DatabaseResetResponse.java  # Database reset response
+│   │   │   ├── exception/                      # Exception handling
+│   │   │   │   ├── ResourceNotFoundException.java # Custom 404 exception
+│   │   │   │   ├── GlobalExceptionHandler.java # Centralized error handling
+│   │   │   │   └── ApiError.java               # Standardized error response
+│   │   │   ├── config/                         # Configuration classes
+│   │   │   │   ├── SwaggerConfig.java          # OpenAPI/Swagger configuration
+│   │   │   │   ├── CorsConfig.java             # CORS configuration
+│   │   │   │   └── PageConfig.java             # Pagination configuration
+│   │   │   └── specification/                  # JPA Specifications
+│   │   │       └── AlbumSpecs.java             # Dynamic query specifications
+│   │   └── resources/
+│   │       ├── application.yaml                # Main configuration
+│   │       ├── application.properties           # Additional properties
+│   │       ├── db/                             # Database migrations
+│   │       │   └── migration/                  # Flyway migration scripts
+│   │       │       ├── V1__Create_Schema.sql
+│   │       │       ├── V1__Initial_Schema.sql.sql
+│   │       │       ├── V1_1__add_catalog_number_unique.sql
+│   │       │       ├── V1_2__add_cover_image_url.sql
+│   │       │       └── V2__Seed_Data.sql
+│   │       └── static/                         # Static web resources
+│   │           ├── index.html                  # API welcome page
+│   │           ├── library.html                # Music library browser UI
+│   │           ├── favicon.ico                 # Site favicon
+│   │           ├── covers/                     # Album cover images directory
+│   │           └── new_covers/                 # Additional album covers
+│   └── test/
+│       └── java/music/library/
+│           ├── integration/                    # Integration tests
+│           │   ├── ArtistControllerIT.java     # Artist endpoint tests
+│           │   ├── AlbumControllerIT.java      # Album endpoint tests (GET, POST)
+│           │   ├── AlbumControllerUpdateDeleteIT.java # Album PUT/DELETE tests
+│           │   ├── GenreControllerIT.java      # Genre endpoint tests
+│           │   └── RestResponsePage.java       # Pagination test helper
+│           ├── service/                        # Service layer tests
+│           │   ├── ArtistServiceTest.java      # Artist service unit tests
+│           │   ├── AlbumServiceTest.java       # Album service unit tests
+│           │   └── AlbumServiceBidirectionalTest.java # Relationship tests
+│           └── repository/                     # Repository tests
+│               └── AlbumRepositoryTest.java    # Album repository tests
+├── target/                                     # Maven build output directory
+├── pom.xml                                     # Maven configuration
+├── README.md                                   # This file
+├── README-SAMPLE-DATA.md                       # Sample data documentation
+├── API_WELCOME_ENDPOINT_SUMMARY.md             # API endpoint summary
+├── Dockerfile                                  # Docker containerization config
+├── docker-compose.yaml                         # Docker Compose configuration
+├── buildspec.yml                               # AWS CodeBuild configuration
+├── startup.sh                                  # Container startup script
+├── update-namesilo-dns.sh                      # DNS update automation script
+├── collection_current.json                     # Current Postman collection export
+├── Music_Library_With_Images.json              # Postman collection with image data
+├── PostmanImport1123a.json                     # Postman import file
+├── file-list.txt                               # Complete file listing
+├── .gitignore                                  # Git ignore rules
+├── .classpath                                  # Eclipse classpath configuration
+├── .project                                    # Eclipse project configuration
+└── .factorypath                                # Eclipse annotation processing
+```
+
+### Package Structure
+
+The application follows a standard layered architecture:
+
+- **`music.library`** - Root package
+  - **`controller`** - REST API endpoints (presentation layer)
+  - **`service`** - Business logic (service layer)
+  - **`repository`** - Data access (persistence layer)
+  - **`entity`** - JPA entities (domain model)
+  - **`dto`** - Data Transfer Objects (API contracts)
+  - **`exception`** - Custom exceptions and error handling
+  - **`config`** - Spring configuration classes
+  - **`specification`** - JPA Specifications for dynamic queries
+
+---
+
+## 🔧 Configuration
+
+### Application Configuration (application.yaml)
+
+The application uses YAML configuration with environment variables for flexibility:
+
+```yaml
+# Server Configuration
+server:
+  port: ${PORT:8080}  # Server port, fallback to 8080 if not specified
+
+# Database Configuration
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  # JPA / Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update              # Hibernate manages schema updates
+    show-sql: true                  # Print SQL statements (debug)
+
+  # Springdoc / Swagger UI Configuration
+  springdoc:
+    api-docs:
+      path: /v3/api-docs
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui.html
+      cors-enabled: true
+      servers:
+        - url: https://suanne-speedless-chrissy.ngrok-free.dev
+
+# Prevent Spring from executing plain .sql scripts
+sql:
+  init:
+    mode: never
+```
+
+### Environment Variables
+
+Required environment variables:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MYSQL_HOST` | MySQL server hostname | `localhost` |
+| `MYSQL_PORT` | MySQL server port | `3306` |
+| `MYSQL_DATABASE` | Database name | `music_library` |
+| `MYSQL_USER` | Database username | `music_user` |
+| `MYSQL_PASSWORD` | Database password | `your_secure_password` |
+| `PORT` | Server port (optional) | `8080` |
+
+### Test Configuration (application-test.yaml)
+
+Tests use an H2 in-memory database for fast, isolated testing:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+```
+
+---
+
+## 👮 Testing
+
+The application includes a comprehensive test suite covering multiple layers.
+
+### Test Structure
+
+```
+src/test/java/music/library/
+├── integration/              # Full stack integration tests
+│   ├── ArtistControllerIT.java
+│   ├── AlbumControllerIT.java
+│   ├── AlbumControllerUpdateDeleteIT.java
+│   └── GenreControllerIT.java
+├── service/                  # Service layer unit tests
+│   ├── ArtistServiceTest.java
+│   ├── AlbumServiceTest.java
+│   └── AlbumServiceBidirectionalTest.java
+└── repository/               # Repository layer tests
+    └── AlbumRepositoryTest.java
+```
+
+### Test Types
+
+#### 1. Integration Tests (`*IT.java`)
+
+Full-stack tests using `@SpringBootTest` and `MockMvc`:
+
+- Test complete request/response cycle
+- Use H2 in-memory database
+- Verify HTTP status codes, headers, and response bodies
+- Test pagination, sorting, and filtering
+- Validate error handling and edge cases
+
+**Example:**
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ArtistControllerIT {
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Test
+    void testCreateArtist() throws Exception {
+        mockMvc.perform(post("/api/artists")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"The Beatles\"}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name").value("The Beatles"));
+    }
+}
+```
+
+#### 2. Service Tests (`*Test.java`)
+
+Unit tests for business logic using Mockito:
+
+- Mock repository dependencies
+- Test service methods in isolation
+- Verify exception handling
+- Test bidirectional relationship management
+
+**Example:**
+```java
+@ExtendWith(MockitoExtension.class)
+class ArtistServiceTest {
+    @Mock
+    private ArtistRepository artistRepository;
+    
+    @InjectMocks
+    private ArtistService artistService;
+    
+    @Test
+    void testFindById_Success() {
+        Artist artist = new Artist();
+        artist.setArtistId(1L);
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
+        
+        Artist result = artistService.findById(1L);
+        
+        assertNotNull(result);
+        assertEquals(1L, result.getArtistId());
+    }
+}
+```
+
+#### 3. Repository Tests
+
+Tests for custom repository queries and JPA behavior:
+
+- Test custom query methods
+- Verify relationship mappings
+- Test cascade operations
+
+### Running Tests
+
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=ArtistControllerIT
+
+# Run tests
+mvn test
+
+# View test results
+# Individual test results are in target/surefire-reports/
+```
+
+### Test Results
+
+Test execution results are generated by **Maven Surefire**:
+
+- Test reports generated in `target/surefire-reports/`
+- XML and text reports for each test class
+- Console output shows test pass/fail summary
+
+### Test Configuration
+
+Tests use a separate profile (`test`) with H2 database:
+
+```yaml
+# application-test.yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+```
+
+The Maven Surefire plugin automatically activates the test profile:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+        <systemPropertyVariables>
+            <spring.profiles.active>test</spring.profiles.active>
+        </systemPropertyVariables>
+    </configuration>
+</plugin>
+```
+
+### Test Best Practices
+
+✅ Use `@TestInstance(PER_CLASS)` for efficient test data reuse  
+✅ Clean up test data in `@AfterEach` or `@AfterAll` methods  
+✅ Use meaningful test names (e.g., `testCreateArtist_WithValidData_ReturnsCreated`)  
+✅ Test both success and failure scenarios  
+✅ Verify exception messages and error responses  
+✅ Use `@Transactional` for tests that modify data  
 
 ---
 
@@ -848,6 +1343,7 @@ This project demonstrates proficiency in:
 
 ---
 
+
 ## 📋 Prerequisites
 
 - **Java 17** or higher installed ([Download](https://www.oracle.com/java/technologies/downloads/#java17))
@@ -1101,501 +1597,6 @@ Input validation errors return detailed field-level errors:
 - **`HttpMessageNotReadableException`** - Malformed JSON (400)
 - **`DataIntegrityViolationException`** - Database constraint violation (400)
 - **`Exception`** - Generic server error (500)
-
----
-
-## 📊 Data Models
-
-### Artist Entity
-
-Represents a musician or band.
-
-```json
-{
-  "artistId": 1,
-  "name": "The Rolling Stones",
-  "description": "Legendary British rock band formed in 1962",
-  "createdAt": "2025-01-19T04:40:37",
-  "updatedAt": "2025-01-19T04:40:37"
-}
-```
-
-**Fields:**
-- `artistId` (Long) - Auto-generated primary key
-- `name` (String, required) - Artist name (max 255 characters)
-- `description` (String, optional) - Biographical information (TEXT)
-- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
-- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
-
-**Relationships:**
-- One-to-Many with Album (cascade all, orphan removal)
-
----
-
-### Album Entity
-
-Represents a music album with detailed metadata.
-
-```json
-{
-  "albumId": 1,
-490│  "title": "Abbey Road",
-491│  "releaseDate": "1969-09-26",
-492│  "releaseYear": 1969,
-493│  "coverImageUrl": "https://example.com/covers/abbey-road.jpg",
-  "trackCount": 10,
-  "catalogNumber": "COC-59100",
-  "artist": {
-    "artistId": 1,
-498│    "name": "The Beatles"
-  },
-  "genres": [
-    {
-      "genreId": 1,
-      "name": "Rock"
-    }
-  ],
-  "createdAt": "2025-01-19T04:40:37",
-  "updatedAt": "2025-01-19T04:40:37"
-}
-```
-
-**Fields:**
-- `albumId` (Long) - Auto-generated primary key
-- `title` (String, required) - Album title (max 255 characters)
-- `releaseDate` (LocalDate, optional) - Full release date
-- `releaseYear` (Integer, computed) - Derived from releaseDate (transient field)
-- `coverImageUrl` (String, optional) - URL to album cover image (max 255 characters)
-- `trackCount` (Integer, optional) - Number of tracks on the album
-- `catalogNumber` (String, optional) - Unique catalog identifier (max 50 characters)
-- `artist` (Artist, required) - Many-to-One relationship with Artist
-- `genres` (Set<Genre>, optional) - Many-to-Many relationship with Genre
-- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
-- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
-
-**Relationships:**
-- Many-to-One with Artist (required)
-- Many-to-Many with Genre (via `album_genre` join table)
-
----
-
-### Genre Entity
-
-Represents a musical genre or category.
-
-```json
-{
-  "genreId": 1,
-  "name": "Rock",
-  "description": "Rock music genre characterized by electric guitars and strong rhythms",
-  "createdAt": "2025-01-19T04:40:37",
-  "updatedAt": "2025-01-19T04:40:37"
-}
-```
-
-**Fields:**
-- `genreId` (Long) - Auto-generated primary key
-- `name` (String, required) - Genre name (max 100 characters)
-- `description` (String, optional) - Genre description (TEXT)
-- `createdAt` (LocalDateTime) - Auto-generated creation timestamp
-- `updatedAt` (LocalDateTime) - Auto-updated modification timestamp
-
-**Relationships:**
-- Many-to-Many with Album (inverse side, mapped by `genres`)
-
----
-
-## 📦 DTOs (Data Transfer Objects)
-
-The API uses DTOs to separate internal entity representations from external API contracts.
-
-### CreateArtistRequest
-
-Used for creating new artists.
-
-```json
-{
-  "name": "The Beatles",
-  "description": "Iconic British rock band from Liverpool"
-}
-```
-
-### CreateAlbumRequest
-
-Used for creating new albums.
-
-```json
-{
-  "title": "Abbey Road",
-  "artistId": 1,
-  "genreIds": [1, 2],
-  "releaseDate": "1969-09-26",
-  "coverImageUrl": "https://example.com/covers/abbey-road.jpg",
-  "trackCount": 17,
-  "catalogNumber": "PCS-7088"
-}
-```
-
-### CreateGenreRequest
-
-Used for creating new genres.
-
-```json
-{
-  "name": "Progressive Rock",
-  "description": "Complex rock music with experimental elements"
-}
-```
-
-### ApiInfoResponse
-
-Returned by `GET /api` endpoint with comprehensive API information.
-
-### DatabaseResetResponse
-
-Returned by `DELETE /api/reset` endpoint with reset statistics.
-
----
-
-## 🏗️ Project Structure
-
-```
-music-library/
-├── src/
-│   ├── main/
-│   │   ├── java/music/library/
-│   │   │   ├── MusicLibraryApplication.java    # Main application class
-│   │   │   ├── controller/                     # REST controllers
-│   │   │   │   ├── MusicLibraryController.java # Main API controller (GET, POST, PUT, DELETE)
-│   │   │   │   ├── SwaggerRedirectController.java # Swagger UI redirect
-│   │   │   │   ├── error/                      # Error handling controllers
-│   │   │   │   └── model/                      # Controller models
-│   │   │   ├── entity/                         # JPA entities
-│   │   │   │   ├── Artist.java                 # Artist entity with albums relationship
-│   │   │   │   ├── Album.java                  # Album entity with artist and genres
-│   │   │   │   └── Genre.java                  # Genre entity with albums relationship
-│   │   │   ├── repository/                     # Spring Data repositories
-│   │   │   │   ├── ArtistRepository.java       # Artist data access
-│   │   │   │   ├── AlbumRepository.java        # Album data access
-│   │   │   │   └── GenreRepository.java        # Genre data access
-│   │   │   ├── service/                        # Business logic layer
-│   │   │   │   ├── ArtistService.java          # Artist CRUD operations
-│   │   │   │   ├── AlbumService.java           # Album CRUD operations
-│   │   │   │   ├── GenreService.java           # Genre CRUD operations
-│   │   │   │   └── DatabaseResetService.java   # Database reset functionality
-│   │   │   ├── dto/                            # Data Transfer Objects
-│   │   │   │   ├── CreateArtistRequest.java    # DTO for creating artists
-│   │   │   │   ├── CreateAlbumRequest.java     # DTO for creating albums
-│   │   │   │   ├── CreateGenreRequest.java     # DTO for creating genres
-│   │   │   │   ├── UpdateArtistRequest.java    # DTO for updating artists (PUT)
-│   │   │   │   ├── UpdateAlbumRequest.java     # DTO for updating albums (PUT)
-│   │   │   │   ├── UpdateGenreRequest.java     # DTO for updating genres (PUT)
-│   │   │   │   ├── ApiInfoResponse.java        # API welcome endpoint response
-│   │   │   │   └── DatabaseResetResponse.java  # Database reset response
-│   │   │   ├── exception/                      # Exception handling
-│   │   │   │   ├── ResourceNotFoundException.java # Custom 404 exception
-│   │   │   │   ├── GlobalExceptionHandler.java # Centralized error handling
-│   │   │   │   └── ApiError.java               # Standardized error response
-│   │   │   ├── config/                         # Configuration classes
-│   │   │   │   ├── SwaggerConfig.java          # OpenAPI/Swagger configuration
-│   │   │   │   ├── CorsConfig.java             # CORS configuration
-│   │   │   │   └── PageConfig.java             # Pagination configuration
-│   │   │   └── specification/                  # JPA Specifications
-│   │   │       └── AlbumSpecs.java             # Dynamic query specifications
-│   │   └── resources/
-│   │       ├── application.yaml                # Main configuration
-│   │       ├── application.properties           # Additional properties
-│   │       ├── db/                             # Database migrations
-│   │       │   └── migration/                  # Flyway migration scripts
-│   │       │       ├── V1__Create_Schema.sql
-│   │       │       ├── V1__Initial_Schema.sql.sql
-│   │       │       ├── V1_1__add_catalog_number_unique.sql
-│   │       │       ├── V1_2__add_cover_image_url.sql
-│   │       │       └── V2__Seed_Data.sql
-│   │       └── static/                         # Static web resources
-│   │           ├── index.html                  # API welcome page
-│   │           ├── library.html                # Music library browser UI
-│   │           ├── favicon.ico                 # Site favicon
-│   │           ├── covers/                     # Album cover images directory
-│   │           └── new_covers/                 # Additional album covers
-│   └── test/
-│       └── java/music/library/
-│           ├── integration/                    # Integration tests
-│           │   ├── ArtistControllerIT.java     # Artist endpoint tests
-│           │   ├── AlbumControllerIT.java      # Album endpoint tests (GET, POST)
-│           │   ├── AlbumControllerUpdateDeleteIT.java # Album PUT/DELETE tests
-│           │   ├── GenreControllerIT.java      # Genre endpoint tests
-│           │   └── RestResponsePage.java       # Pagination test helper
-│           ├── service/                        # Service layer tests
-│           │   ├── ArtistServiceTest.java      # Artist service unit tests
-│           │   ├── AlbumServiceTest.java       # Album service unit tests
-│           │   └── AlbumServiceBidirectionalTest.java # Relationship tests
-│           └── repository/                     # Repository tests
-│               └── AlbumRepositoryTest.java    # Album repository tests
-├── target/                                     # Maven build output directory
-├── pom.xml                                     # Maven configuration
-├── README.md                                   # This file
-├── README-SAMPLE-DATA.md                       # Sample data documentation
-├── API_WELCOME_ENDPOINT_SUMMARY.md             # API endpoint summary
-├── Dockerfile                                  # Docker containerization config
-├── docker-compose.yaml                         # Docker Compose configuration
-├── buildspec.yml                               # AWS CodeBuild configuration
-├── startup.sh                                  # Container startup script
-├── update-namesilo-dns.sh                      # DNS update automation script
-├── collection_current.json                     # Current Postman collection export
-├── Music_Library_With_Images.json              # Postman collection with image data
-├── PostmanImport1123a.json                     # Postman import file
-├── file-list.txt                               # Complete file listing
-├── .gitignore                                  # Git ignore rules
-├── .classpath                                  # Eclipse classpath configuration
-├── .project                                    # Eclipse project configuration
-└── .factorypath                                # Eclipse annotation processing
-```
-
-### Package Structure
-
-The application follows a standard layered architecture:
-
-- **`music.library`** - Root package
-  - **`controller`** - REST API endpoints (presentation layer)
-  - **`service`** - Business logic (service layer)
-  - **`repository`** - Data access (persistence layer)
-  - **`entity`** - JPA entities (domain model)
-  - **`dto`** - Data Transfer Objects (API contracts)
-  - **`exception`** - Custom exceptions and error handling
-  - **`config`** - Spring configuration classes
-  - **`specification`** - JPA Specifications for dynamic queries
-
----
-
-## 🔧 Configuration
-
-### Application Configuration (application.yaml)
-
-The application uses YAML configuration with environment variables for flexibility:
-
-```yaml
-# Server Configuration
-server:
-  port: ${PORT:8080}  # Server port, fallback to 8080 if not specified
-
-# Database Configuration
-spring:
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-
-  # JPA / Hibernate Configuration
-  jpa:
-    hibernate:
-      ddl-auto: update              # Hibernate manages schema updates
-    show-sql: true                  # Print SQL statements (debug)
-
-  # Springdoc / Swagger UI Configuration
-  springdoc:
-    api-docs:
-      path: /v3/api-docs
-    swagger-ui:
-      enabled: true
-      path: /swagger-ui.html
-      cors-enabled: true
-      servers:
-        - url: https://suanne-speedless-chrissy.ngrok-free.dev
-
-# Prevent Spring from executing plain .sql scripts
-sql:
-  init:
-    mode: never
-```
-
-### Environment Variables
-
-Required environment variables:
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `MYSQL_HOST` | MySQL server hostname | `localhost` |
-| `MYSQL_PORT` | MySQL server port | `3306` |
-| `MYSQL_DATABASE` | Database name | `music_library` |
-| `MYSQL_USER` | Database username | `music_user` |
-| `MYSQL_PASSWORD` | Database password | `your_secure_password` |
-| `PORT` | Server port (optional) | `8080` |
-
-### Test Configuration (application-test.yaml)
-
-Tests use an H2 in-memory database for fast, isolated testing:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-```
-
----
-
-## 👮 Testing
-
-The application includes a comprehensive test suite covering multiple layers.
-
-### Test Structure
-
-```
-src/test/java/music/library/
-├── integration/              # Full stack integration tests
-│   ├── ArtistControllerIT.java
-│   ├── AlbumControllerIT.java
-│   ├── AlbumControllerUpdateDeleteIT.java
-│   └── GenreControllerIT.java
-├── service/                  # Service layer unit tests
-│   ├── ArtistServiceTest.java
-│   ├── AlbumServiceTest.java
-│   └── AlbumServiceBidirectionalTest.java
-└── repository/               # Repository layer tests
-    └── AlbumRepositoryTest.java
-```
-
-### Test Types
-
-#### 1. Integration Tests (`*IT.java`)
-
-Full-stack tests using `@SpringBootTest` and `MockMvc`:
-
-- Test complete request/response cycle
-- Use H2 in-memory database
-- Verify HTTP status codes, headers, and response bodies
-- Test pagination, sorting, and filtering
-- Validate error handling and edge cases
-
-**Example:**
-```java
-@SpringBootTest
-@AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ArtistControllerIT {
-    @Autowired
-    private MockMvc mockMvc;
-    
-    @Test
-    void testCreateArtist() throws Exception {
-        mockMvc.perform(post("/api/artists")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\":\"The Beatles\"}"))
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.name").value("The Beatles"));
-    }
-}
-```
-
-#### 2. Service Tests (`*Test.java`)
-
-Unit tests for business logic using Mockito:
-
-- Mock repository dependencies
-- Test service methods in isolation
-- Verify exception handling
-- Test bidirectional relationship management
-
-**Example:**
-```java
-@ExtendWith(MockitoExtension.class)
-class ArtistServiceTest {
-    @Mock
-    private ArtistRepository artistRepository;
-    
-    @InjectMocks
-    private ArtistService artistService;
-    
-    @Test
-    void testFindById_Success() {
-        Artist artist = new Artist();
-        artist.setArtistId(1L);
-        when(artistRepository.findById(1L)).thenReturn(Optional.of(artist));
-        
-        Artist result = artistService.findById(1L);
-        
-        assertNotNull(result);
-        assertEquals(1L, result.getArtistId());
-    }
-}
-```
-
-#### 3. Repository Tests
-
-Tests for custom repository queries and JPA behavior:
-
-- Test custom query methods
-- Verify relationship mappings
-- Test cascade operations
-
-### Running Tests
-
-```bash
-# Run all tests
-mvn test
-
-# Run specific test class
-mvn test -Dtest=ArtistControllerIT
-
-# Run tests
-mvn test
-
-# View test results
-# Individual test results are in target/surefire-reports/
-```
-
-### Test Results
-
-Test execution results are generated by **Maven Surefire**:
-
-- Test reports generated in `target/surefire-reports/`
-- XML and text reports for each test class
-- Console output shows test pass/fail summary
-
-### Test Configuration
-
-Tests use a separate profile (`test`) with H2 database:
-
-```yaml
-# application-test.yaml
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-  flyway:
-    enabled: false
-```
-
-The Maven Surefire plugin automatically activates the test profile:
-
-```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <configuration>
-        <systemPropertyVariables>
-            <spring.profiles.active>test</spring.profiles.active>
-        </systemPropertyVariables>
-    </configuration>
-</plugin>
-```
-
-### Test Best Practices
-
-✅ Use `@TestInstance(PER_CLASS)` for efficient test data reuse  
-✅ Clean up test data in `@AfterEach` or `@AfterAll` methods  
-✅ Use meaningful test names (e.g., `testCreateArtist_WithValidData_ReturnsCreated`)  
-✅ Test both success and failure scenarios  
-✅ Verify exception messages and error responses  
-✅ Use `@Transactional` for tests that modify data  
 
 ---
 
