@@ -21,6 +21,7 @@
 - [DTOs (Data Transfer Objects)](#-dtos-data-transfer-objects)
 - [Project Structure](#️-project-structure)
 - [Configuration](#-configuration)
+- [Testing](#-testing)
 - [Development Approach](#-development-approach)
 - [Deployment Journey & Learning Experiences](#-deployment-journey--learning-experiences)
 - [DevOps Challenges & Troubleshooting (Quick Reference)](#-devops-challenges--troubleshooting-quick-reference)
@@ -31,13 +32,12 @@
 - [API Documentation](#-api-documentation)
 - [API Endpoints](#-api-endpoints)
 - [Error Handling](#-error-handling)
-- [Testing](#-testing)
-- [Deployment](#-deployment-options)
+- [Deployment Options](#-deployment-options)
 
 
 ---
 
-## 🎵 Project Overview
+## 🎼 Project Overview
 
 The Music Library API is a portfolio-quality Spring Boot application that demonstrates modern backend development practices. It provides a complete solution for managing a music catalog with:
 
@@ -988,7 +988,7 @@ aws rds describe-db-instances \
 
 ---
 
-## 🗃️ Deployment Journey & Learning Experiences
+## 🗃 Deployment Journey & Learning Experiences
 
 *For a condensed quick-reference guide, see [DevOps Challenges & Troubleshooting](#-devops-challenges--troubleshooting-quick-reference) at the end of this section.*
 
@@ -1600,7 +1600,7 @@ Input validation errors return detailed field-level errors:
 
 ---
 
-## ⚙️ Deployment Options
+## ⚙ Deployment Options
 
 The Music Library API supports multiple deployment strategies, from local development to production cloud infrastructure.
 
