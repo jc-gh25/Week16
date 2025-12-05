@@ -434,7 +434,7 @@ spring:
       path: /swagger-ui.html
       cors-enabled: true
       servers:
-        - url: https://suanne-speedless-chrissy.ngrok-free.dev
+        - url: https://project.jcarl.net
 
 # Prevent Spring from executing plain .sql scripts
 sql:
@@ -1316,8 +1316,8 @@ This deployment journey demonstrates real-world DevOps problem-solving: encounte
 
 This project represents a significant deep-dive into AWS cloud infrastructure and containerization. The final production release is the result of an intensive iterative development process involving:
 
-*   **38+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
-*   **11+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
+*   **40+ Build Iterations:** Refined Docker multi-stage builds to optimize image size and security.
+*   **12+ Infrastructure Revisions:** Evolved ECS Task Definitions to fine-tune memory allocation (1GB), IAM roles (Least Privilege), and network security.
 *   **Cost-Optimization Strategy:** Engineered a custom "Serverless DNS" solution to bypass the need for an expensive AWS Application Load Balancer ($16+/mo), instead using a self-healing container script to manage a dynamic public IP with a third-party registrar (Namesilo).
 *   **Cross-Platform DevOps:** Overcame significant challenges integrating Windows development environments with Alpine Linux containers, specifically managing `CRLF` line-ending incompatibilities via automated `sed` stream editing in the Dockerfile.
 *   **Tools Used:** AWS CloudShell, S3, CodeBuild, ECR, ECS Fargate, RDS MySQL, Git, and Docker.
@@ -1897,7 +1897,7 @@ Railway is a modern cloud platform that simplifies deployment with automatic CI/
 
 ### 3. ngrok Tunneling (Local Development)
 
-**Live API**: [https://suanne-speedless-chrissy.ngrok-free.dev](https://suanne-speedless-chrissy.ngrok-free.dev)
+**Live API**: [https://x-x-x.ngrok-free.dev](https://x-x-x.ngrok-free.dev)
 
 ngrok provides secure tunneling to expose your local development server to the internet.
 

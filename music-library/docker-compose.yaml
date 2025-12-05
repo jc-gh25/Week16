@@ -10,6 +10,9 @@ services:
       MYSQL_ROOT_PASSWORD: rootpw
     ports:
       - "3306:3306"
+    environment:
+      SPRING_PROFILES_ACTIVE=prod,swagger # ensures swagger UI is enabled in production
+      PUBLIC_URL=https://project.jcarl.net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
@@ -28,6 +31,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
+      PUBLIC_URL: http://project.jcarl.net
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DATABASE: music_library

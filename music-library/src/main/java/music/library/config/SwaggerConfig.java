@@ -39,9 +39,8 @@ public class SwaggerConfig {
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0")))
                 .servers(List.of(
-                        // Ngrok tunnel server - HTTPS
                         new Server()
-                                .url("https://suanne-speedless-chrissy.ngrok-free.dev")
+                                .url("https://project.jcarl.net")
                                 .description("Ngrok Tunnel Server"),
                         // Local development server
                         new Server()

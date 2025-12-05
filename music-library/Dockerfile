@@ -10,7 +10,10 @@ FROM public.ecr.aws/docker/library/eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 # Install dependencies (curl, bash, ssl certs)
-RUN apk add --no-cache curl bash ca-certificates grep
+RUN apk add --no-cache curl bash ca-certificates
+
+# Set URL
+ENV PUBLIC_URL=https://project.jcarl.net
 
 # Copy scripts
 COPY update-namesilo-dns.sh /update-namesilo-dns.sh

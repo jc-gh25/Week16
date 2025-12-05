@@ -31,7 +31,7 @@ spring:
       path: /swagger-ui.html
       cors-enabled: true
       servers:
-        - url: https://suanne-speedless-chrissy.ngrok-free.dev
+        - url: http://project.jcarl.net
 
 # ---------------------------------------------------------
 # Prevent Spring from executing any plain .sql scripts at startup

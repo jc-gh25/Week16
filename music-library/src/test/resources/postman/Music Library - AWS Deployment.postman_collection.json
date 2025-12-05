@@ -9512,7 +9512,7 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "https://suanne-speedless-chrissy.ngrok-free.dev/api"
+			"value": "http://project.jcarl.net/api"
 		},
 		{
 			"key": "maxRichterId",
