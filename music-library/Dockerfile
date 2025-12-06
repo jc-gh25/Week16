@@ -13,7 +13,7 @@ WORKDIR /app
 RUN apk add --no-cache curl bash ca-certificates
 
 # Set URL
-ENV PUBLIC_URL=https://project.jcarl.net
+ENV PUBLIC_URL=http://project.jcarl.net
 
 # Copy scripts
 COPY update-namesilo-dns.sh /update-namesilo-dns.sh

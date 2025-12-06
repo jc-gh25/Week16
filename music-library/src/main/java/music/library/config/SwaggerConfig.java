@@ -17,7 +17,6 @@ public class SwaggerConfig {
     /**
      * Configures OpenAPI/Swagger with comprehensive API metadata.
      * This configuration includes title, version, description, contact info, and license.
-     * Also configures servers for both HTTPS (ngrok tunnel) and local development.
      * 
      * The API documentation is available at:
      * - Swagger UI: /swagger-ui.html
@@ -40,8 +39,8 @@ public class SwaggerConfig {
                                 .url("https://www.apache.org/licenses/LICENSE-2.0")))
                 .servers(List.of(
                         new Server()
-                                .url("https://project.jcarl.net")
-                                .description("Ngrok Tunnel Server"),
+                                .url("/")
+                                .description("AWS Server"),
                         // Local development server
                         new Server()
                                 .url("http://localhost:8080")

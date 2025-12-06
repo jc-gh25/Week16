@@ -1982,10 +1982,10 @@ This project is part of a Java/MySQL backend development bootcamp and is for edu
 
 ## 🙏 Acknowledgments
 
-- **Prashant Hardikar** - Bootcamp Instructor
-- **Michael Goeres** - Bootcamp Mentor
-- **Tammy Ethridge** - Career Services Manager
-- **Tiffany Hudson** - Career Advisor
+- **Prashant H.** - Bootcamp Instructor
+- **Michael G.** - Bootcamp Mentor
+- **Tammy E.** - Career Services Manager
+- **Tiffany H.** - Career Advisor
 - **Postman** - The World's Leading API Platform | postman.com
 
 ---
